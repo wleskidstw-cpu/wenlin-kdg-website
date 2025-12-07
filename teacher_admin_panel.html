@@ -87,9 +87,10 @@
                             </div>
                         </div>
                         <div>
-                            <label for="announcement-file" class="block text-sm font-medium text-stone-700 mb-1">附加檔案 (模擬)</label>
-                            <input type="file" id="announcement-file" class="w-full p-2 border rounded-lg bg-gray-50">
-                            <p class="text-xs text-stone-500 mt-1">此功能僅為模擬，實際檔案不會上傳，僅記錄文件名。</p>
+                            <!-- 檔案上傳欄位已改為連結輸入 -->
+                            <label for="announcement-file-url" class="block text-sm font-medium text-stone-700 mb-1">附加檔案連結 (URL)</label>
+                            <input type="text" id="announcement-file-url" class="w-full p-2 border rounded-lg bg-gray-50" placeholder="貼上公開檔案的網址 (例如 GitHub 或 Google Drive 公開連結)">
+                            <p class="text-xs text-stone-500 mt-1">請確保連結是公開且可存取的。</p>
                         </div>
                         <button type="submit" class="py-2 px-4 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150">儲存公告並發布</button>
                     </form>
@@ -130,9 +131,9 @@
         // ** 請在此處填入您的 EmailJS 金鑰 **
         // Service ID 已填入您提供的金鑰
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
-        // 這些需要您從 EmailJS 網站上取得 (在 Email Service 和 Account 設定中)
-        const EMAILJS_TEMPLATE_ID = template_9y31gtm; // 替換為您的 Template ID (用於託藥回覆)
-        const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; // 替換為您的 Public Key (User ID)
+        // 修正：Template ID 和 User ID 應為字串，並使用您的實際值
+        const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID'; // <--- 請替換為您在 EmailJS 網站上建立的 Template ID
+        const EMAILJS_USER_ID = 'YOUR_EMAILJS_USER_ID'; // <--- 請替換為您的 Public Key (User ID)
 
         // --- 數據存取通用函數 ---
         function getRequests(key) {
@@ -211,18 +212,17 @@
             const tag = form.elements['announcement-tag'].value;
             const date = form.elements['announcement-date'].value;
             
-            // 模擬檔案上傳 (實際只記錄文件名)
-            const fileInput = document.getElementById('announcement-file');
-            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : '';
+            // 新增：檔案 URL
+            const fileURL = document.getElementById('announcement-file-url').value.trim();
 
 
             const newAnnouncement = {
                 id: Date.now(),
                 title: title,
-                content: content, // 新增內容
+                content: content,
                 tag: tag,
                 date: date,
-                fileName: fileName // 新增附件名稱
+                fileURL: fileURL // 儲存檔案 URL
             };
 
             const announcements = getRequests(ANNOUNCEMENT_KEY);
@@ -277,10 +277,13 @@
                 item.appendChild(header);
 
                 // Metadata and Content
+                const contentPreview = ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : '無內容';
+                const fileName = ann.fileURL ? new URL(ann.fileURL).pathname.split('/').pop() : '';
+
                 item.innerHTML += `
-                    <p class="text-sm text-stone-600 whitespace-pre-wrap">${ann.content.substring(0, 50)}...</p>
+                    <p class="text-sm text-stone-600 whitespace-pre-wrap">${contentPreview}</p>
                     <p class="text-xs text-stone-500 mt-1">發布於: ${ann.date}</p>
-                    ${ann.fileName ? `<p class="text-xs text-teal-700 font-medium">附件: ${ann.fileName}</p>` : ''}
+                    ${ann.fileURL ? `<p class="text-xs text-teal-700 font-medium">附件: <a href="${ann.fileURL}" target="_blank" class="underline hover:text-teal-900">${fileName}</a></p>` : ''}
                 `;
                 
                 listContainer.appendChild(item);
@@ -423,7 +426,7 @@
             };
 
             // 1. 模擬 Email 服務 API 呼叫
-            if (EMAILJS_USER_ID === 'YOUR_EMAILJS_USER_ID' || EMAILJS_TEMPLATE_ID === template_9y31gtm) {
+            if (EMAILJS_USER_ID === 'YOUR_EMAILJS_USER_ID' || EMAILJS_TEMPLATE_ID === 'YOUR_EMAILJS_TEMPLATE_ID') {
                 console.error("錯誤: EmailJS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
                 alert("錯誤: EmailJS 金鑰/模板 ID 尚未設定。請檢查程式碼中的設定。");
                 return;
