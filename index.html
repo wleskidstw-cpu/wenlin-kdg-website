@@ -568,9 +568,9 @@
                 <!-- Tab 內容區 -->
                 <div id="admin-content" class="bg-yellow-50 p-8 rounded-xl shadow-2xl">
                     
-                    <!-- 線上請假表單 (Default Tab) - 已新增欄位及區間式日期 -->
+                    <!-- 線上請假表單 (Default Tab) - 已移除 (模擬) 文本 -->
                     <div id="leave" class="tab-content-admin">
-                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">幼兒線上請假通知單 (模擬)</h4>
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">幼兒線上請假通知單</h4>
                         <form id="leave-form" onsubmit="handleLeaveSubmit(event)">
                             <div class="space-y-4">
                                 <div>
@@ -643,7 +643,7 @@
 
                     <!-- 託藥申請表內容 - 已新增欄位及教師回覆區 -->
                     <div id="medication" class="tab-content-admin hidden">
-                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">藥品委託管理申請表 </h4>
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">藥品委託管理申請表 (模擬)</h4>
                         <form id="medication-form" onsubmit="handleMedicationSubmit(event)">
                              <div class="space-y-4">
                                 <!-- 幼兒班級/姓名 -->
@@ -735,7 +735,15 @@
             <h2 class="text-2xl font-bold text-amber-700 mb-4 handwriting-font">✉️ 聯絡我們</h2>
             <p class="text-sm text-stone-600 mb-6">請填寫您的問題，我們將盡快透過 Email 回覆您。</p>
             <form id="general-contact-form" onsubmit="handleGeneralContactSubmit(event)">
-                <div class="space-y-4">            
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">對象/收件人</label>
+                        <select name="recipient" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                            <option value="幼兒園主任" selected>幼兒園主任 (一般行政)</option>
+                            <option value="行政教保員">行政教保員 (文書/招生)</option>
+                            <option value="總務">總務 (費用/雜項)</option>
+                        </select>
+                    </div>
                     <div>
                         <label class="block text-stone-700 font-medium mb-1">您的姓名</label>
                         <input type="text" name="senderName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入您的姓名" required>
@@ -799,7 +807,6 @@
                     <ul class="space-y-2">
                         <li><a href="https://fatraceschool.k12ea.gov.tw/frontend/" target="_blank" class="text-stone-300 hover:text-white transition duration-150">校園食材登錄平台</a></li>
                         <li><a href="https://www.doe.gov.taipei/" target="_blank" class="text-stone-300 hover:text-white transition duration-150">臺北市政府教育局</a></li>
-                        <li><a href="#admin" onclick="showAdminTab('leave')" class="text-stone-300 hover:text-white transition duration-150">線上請假</a></li>
                         <li><a href="teacher_admin_panel.html" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">🧑‍🏫 教師後台登入</a></li>
                     </ul>
                 </div>
@@ -915,7 +922,7 @@
         }
 
 
-        // --- 公告渲染邏輯 ---
+        // --- 公告渲染邏輯 (已更新以準備顯示完整內容) ---
         function renderPublicAnnouncements() {
             // 從 localStorage 讀取教師發布的公告
             const announcements = getRequests(ANNOUNCEMENT_KEY);
@@ -933,17 +940,50 @@
             }
 
             // 只顯示前三個公告
-            announcements.slice(0, 3).forEach(ann => {
+            announcements.slice(0, 3).forEach((ann, index) => {
                 const tagColor = ann.tag === '重要' ? 'border-amber-500' : ann.tag === '活動' ? 'border-teal-500' : 'border-stone-500';
-                const item = document.createElement('a');
-                item.href = '#news'; // 點擊後捲動到公告區
-                item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor}`;
+                const item = document.createElement('div');
+                item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor} cursor-pointer`;
+                
+                // 使用 onclick 顯示完整的公告內容
+                item.onclick = () => showAnnouncementDetails(ann.id);
+
                 item.innerHTML = `
                     <p class="text-stone-500 text-sm">【${ann.tag}】${ann.date}</p>
                     <p class="text-lg font-semibold text-stone-800">${ann.title}</p>
+                    <p class="text-sm text-stone-600 mt-1">${ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : ''}</p>
                 `;
                 listContainer.appendChild(item);
             });
+        }
+        
+        // 新增：顯示完整公告內容的 Modal
+        function showAnnouncementDetails(id) {
+            const announcements = getRequests(ANNOUNCEMENT_KEY);
+            const ann = announcements.find(a => a.id === id);
+            
+            if (!ann) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4';
+            modal.onclick = () => document.body.removeChild(modal);
+
+            const fileLink = ann.fileName 
+                ? `<p class="mt-4 text-sm text-teal-700 font-bold">附件：<a href="#" onclick="alert('模擬下載附件: ${ann.fileName}')" class="underline">${ann.fileName}</a></p>`
+                : '';
+
+            const contentHtml = ann.content.replace(/\n/g, '<br>');
+
+            modal.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-100" onclick="event.stopPropagation()">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-2 handwriting-font">${ann.title}</h2>
+                    <p class="text-xs text-stone-500 mb-4 border-b pb-2">【${ann.tag}】發布日期: ${ann.date}</p>
+                    <div class="text-stone-700 text-base">${contentHtml}</div>
+                    ${fileLink}
+                    <button onclick="document.body.removeChild(this.parentNode.parentNode);" class="mt-6 py-2 px-4 bg-amber-600 text-white rounded-lg hover:bg-amber-700">關閉</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
 
