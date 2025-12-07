@@ -6,25 +6,31 @@
     <title>臺北市北投區文林國民小學附設幼兒園</title>
     <!-- 載入 Tailwind CSS 函式庫 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 使用 Inter 字體作為清晰易讀的基底字體 -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
+            /* 內文使用清晰的 Inter */
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
         }
-        /* 自定義一個柔和的背景圖案 */
+        /* New style for main headings using the handwriting font */
+        .handwriting-font {
+            /* 標題使用手寫風格的 Klee One */
+            font-family: 'Klee One', cursive;
+        }
+        /* 自定義一個柔和的背景圖案 (淺米白/奶油色) */
         .hero-bg {
-            background-color: #e9eef8; /* 淺藍灰 */
+            background-color: #fcf9f2; /* Light Cream/Beige */
             background-image: radial-gradient(#ffffff 1px, transparent 1px),
-                              radial-gradient(#ffffff 1px, #e9eef8 1px);
+                              radial-gradient(#ffffff 1px, #fcf9f2 1px);
             background-size: 20px 20px;
             background-position: 0 0, 10px 10px;
         }
-        /* 活躍 Tab 樣式 */
+        /* 活躍 Tab 樣式 (茶綠色) */
         .tab-active {
-            border-bottom: 3px solid #4f46e5; /* indigo-600 */
-            color: #1e3a8a; /* indigo-900 */
+            border-bottom: 3px solid #0f766e; /* Teal-700 */
+            color: #0f766e; /* Teal-700 */
             font-weight: 700;
         }
         /* 表格樣式 */
@@ -35,33 +41,34 @@
         }
     </style>
 </head>
-<body>
+<body class="text-stone-700">
     
     <!-- 導覽列 (Header) -->
     <header class="sticky top-0 z-50 bg-white shadow-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 
-                <!-- Logo/學校名稱 -->
+                <!-- Logo/臺北市北投區文林國民小學附設幼兒園 - 已放大字體 -->
                 <a href="#home" class="flex items-center space-x-2">
-                    <!-- 使用 SVG 建立一個文林附幼 Logo -->
-                    <svg class="w-10 h-10 text-indigo-600" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 使用 SVG 建立一個文林附幼 Logo (茶綠色) -->
+                    <svg class="w-10 h-10 text-teal-700" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                     </svg>
-                    <span class="text-xl md:text-2xl font-bold text-indigo-800">文林附幼</span>
+                    <!-- 標題文字已更新並放大至 text-3xl (手機) md:text-4xl (桌面) -->
+                    <span class="text-3xl md:text-4xl font-bold text-stone-800 handwriting-font">臺北市北投區文林國民小學附設幼兒園</span>
                 </a>
 
                 <!-- 導覽連結 (桌面版) -->
                 <nav class="hidden lg:flex space-x-8 text-lg">
-                    <a href="#home" class="text-gray-600 hover:text-indigo-600 transition duration-150 font-medium">首頁簡介</a>
-                    <a href="#news" class="text-gray-600 hover:text-indigo-600 transition duration-150 font-medium">最新公告</a>
-                    <a href="#about" class="text-gray-600 hover:text-indigo-600 transition duration-150 font-medium">關於我們</a>
-                    <a href="#gallery" class="text-gray-600 hover:text-indigo-600 transition duration-150 font-medium">活動花絮</a>
-                    <a href="#admin" class="px-4 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-600 transition duration-150 font-medium shadow-md">行政服務</a>
+                    <a href="#home" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">首頁簡介</a>
+                    <a href="#news" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">最新公告</a>
+                    <a href="#about" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">關於我們</a>
+                    <a href="#gallery" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">活動花絮</a>
+                    <a href="#admin" class="px-4 py-2 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition duration-150 font-medium shadow-md">行政服務</a>
                 </nav>
 
                 <!-- 手機版選單按鈕 (留空，因為單頁應用) -->
-                <button class="lg:hidden text-gray-500 hover:text-indigo-600">
+                <button class="lg:hidden text-stone-500 hover:text-teal-700">
                     <!-- Menu Icon -->
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
@@ -75,14 +82,15 @@
         <section id="home" class="hero-bg py-16 sm:py-24 lg:py-32">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <div class="lg:w-3/4 mx-auto">
-                    <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-indigo-800 leading-tight mb-4">
-                        文林附幼：<span class="text-pink-500">用愛與探索，讓學習發光！</span>
+                    <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-800 leading-tight mb-4 handwriting-font">
+                        <span class="text-amber-600">閱讀自然</span>
                     </h2>
-                    <p class="text-xl sm:text-2xl text-gray-600 mb-8">
-                        臺北市北投區文林國民小學附設幼兒園，為孩子創造一個安全、啟發和多元的學習環境。
+                    <p class="text-xl sm:text-2xl text-stone-600 mb-8">
+                        和孩子一起創造安全、多元、快樂的學習環境。
                     </p>
                     <div class="mt-12 w-full max-w-5xl mx-auto rounded-xl overflow-hidden shadow-2xl">
-                        <img src="https://placehold.co/1000x450/c7d2fe/4f46e5?text=文林附幼+校園鳥瞰圖" 
+                        <!-- 圖片使用大地色系 Placeholder -->
+                        <img src="https://placehold.co/1000x450/d9f99d/4d7c0f?text=文林附幼+校園鳥瞰圖" 
                              alt="文林附幼環境鳥瞰圖" 
                              class="w-full h-auto object-cover">
                     </div>
@@ -93,26 +101,26 @@
                 <!-- 簡介卡片區 -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     
-                    <!-- 環境介紹 -->
-                    <div class="bg-white p-8 rounded-3xl shadow-xl border-t-4 border-indigo-500">
-                        <h3 class="text-3xl font-extrabold text-indigo-700 mb-4">🏡 環境介紹</h3>
-                        <p class="text-gray-600 mb-4">
+                    <!-- 環境介紹 (茶綠色邊框) -->
+                    <div class="bg-white p-8 rounded-3xl shadow-xl border-t-4 border-teal-500">
+                        <h3 class="text-3xl font-extrabold text-teal-700 mb-4 handwriting-font">🏡 環境介紹</h3>
+                        <p class="text-stone-600 mb-4">
                             幼兒園位於文林國小校區內，享有寬廣的戶外空間和資源。我們擁有獨立的遊戲場、沙坑、生態園區和陽光充足的活動室。所有的設施均通過安全檢驗，為幼兒提供一個無憂無慮的探索天地。
                         </p>
-                        <ul class="text-sm text-gray-500 space-y-2 list-disc list-inside">
+                        <ul class="text-sm text-stone-500 space-y-2 list-disc list-inside">
                             <li>多功能體能活動室</li>
                             <li>豐富的主題學習區</li>
                             <li>專屬的午睡與用餐區域</li>
                         </ul>
                     </div>
                     
-                    <!-- 教學理念 -->
-                    <div class="bg-white p-8 rounded-3xl shadow-xl border-t-4 border-pink-500">
-                        <h3 class="text-3xl font-extrabold text-pink-700 mb-4">💡 教學理念</h3>
-                        <p class="text-gray-600 mb-4">
-                            我們採**主題式與角落教學**模式，以幼兒的生活經驗為核心，引導孩子從「做中學」。我們注重培養幼兒的五大領域能力：身體動作與健康、語文、認知、社會、美感，鼓勵孩子成為主動的學習者。
+                    <!-- 教學理念 (琥珀色邊框) -->
+                    <div class="bg-white p-8 rounded-3xl shadow-xl border-t-4 border-amber-500">
+                        <h3 class="text-3xl font-extrabold text-amber-700 mb-4 handwriting-font">💡 教學理念</h3>
+                        <p class="text-stone-600 mb-4">
+                            我們採學習區模式，以幼兒的生活經驗為核心，引導孩子從「做中學」。我們注重培養幼兒各個不同面向的能力，鼓勵孩子成為主動的學習者。
                         </p>
-                        <ul class="text-sm text-gray-500 space-y-2 list-disc list-inside">
+                        <ul class="text-sm text-stone-500 space-y-2 list-disc list-inside">
                             <li>以幼兒為中心的教學法</li>
                             <li>鼓勵動手操作與合作學習</li>
                             <li>重視生活自理能力與情商發展</li>
@@ -125,30 +133,30 @@
         <!-- 2. 最新公告欄位 (News Section) -->
         <section id="news" class="py-16 sm:py-24 bg-gray-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <span class="text-sm font-semibold text-indigo-500 uppercase tracking-wider">最新資訊</span>
-                <h3 class="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl mb-10">
+                <span class="text-sm font-semibold text-teal-700 uppercase tracking-wider">最新資訊</span>
+                <h3 class="mt-2 text-3xl font-extrabold text-stone-800 sm:text-4xl mb-10 handwriting-font">
                     📢 文林附幼公告欄
                 </h3>
 
                 <div class="space-y-4">
                     <!-- 公告範例 1 -->
-                    <a href="#" class="block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 border-red-500">
-                        <p class="text-gray-500 text-sm">【重要】2025/09/01</p>
-                        <p class="text-lg font-semibold text-gray-800">新學年度招生登記開始，請查閱詳細辦法。</p>
+                    <a href="#" class="block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 border-amber-500">
+                        <p class="text-stone-500 text-sm">【重要】2025/09/01</p>
+                        <p class="text-lg font-semibold text-stone-800">新學年度招生登記開始，請查閱詳細辦法。</p>
                     </a>
                     <!-- 公告範例 2 -->
-                    <a href="#" class="block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 border-green-500">
-                        <p class="text-gray-500 text-sm">【活動】2025/08/20</p>
-                        <p class="text-lg font-semibold text-gray-800">全園親職講座：「幼兒專注力培養」圓滿結束。</p>
+                    <a href="#" class="block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 border-teal-500">
+                        <p class="text-stone-500 text-sm">【活動】2025/08/20</p>
+                        <p class="text-lg font-semibold text-stone-800">全園親職講座：「幼兒專注力培養」圓滿結束。</p>
                     </a>
                     <!-- 公告範例 3 -->
-                    <a href="#" class="block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 border-blue-500">
-                        <p class="text-gray-500 text-sm">【行政】2025/07/15</p>
-                        <p class="text-lg font-semibold text-gray-800">修訂版託藥辦法及申請書已上線，請至行政服務區下載。</p>
+                    <a href="#" class="block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 border-stone-500">
+                        <p class="text-stone-500 text-sm">【行政】2025/07/15</p>
+                        <p class="text-lg font-semibold text-stone-800">修訂版託藥辦法及申請書已上線，請至行政服務區下載。</p>
                     </a>
                 </div>
                 
-                <button class="mt-8 px-6 py-2 text-indigo-600 font-semibold border border-indigo-300 rounded-full hover:bg-indigo-50 transition duration-150">
+                <button class="mt-8 px-6 py-2 text-teal-700 font-semibold border border-teal-300 rounded-full hover:bg-teal-50 transition duration-150">
                     查看所有公告
                 </button>
             </div>
@@ -157,27 +165,27 @@
         <!-- 3. 關於我們 (About Us) - 使用 Tab 切換：行事曆、作息表、教職員介紹及班級網頁 -->
         <section id="about" class="py-16 sm:py-24 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h3 class="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-10 text-center">
+                <h3 class="text-3xl font-extrabold text-stone-800 sm:text-4xl mb-10 text-center handwriting-font">
                     📖 關於我們與行政資訊
                 </h3>
 
-                <!-- Tab 導覽列 -->
+                <!-- Tab 導覽列 (使用大地色系 hover 效果) -->
                 <div id="about-tabs" class="flex flex-wrap justify-center border-b border-gray-200 mb-8 space-x-4 sm:space-x-8">
-                    <button class="py-3 px-3 text-gray-600 hover:text-indigo-600 tab-active" onclick="showAboutTab('calendar')">行事曆</button>
-                    <button class="py-3 px-3 text-gray-600 hover:text-indigo-600" onclick="showAboutTab('schedule')">作息表</button>
-                    <button class="py-3 px-3 text-gray-600 hover:text-indigo-600" onclick="showAboutTab('staff')">教職員介紹</button>
-                    <button class="py-3 px-3 text-gray-600 hover:text-indigo-600" onclick="showAboutTab('classes')">班級網頁</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700 tab-active" onclick="showAboutTab('calendar')">行事曆</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('schedule')">作息表</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('staff')">教職員介紹</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('classes')">班級網頁</button>
                 </div>
 
                 <!-- Tab 內容區 -->
                 <div id="about-content">
                     
                     <!-- 行事曆內容 (Default Tab) -->
-                    <div id="calendar" class="tab-content bg-indigo-50 p-6 rounded-xl shadow-inner">
-                        <h4 class="text-2xl font-bold text-indigo-700 mb-4">學年重要行事曆 (範例)</h4>
+                    <div id="calendar" class="tab-content bg-yellow-50 p-6 rounded-xl shadow-inner">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-4 handwriting-font">學年重要行事曆 (範例)</h4>
                         <table class="data-table w-full bg-white rounded-lg shadow-sm">
                             <thead>
-                                <tr class="bg-indigo-100 text-indigo-800">
+                                <tr class="bg-teal-100 text-teal-800">
                                     <th>日期</th>
                                     <th>活動名稱</th>
                                     <th>備註</th>
@@ -193,11 +201,11 @@
                     </div>
 
                     <!-- 作息表內容 -->
-                    <div id="schedule" class="tab-content hidden bg-indigo-50 p-6 rounded-xl shadow-inner">
-                        <h4 class="text-2xl font-bold text-indigo-700 mb-4">幼兒園一日作息表 (範例)</h4>
+                    <div id="schedule" class="tab-content hidden bg-yellow-50 p-6 rounded-xl shadow-inner">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-4 handwriting-font">幼兒園一日作息表 (範例)</h4>
                         <table class="data-table w-full bg-white rounded-lg shadow-sm">
                             <thead>
-                                <tr class="bg-indigo-100 text-indigo-800">
+                                <tr class="bg-teal-100 text-teal-800">
                                     <th>時間</th>
                                     <th>內容</th>
                                 </tr>
@@ -217,36 +225,36 @@
 
                     <!-- 教職員介紹內容 -->
                     <div id="staff" class="tab-content hidden p-6">
-                        <h4 class="text-2xl font-bold text-indigo-700 mb-6">教職員團隊</h4>
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">教職員團隊</h4>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                             <!-- 老師卡片範例 1 -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-pink-400">
-                                <img src="https://placehold.co/100x100/fbcfe8/be185d?text=李老師" alt="李老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-gray-800">李雅雯 老師</p>
-                                <p class="text-sm text-pink-600">園長 / 教學總規劃</p>
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
+                                <img src="https://placehold.co/100x100/fec7b3/f59e0b?text=李老師" alt="李老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">李雅雯 老師</p>
+                                <p class="text-sm text-amber-700">園長 / 教學總規劃</p>
                             </div>
                             <!-- 老師卡片範例 2 -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-indigo-400">
-                                <img src="https://placehold.co/100x100/c7d2fe/4f46e5?text=王老師" alt="王老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-gray-800">王志明 老師</p>
-                                <p class="text-sm text-indigo-600">大班教師 / 體能指導</p>
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <img src="https://placehold.co/100x100/bae6fd/0e7490?text=王老師" alt="王老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">王志明 老師</p>
+                                <p class="text-sm text-teal-700">大班教師 / 體能指導</p>
                             </div>
                             <!-- 老師卡片範例 3 -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-green-400">
                                 <img src="https://placehold.co/100x100/d9f99d/4d7c0f?text=陳老師" alt="陳老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-gray-800">陳美華 老師</p>
-                                <p class="text-sm text-green-600">廚房阿姨 / 營養師</p>
+                                <p class="font-bold text-stone-800">陳美華 老師</p>
+                                <p class="text-sm text-green-700">廚房阿姨 / 營養師</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- 班級網頁內容 -->
-                    <div id="classes" class="tab-content hidden bg-indigo-50 p-6 rounded-xl shadow-inner">
-                        <h4 class="text-2xl font-bold text-indigo-700 mb-6">各班級學習資源與網頁連結</h4>
+                    <div id="classes" class="tab-content hidden bg-yellow-50 p-6 rounded-xl shadow-inner">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">各班級學習資源與網頁連結</h4>
                         <div class="space-y-4">
-                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-blue-600">🍎 蘋果班 (大班) - 點此進入班級網頁</a>
-                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-600">🌳 森林班 (中班) - 點此進入班級網頁</a>
-                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-pink-600">⭐ 星星班 (小班) - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-teal-600">🍎 蘋果班 (大班) - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-700">🌳 森林班 (中班) - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-amber-700">⭐ 星星班 (小班) - 點此進入班級網頁</a>
                         </div>
                     </div>
                 </div>
@@ -257,8 +265,8 @@
         <!-- 4. 全園活動花絮 (Gallery) -->
         <section id="gallery" class="py-16 sm:py-24 hero-bg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <span class="text-sm font-semibold text-pink-500 uppercase tracking-wider">成長瞬間</span>
-                <h3 class="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl mb-12">
+                <span class="text-sm font-semibold text-amber-600 uppercase tracking-wider">成長瞬間</span>
+                <h3 class="mt-2 text-3xl font-extrabold text-stone-800 sm:text-4xl mb-12 handwriting-font">
                     📸 2024-2025 學年全園活動花絮
                 </h3>
 
@@ -278,7 +286,7 @@
                     </div>
                 </div>
                 
-                <a href="#" class="mt-10 inline-block text-lg font-semibold text-indigo-600 hover:text-indigo-800 transition duration-150 border-b-2 border-indigo-200 hover:border-indigo-600">
+                <a href="#" class="mt-10 inline-block text-lg font-semibold text-teal-700 hover:text-teal-900 transition duration-150 border-b-2 border-teal-200 hover:border-teal-700">
                     查看完整相簿 →
                 </a>
             </div>
@@ -287,38 +295,39 @@
         <!-- 5. 行政服務 (Admin Forms) - 使用 Tab 切換：線上請假、託藥辦法及託藥申請 -->
         <section id="admin" class="py-16 sm:py-24 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                 <h3 class="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-10 text-center">
+                 <h3 class="text-3xl font-extrabold text-stone-800 sm:text-4xl mb-10 text-center handwriting-font">
                     📋 家長行政服務區
                 </h3>
 
                 <!-- Tab 導覽列 -->
                 <div id="admin-tabs" class="flex flex-wrap justify-center border-b border-gray-200 mb-8 space-x-4 sm:space-x-8">
-                    <button class="py-3 px-3 text-gray-600 hover:text-indigo-600 tab-active" onclick="showAdminTab('leave')">線上請假表單</button>
-                    <button class="py-3 px-3 text-gray-600 hover:text-indigo-600" onclick="showAdminTab('policy')">託藥辦法</button>
-                    <button class="py-3 px-3 text-gray-600 hover:text-indigo-600" onclick="showAdminTab('medication')">託藥申請表</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700 tab-active" onclick="showAdminTab('leave')">線上請假表單</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAdminTab('policy')">託藥辦法</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAdminTab('medication')">託藥申請表</button>
                 </div>
                 
                 <!-- Tab 內容區 -->
-                <div id="admin-content" class="bg-indigo-50 p-8 rounded-xl shadow-2xl">
+                <div id="admin-content" class="bg-yellow-50 p-8 rounded-xl shadow-2xl">
                     
                     <!-- 線上請假表單 (Default Tab) -->
                     <div id="leave" class="tab-content-admin">
-                        <h4 class="text-2xl font-bold text-indigo-700 mb-6">幼兒線上請假通知單 (模擬)</h4>
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">幼兒線上請假通知單 (模擬)</h4>
                         <form onsubmit="handleFormSubmit(event, '請假')">
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-1">幼兒姓名</label>
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" placeholder="請輸入幼兒全名" required>
+                                    <label class="block text-stone-700 font-medium mb-1">幼兒姓名</label>
+                                    <!-- 將 focus 顏色改為琥珀色 -->
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入幼兒全名" required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-1">請假日期</label>
-                                    <input type="date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+                                    <label class="block text-stone-700 font-medium mb-1">請假日期</label>
+                                    <input type="date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-1">請假原因</label>
-                                    <textarea class="w-full p-3 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" rows="3" placeholder="例如：發燒、家庭旅遊、事假" required></textarea>
+                                    <label class="block text-stone-700 font-medium mb-1">請假原因</label>
+                                    <textarea class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="3" placeholder="例如：發燒、家庭旅遊、事假" required></textarea>
                                 </div>
-                                <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md">
+                                <button type="submit" class="w-full py-3 bg-teal-700 text-white font-bold rounded-lg hover:bg-teal-800 transition duration-150 shadow-md">
                                     送出請假申請
                                 </button>
                             </div>
@@ -327,8 +336,8 @@
 
                     <!-- 託藥辦法內容 -->
                     <div id="policy" class="tab-content-admin hidden">
-                        <h4 class="text-2xl font-bold text-indigo-700 mb-6">💊 幼兒園委託幼兒服藥辦法</h4>
-                        <div class="bg-white p-6 rounded-lg shadow-inner space-y-4 text-gray-700">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">💊 幼兒園委託幼兒服藥辦法</h4>
+                        <div class="bg-white p-6 rounded-lg shadow-inner space-y-4 text-stone-700">
                             <p class="font-bold">一、基本原則：</p>
                             <p class="pl-4">幼兒服藥以在家自行服藥為原則，如因特殊疾病或療程需要，家長需填寫本園之「託藥申請表」。</p>
                             <p class="font-bold">二、託藥要求：</p>
@@ -344,22 +353,22 @@
 
                     <!-- 託藥申請表內容 -->
                     <div id="medication" class="tab-content-admin hidden">
-                        <h4 class="text-2xl font-bold text-indigo-700 mb-6">藥品委託管理申請表 (模擬)</h4>
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">藥品委託管理申請表 (模擬)</h4>
                         <form onsubmit="handleFormSubmit(event, '託藥')">
                              <div class="space-y-4">
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-1">藥品名稱 (需與藥袋一致)</label>
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" placeholder="例如：安佳熱口服液" required>
+                                    <label class="block text-stone-700 font-medium mb-1">藥品名稱 (需與藥袋一致)</label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：安佳熱口服液" required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-1">服藥時間</label>
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" placeholder="例如：午餐後 12:30" required>
+                                    <label class="block text-stone-700 font-medium mb-1">服藥時間</label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：午餐後 12:30" required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-1">家長簽名</label>
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" placeholder="請輸入家長姓名代表簽名" required>
+                                    <label class="block text-stone-700 font-medium mb-1">家長簽名</label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入家長姓名代表簽名" required>
                                 </div>
-                                <button type="submit" class="w-full py-3 bg-pink-600 text-white font-bold rounded-lg hover:bg-pink-700 transition duration-150 shadow-md">
+                                <button type="submit" class="w-full py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150 shadow-md">
                                     送出託藥申請
                                 </button>
                             </div>
@@ -374,39 +383,39 @@
     </main>
 
     <!-- 6. 頁腳 (Footer) & 聯絡資訊 -->
-    <footer id="contact" class="bg-indigo-700 text-white py-12">
+    <footer id="contact" class="bg-stone-700 text-white py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 border-b border-indigo-600 pb-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 border-b border-stone-600 pb-8 mb-8">
                 
                 <!-- 關於學校 -->
                 <div>
-                    <h5 class="text-xl font-bold mb-4 text-yellow-300">文林附幼</h5>
-                    <p class="text-indigo-200 text-sm">
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">文林附幼</h5>
+                    <p class="text-stone-300 text-sm">
                         我們承諾提供最優質的學前教育，為每個孩子在未來的小學生活打下堅實的基礎。
                     </p>
                 </div>
 
                 <!-- 聯絡資訊 -->
                 <div>
-                    <h5 class="text-xl font-bold mb-4 text-yellow-300">聯絡我們</h5>
-                    <p class="text-indigo-200">📞 (02) 1234-5678 (學校總機)</p>
-                    <p class="text-indigo-200">📧 wenlin.kdg@tp.edu.tw</p>
-                    <p class="text-indigo-200 mt-2">📍 臺北市北投區文林北路 155 號 (文林國小內)</p>
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">聯絡我們</h5>
+                    <p class="text-stone-300">📞 (02) 1234-5678 (學校總機)</p>
+                    <p class="text-stone-300">📧 wenlin.kdg@tp.edu.tw</p>
+                    <p class="text-stone-300 mt-2">📍 臺北市北投區文林北路 155 號 (文林國小內)</p>
                 </div>
 
                 <!-- 快速連結 -->
                 <div>
-                    <h5 class="text-xl font-bold mb-4 text-yellow-300">行政資源</h5>
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">行政資源</h5>
                     <ul class="space-y-2">
-                        <li><a href="#admin" onclick="showAdminTab('leave')" class="text-indigo-200 hover:text-white transition duration-150">線上請假</a></li>
-                        <li><a href="#admin" onclick="showAdminTab('policy')" class="text-indigo-200 hover:text-white transition duration-150">託藥辦法</a></li>
-                        <li><a href="#news" class="text-indigo-200 hover:text-white transition duration-150">最新消息</a></li>
+                        <li><a href="#admin" onclick="showAdminTab('leave')" class="text-stone-300 hover:text-white transition duration-150">線上請假</a></li>
+                        <li><a href="#admin" onclick="showAdminTab('policy')" class="text-stone-300 hover:text-white transition duration-150">託藥辦法</a></li>
+                        <li><a href="#news" class="text-stone-300 hover:text-white transition duration-150">最新消息</a></li>
                     </ul>
                 </div>
             </div>
             
             <!-- 版權聲明 -->
-            <div class="text-center text-sm text-indigo-400 pt-4">
+            <div class="text-center text-sm text-stone-400 pt-4">
                 &copy; 2024 臺北市北投區文林國民小學附設幼兒園. 設計：程式夥伴
             </div>
         </div>
@@ -461,7 +470,7 @@
 
             // 替代 alert() 的訊息提示
             const message = document.createElement('div');
-            message.className = 'fixed bottom-5 right-5 p-4 bg-green-500 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
             message.textContent = `${formType}申請已成功送出！園方將會儘速處理。`;
             document.body.appendChild(message);
 
