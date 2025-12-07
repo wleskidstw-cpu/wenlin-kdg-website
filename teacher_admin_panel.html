@@ -127,6 +127,13 @@
         const MEDICATION_KEY = 'wenlin_medication_requests';
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
 
+        // ** 請在此處填入您的 EmailJS 金鑰 **
+        // Service ID 已填入您提供的金鑰
+        const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
+        // 這些需要您從 EmailJS 網站上取得 (在 Email Service 和 Account 設定中)
+        const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID'; // 替換為您的 Template ID (用於託藥回覆)
+        const EMAILJS_USER_ID = 'YOUR_EMAILJS_USER_ID'; // 替換為您的 Public Key (User ID)
+
         // --- 數據存取通用函數 ---
         function getRequests(key) {
             try {
@@ -396,6 +403,7 @@
             });
         }
 
+        // 實際的 Email 發送邏輯 (模擬 EmailJS 呼叫)
         function handleTeacherReply(event, id) {
             event.preventDefault();
             
@@ -414,16 +422,47 @@
                 timestamp: new Date().toISOString()
             };
 
-            // 模擬 Email 發送
-            const emailContent = `
-                幼兒姓名: ${req.childName} (${req.className})
-                託藥內容: ${req.medicationDetails}
-                餵藥時間: ${reply.time}
-                餵藥情況: ${reply.note}
-                操作教師: ${reply.teacher}
-            `;
-            sendEmail(req.parentEmail, `【文林附幼】${req.childName} 託藥回覆通知`, emailContent);
+            // 1. 模擬 Email 服務 API 呼叫
+            if (EMAILJS_USER_ID === 'YOUR_EMAILJS_USER_ID' || EMAILJS_TEMPLATE_ID === 'YOUR_EMAILJS_TEMPLATE_ID') {
+                console.error("錯誤: EmailJS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
+                alert("錯誤: EmailJS 金鑰/模板 ID 尚未設定。請檢查程式碼中的設定。");
+                return;
+            }
             
+            const emailParams = {
+                to_email: req.parentEmail,
+                child_name: req.childName,
+                class_name: req.className,
+                medication_details: req.medicationDetails.replace(/\n/g, '<br>'),
+                reply_time: reply.time,
+                reply_note: reply.note.replace(/\n/g, '<br>'),
+                teacher_name: reply.teacher
+            };
+            
+            // ------------------------------------------------
+            // *** 這是實際 EmailJS 發送的程式碼 (使用 fetch 模擬) ***
+            // ------------------------------------------------
+            fetch(`https://api.emailjs.com/api/v1.0/email/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    service_id: EMAILJS_SERVICE_ID,
+                    template_id: EMAILJS_TEMPLATE_ID,
+                    user_id: EMAILJS_USER_ID,
+                    template_params: emailParams
+                })
+            }).then(response => {
+                if (response.ok) {
+                    console.log("EmailJS 模擬呼叫成功！");
+                } else {
+                    console.error("EmailJS 模擬呼叫失敗:", response.statusText);
+                }
+            }).catch(error => {
+                console.error("EmailJS 模擬呼叫發生錯誤:", error);
+            });
+
+
+            // 2. 儲存回覆並更新後台介面
             requests[index].teacherReply = reply;
             saveRequests(MEDICATION_KEY, requests);
             
@@ -436,15 +475,6 @@
             
             renderMedicationRequests();
             loadDashboardData();
-        }
-        
-        // 模擬的 Email 發送函數 (在真實系統中需要後端或服務)
-        function sendEmail(to, subject, body) {
-            console.log("--- 模擬 Email 寄送 ---");
-            console.log(`To: ${to}`);
-            console.log(`Subject: ${subject}`);
-            console.log(`Body: ${body}`);
-            console.log("-----------------------");
         }
         
         function updateMedicationStatus(id, isDelete) {
