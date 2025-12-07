@@ -73,7 +73,7 @@
                 
                 <!-- Logo/臺北市北投區文林國民小學附設幼兒園 - 已放大字體 -->
                 <a href="#home" class="flex items-center space-x-2">
-                    <!-- 使用 SVG 建立一個文林附幼 Logo (茶綠色) -->
+                    <!-- 文林附幼.png -->
                     <svg class="w-10 h-10 text-teal-700" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                     </svg>
@@ -82,12 +82,15 @@
                 </a>
 
                 <!-- 導覽連結 (桌面版) -->
-                <nav class="hidden lg:flex space-x-8 text-lg">
+                <nav class="hidden lg:flex space-x-8 text-lg items-center">
                     <a href="#home" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">首頁簡介</a>
                     <a href="#news" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">最新公告</a>
                     <a href="#about" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">關於我們</a>
                     <a href="#gallery" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">活動花絮</a>
-                    <a href="#admin" class="px-4 py-2 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition duration-150 font-medium shadow-md">行政服務</a>
+                    <a href="#admin" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">行政服務</a>
+                    
+                    <!-- 新增聯絡我們按鈕 -->
+                    <button onclick="showContactModal()" class="px-4 py-2 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition duration-150 font-medium shadow-md">聯絡我們</button>
                 </nav>
 
                 <!-- 手機版選單按鈕 (留空，因為單頁應用) -->
@@ -113,8 +116,8 @@
                     </p>
                     <div class="mt-12 w-full max-w-5xl mx-auto rounded-xl overflow-hidden shadow-2xl">
                         <!-- 圖片已恢復為 Placeholder -->
-                        <img src="入口.jpg" 
-                           
+                        <img src="https://placehold.co/1000x450/d9f99d/4d7c0f?text=入口.jpg" 
+                             alt="入口.jpg" 
                              class="w-full h-auto object-cover">
                     </div>
                 </div>
@@ -175,16 +178,19 @@
         <!-- 3. 關於我們 (About Us) - 使用 Tab 切換：行事曆、作息表、教職員介紹及班級網頁 -->
         <section id="about" class="py-16 sm:py-24 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- 標題已修改 -->
                 <h3 class="text-3xl font-extrabold text-stone-800 sm:text-4xl mb-10 text-center handwriting-font">
-                    📖 關於我們與行政資訊
+                    📖 關於我們與聯繫方式
                 </h3>
 
-                <!-- Tab 導覽列 (使用大地色系 hover 效果) -->
+                <!-- Tab 導覽列 (已新增聯絡資訊 Tab) -->
                 <div id="about-tabs" class="flex flex-wrap justify-center border-b border-gray-200 mb-8 space-x-4 sm:space-x-8">
                     <button class="py-3 px-3 text-stone-600 hover:text-teal-700 tab-active" onclick="showAboutTab('calendar')">行事曆</button>
                     <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('schedule')">作息表</button>
                     <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('staff')">教職員介紹</button>
                     <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('classes')">班級網頁</button>
+                    <!-- 新增聯絡資訊 Tab -->
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('contact-info')">聯絡資訊</button>
                 </div>
 
                 <!-- Tab 內容區 -->
@@ -212,7 +218,7 @@
 
                     <!-- 作息表內容 (已更新) -->
                     <div id="schedule" class="tab-content hidden bg-yellow-50 p-6 rounded-xl shadow-inner">
-                        <h4 class="text-2xl font-bold text-teal-700 mb-4 handwriting-font">幼兒園一日作息表 (根據圖片內容更新)</h4>
+                        <h4 class="text-2xl font-bold text-teal-700 mb-4 handwriting-font">幼兒園一日作息表 (已修正時段與格式)</h4>
                         <div class="overflow-x-auto">
                             <table class="data-table w-full min-w-[700px] bg-white rounded-lg shadow-sm">
                                 <thead>
@@ -226,104 +232,95 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- 0730-0800 導護老師接送 -->
+                                    <!-- 0730-0800 導護老師接送 (已統一並置中) -->
                                     <tr>
                                         <td class="font-semibold align-top">07:30-08:00</td>
-                                        <td colspan="5" class="text-sm text-stone-700 align-top">
-                                            7:30-7:50 導護老師於防洪設施旁看顧，7:50 班級老師接回教室
+                                        <td colspan="5" class="text-sm text-stone-700 align-top text-center">
+                                            導護老師於防洪教室看顧幼兒
                                         </td>
                                     </tr>
-                                    <!-- 0800-0830 物品歸位/聯絡袋 -->
+                                    <!-- 0800-0830 物品歸位/聯絡袋 (已更新並置中) -->
                                     <tr>
                                         <td class="font-semibold align-top">08:00-08:30</td>
-                                        <td class="text-sm align-top">交聯絡袋資料</td>
-                                        <td colspan="3" class="text-sm align-top">物品歸位、靜心活動 (閱讀、繪畫......)</td>
-                                        <td class="text-sm align-top">談聯絡袋資料</td>
+                                        <td class="text-sm align-top text-center">交聯絡袋資料</td>
+                                        <td colspan="3" class="text-sm align-top text-center">物品歸位及常規練習</td>
+                                        <td class="text-sm align-top text-center">收聯絡袋資料</td>
                                     </tr>
-                                    <!-- 0830-1140 課程時段 (分班級) -->
+                                    <!-- 0830-1130 課程時段 (字體已縮小並置中) -->
                                     <tr>
-                                        <td class="font-semibold align-top">08:30-11:40</td>
+                                        <td class="font-semibold align-top">08:30-11:30</td>
                                         <td colspan="5" class="text-sm align-top p-0 border-none">
                                             <table class="w-full data-table border-none">
                                                 <!-- 中大班 -->
                                                 <tr>
                                                     <td class="w-[20%] font-bold text-teal-700 border-none">●中大班群</td>
-                                                    <td colspan="4" class="text-xs border-none">
-                                                        8:30-9:40 大肌肉體能活動、戶外自然探索 >> 9:40-10:00 享用點心 >> 10:00-11:40 學習區探索、紀錄與分享
+                                                    <td colspan="4" class="text-sm border-none text-center">
+                                                        8:30-9:40 大肌肉體能活動、戶外自然探索 >> 9:40-10:00 享用點心 >> 10:00-11:30 學習區探索、紀錄與分享
                                                     </td>
                                                 </tr>
                                                 <!-- 中小班 -->
                                                 <tr class="bg-teal-50">
                                                     <td class="w-[20%] font-bold text-amber-700 border-none">●中小班群</td>
-                                                    <td colspan="4" class="text-xs border-none">
-                                                        8:40-9:20 享用點心 >> 9:20-10:20 大肌肉體能活動、戶外自然探索 >> 10:20-11:40 學習區探索、紀錄與分享
+                                                    <td colspan="4" class="text-sm border-none text-center">
+                                                        8:40-9:20 享用點心 >> 9:20-10:20 大肌肉體能活動、戶外自然探索 >> 10:20-11:30 學習區探索、紀錄與分享
                                                     </td>
                                                 </tr>
                                                 <!-- 幼幼班 -->
                                                 <tr>
                                                     <td class="w-[20%] font-bold text-red-600 border-none">●幼幼班群</td>
-                                                    <td colspan="4" class="text-xs border-none">
+                                                    <td colspan="4" class="text-sm border-none text-center">
                                                         8:40-9:00 大肌肉體能活動 / 戶外自然探索 >> 9:20-10:00 享用點心 >> 10:00-10:40 學習區探索、紀錄與分享 >> 10:40-11:30 大肌肉體能活動/戶外自然探索
                                                     </td>
                                                 </tr>
                                             </table>
                                         </td>
                                     </tr>
-                                    <!-- 1140-1220 午餐相關 -->
+                                    <!-- 1130-1220 午餐相關 (已修正時段並置中) -->
                                     <tr>
-                                        <td class="font-semibold align-top">11:40-12:20</td>
-                                        <td colspan="5" class="text-sm align-top">
-                                            半日班放學
+                                        <td class="font-semibold align-top">11:30-12:20</td>
+                                        <td colspan="5" class="text-base align-top text-center font-bold">
+                                            享用午餐 & 半日班放學
                                         </td>
                                     </tr>
-                                    <!-- 1220-1230 午餐/個人清潔 -->
+                                    <!-- 1220-1250 環境清潔 & 睡前緩和活動 (已合併並置中) -->
                                     <tr>
-                                        <td class="font-semibold align-top">12:20-12:30</td>
-                                        <td colspan="5" class="text-sm align-top">
-                            
+                                        <td class="font-semibold align-top">12:20-12:50</td>
+                                        <td colspan="5" class="text-base align-top text-center">
+                                            環境清潔 & 睡前緩和活動
                                         </td>
                                     </tr>
-                                    <!-- 1230-1250 睡前緩和活動 (散步、故事欣賞.......) -->
-                                     <tr>
-                                        <td class="font-semibold align-top">12:30-12:50</td>
-                                        <td colspan="5" class="text-sm align-top">
-                                           
-                                        </td>
-                                    </tr>
-                                    <!-- 1250-1430 午休 -->
+                                    <!-- 1250-1430 午休 (已更新並置中) -->
                                     <tr>
                                         <td class="font-semibold align-top">12:50-14:30</td>
-                                        <td colspan="5" class="text-sm align-top">
-                                
-                                            <p class="font-bold text-center text-base mt-1 mb-1">午休</p>
-                                            寢具收拾、儀容整理 
+                                        <td colspan="5" class="text-base align-top text-center font-bold">
+                                            午休
                                         </td>
                                     </tr>
-                                    <!-- 1450-1530 下午點心 -->
+                                    <!-- 1430-1500 寢具收拾 & 下午點心 (已更新並置中) -->
                                      <tr>
-                                        <td class="font-semibold align-top">14:50-15:30</td>
-                                        <td colspan="5" class="text-sm align-top">
-                                             享用下午點心、書包整理
+                                        <td class="font-semibold align-top">14:30-15:00</td>
+                                        <td colspan="5" class="text-base align-top text-center">
+                                             寢具收拾 & 享用下午點心
                                         </td>
                                     </tr>
-                                     <!-- 1530-1600 下午課程 -->
+                                     <!-- 1500-1550 下午課程 (已更新並置中) -->
                                      <tr>
-                                        <td class="font-semibold align-top">15:30-16:00</td>
-                                        <td colspan="5" class="text-sm align-top">
+                                        <td class="font-semibold align-top">15:00-15:50</td>
+                                        <td colspan="5" class="text-base align-top text-center">
                                             宣導教育、體能活動、自然探索、故事閱讀、藝文賞析......
                                         </td>
                                     </tr>
-                                    <!-- 1600-1630 分流放學 -->
+                                    <!-- 1550-1600 分流放學 (已更新並置中) -->
                                     <tr>
-                                        <td class="font-semibold align-top">16:00-16:30</td>
-                                        <td colspan="5" class="text-sm align-top font-bold text-red-700">
+                                        <td class="font-semibold align-top">15:50-16:00</td>
+                                        <td colspan="5" class="text-base align-top font-bold text-red-700 text-center">
                                             全日班分流放學
                                         </td>
                                     </tr>
-                                    <!-- 1630-1830 課後留園 -->
+                                    <!-- 1600-1830 課後留園 (已更新並置中) -->
                                     <tr>
-                                        <td class="font-semibold align-top">16:30-18:30</td>
-                                        <td colspan="5" class="text-sm align-top">
+                                        <td class="font-semibold align-top">16:00-18:30</td>
+                                        <td colspan="5" class="text-base align-top text-center">
                                             課後留園依報名時段參加
                                         </td>
                                     </tr>
@@ -331,133 +328,109 @@
                             </table>
                         </div>
                     
-                        <!-- 備註區 -->
-                        <div class="mt-8 p-4 bg-teal-50 rounded-lg border border-teal-200">
-                            <h5 class="font-bold text-teal-700 handwriting-font mb-2">備註事項 (Notes)</h5>
-                            <ul class="text-xs text-stone-700 space-y-1 list-disc list-inside">
-                                <li>因食安考量，請遲到早退事先告知外，皆不予保留任何餐點，以免影響食材效期及幼兒健康。</li>
-                                <li>幼兒若有個人物品(如:藥物)需要使用冰箱，請務必註記班級姓名，主動告知老師或提醒幼兒拿出。</li>
-                                <li>若是當日因有特別活動將彈性調整作息，會事前發下通知單告知。</li>
-                                <li>寒暑假如有開設班，班級將依依數人數異動，實際作息與學期期間相同。</li>
-                            </ul>
-                        </div>
+                        <!-- 備註區 (已移除) -->
                     </div>
 
-                    <!-- 教職員介紹內容 (已更新) -->
+                    <!-- 教職員介紹內容 (已更新：移除照片，簡化行政人員稱謂) -->
                     <div id="staff" class="tab-content hidden p-6">
                         <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">教職員團隊</h4>
 
                         <h5 class="text-xl font-bold text-stone-800 mt-6 mb-4 border-b border-teal-300 pb-2">行政人員 (Administrative Staff)</h5>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            <!-- 幼兒園主任 -->
+                            <!-- 幼兒園主任 (職稱上移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
-                                <img src="./images/director_lee.jpg" alt="園主任" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">許昱蓁</p>
                                 <p class="text-sm text-amber-700">幼兒園主任</p>
+                                <p class="font-bold text-stone-800 mt-1">許昱蓁</p>
                             </div>
-                            <!-- 行政教保員 -->
+                            <!-- 行政教保員 (職稱上移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
-                                <img src="./images/admin_wang.jpg" alt="行政教保員" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">林璟璿</p>
                                 <p class="text-sm text-amber-700">行政教保員</p>
+                                <p class="font-bold text-stone-800 mt-1">林璟璿</p>
                             </div>
-                            <!-- 廚工 1 (稱謂刪除) -->
+                            <!-- 廚工 1 (職稱上移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
-                                <img src="./images/cook_chen.jpg" alt="廚工" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">莊淑慧</p>
                                 <p class="text-sm text-stone-600">廚工</p>
+                                <p class="font-bold text-stone-800 mt-1">莊淑慧</p>
                             </div>
-                            <!-- 廚工 2 (稱謂刪除) -->
+                            <!-- 廚工 2 (職稱上移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
-                                <img src="./images/cook_lin.jpg" alt="廚工" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">鄭雅萍</p>
                                 <p class="text-sm text-stone-600">廚工</p>
+                                <p class="font-bold text-stone-800 mt-1">鄭雅萍</p>
                             </div>
-                            <!-- 廚工 3 (稱謂刪除) -->
+                            <!-- 廚工 3 (職稱上移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
-                                <img src="./images/cook_chang.jpg" alt="廚工" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">李愛琪</p>
                                 <p class="text-sm text-stone-600">廚工</p>
+                                <p class="font-bold text-stone-800 mt-1">李愛琪</p>
                             </div>
                         </div>
 
                         <h5 class="text-xl font-bold text-stone-800 mt-8 mb-4 border-b border-teal-300 pb-2">班級教師 (Class Teachers)</h5>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                             
-                            <!-- 太陽班 -->
+                            <!-- 太陽班 (姓名下移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
-                                <img src="./images/teacher_zhou.jpg" alt="太陽班老師1" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="text-xs text-stone-500 mb-1">☀️ 太陽班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">周惠莉 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">鍾美玲 老師</p>
-                                <p class="text-xs text-stone-500 mt-2">☀️ 太陽班</p>
                             </div>
-                            <!-- 藍天班 -->
+                            <!-- 藍天班 (姓名下移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
-                                <img src="./images/teacher_lin.jpg" alt="藍天班老師1" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="text-xs text-stone-500 mb-1">☁️ 藍天班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">林佳蒨 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">張爾軒 老師</p>
-                                <p class="text-xs text-stone-500 mt-2">☁️ 藍天班</p>
                             </div>
-                            <!-- 白雲班 -->
+                            <!-- 白雲班 (姓名下移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
-                                <img src="./images/teacher_wu.jpg" alt="白雲班老師1" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="text-xs text-stone-500 mb-1">🤍 白雲班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">務琦 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">林耘慈 老師</p>
-                                <p class="text-xs text-stone-500 mt-2">🤍 白雲班</p>
                             </div>
-                            <!-- 月亮班 -->
+                            <!-- 月亮班 (姓名下移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
-                                <img src="./images/teacher_guo.jpg" alt="月亮班老師1" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="text-xs text-stone-500 mb-1">🌙 月亮班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">郭家禎 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">陳應節 老師</p>
-                                <p class="text-xs text-stone-500 mt-2">🌙 月亮班</p>
                             </div>
-                            <!-- 星星班 -->
+                            <!-- 星星班 (姓名下移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
-                                <img src="./images/teacher_zhang.jpg" alt="星星班老師1" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="text-xs text-stone-500 mb-1">⭐ 星星班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">張曉萍 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">張家瑜 老師</p>
-                                <p class="text-xs text-stone-500 mt-2">⭐ 星星班</p>
                             </div>
-                            <!-- 荳荳班 (教保員) -->
+                            <!-- 荳荳班 (姓名下移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
-                                <img src="./images/caregiver_li.jpg" alt="荳荳班教保員1" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="text-xs text-stone-500 mb-1">🌱 荳荳班</p>
                                 <p class="text-lg font-bold text-amber-700 leading-tight">李雅芬 教保員</p>
                                 <p class="text-lg font-bold text-amber-700 leading-tight">李品萱 教保員</p>
-                                <p class="text-xs text-stone-500 mt-2">🌱 荳荳班</p>
                             </div>
-                            <!-- 朵朵班 (教保員) -->
+                            <!-- 朵朵班 (姓名下移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
-                                <img src="./images/caregiver_zheng.jpg" alt="朵朵班教保員1" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="text-xs text-stone-500 mb-1">🌸 朵朵班</p>
                                 <p class="text-lg font-bold text-amber-700 leading-tight">鄭莉穎 教保員</p>
                                 <p class="text-lg font-bold text-amber-700 leading-tight">洪銓莉 教保員</p>
-                                <p class="text-xs text-stone-500 mt-2">🌸 朵朵班</p>
                             </div>
-                            <!-- 彩虹班 -->
+                            <!-- 彩虹班 (姓名下移) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
-                                <img src="./images/teacher_shi.jpg" alt="彩虹班老師1" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="text-xs text-stone-500 mb-1">🌈 彩虹班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">史佳玲 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">朱育萱 老師</p>
-                                <p class="text-xs text-stone-500 mt-2">🌈 彩虹班</p>
                             </div>
                             
                             <div class="col-span-4 text-center text-sm text-stone-500 pt-4">
-                                (註：教師照片皆為示意圖，請替換為實際照片並更新路徑)
+                                (註：教師照片欄位已移除)
                             </div>
                         </div>
 
                         <h5 class="text-xl font-bold text-stone-800 mt-8 mb-4 border-b border-teal-300 pb-2">其他人力資源 (Other Staff)</h5>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            <!-- 實習生 (佔位符) -->
+                            <!-- 實習生 (移除照片欄位) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-green-400">
-                                <img src="./images/intern_placeholder.jpg" alt="實習生" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">實習生</p>
+                                <p class="font-bold text-stone-800 mt-2">實習生</p>
                                 <p class="text-sm text-green-700">依當學期配置</p>
                             </div>
-                            <!-- 特教助理員 (佔位符) -->
+                            <!-- 特教助理員 (移除照片欄位) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-green-400">
-                                <img src="./images/assistant_placeholder.jpg" alt="特教助理員" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">特教助理員</p>
+                                <p class="font-bold text-stone-800 mt-2">特教助理員</p>
                                 <p class="text-sm text-green-700">依需求配置</p>
                             </div>
                         </div>
@@ -477,17 +450,50 @@
                             <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-700">🌈 彩虹班 - 點此進入班級網頁</a>
                         </div>
                     </div>
+                    
+                    <!-- 新增聯絡資訊 Tab -->
+                    <div id="contact-info" class="tab-content hidden bg-yellow-50 p-6 rounded-xl shadow-inner">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">📞 聯絡資訊</h4>
+                        <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                            <p class="text-xl font-bold text-stone-800 mb-4">臺北市北投區文林國民小學附設幼兒園</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="font-bold text-teal-700">學校總機</p>
+                                    <p class="text-lg">(02) 2823-4212</p>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-teal-700">辦公室分機</p>
+                                    <p class="text-lg">辦公室: 800, 801</p>
+                                </div>
+                            </div>
+
+                            <h5 class="text-lg font-bold text-amber-700 pt-3 border-t border-gray-100">各班級分機</h5>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-base">
+                                <p>☀️ 太陽班: 809</p>
+                                <p>☁️ 藍天班: 810</p>
+                                <p>🤍 白雲班: 805</p>
+                                <p>🌙 月亮班: 808</p>
+                                <p>⭐ 星星班: 807</p>
+                                <p>🌱 荳荳班: 803</p>
+                                <p>🌸 朵朵班: 804</p>
+                                <p>🌈 彩虹班: 806</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
 
 
-        <!-- 4. 全園活動花絮 (Gallery) - 獨立頁面連結與相簿預覽 -->
+        <!-- 4. 全園活動花絮 (Gallery) - 連結到 Google 相簿，並保留預覽圖 -->
         <section id="gallery" class="py-16 sm:py-24 hero-bg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <span class="text-sm font-semibold text-amber-600 uppercase tracking-wider">成長瞬間</span>
+                <!-- 已刪除 2024-2025 學年的名稱 -->
                 <h3 class="mt-2 text-3xl font-extrabold text-stone-800 sm:text-4xl mb-8 handwriting-font">
-                    📸 2024-2025 學年全園活動花絮
+                    📸 全園活動花絮
                 </h3>
 
                 <!-- 相簿預覽 (4張圖片) -->
@@ -510,8 +516,8 @@
                     點擊下方按鈕，連結至 Google 相簿或學校相簿系統，查看更多的全園活動照片和孩子們的精彩瞬間。
                 </p>
                 
-                <!-- 獨立頁面連結按鈕 -->
-                <a href="https://example.com/wenlin-kdg-album" target="_blank" 
+                <!-- 獨立頁面連結按鈕 (已修正為指向 Google 相簿網址) -->
+                <a href="https://photos.google.com/u/1/albums" target="_blank" 
                    class="mt-6 inline-block px-10 py-4 text-xl font-bold text-white bg-teal-600 rounded-full shadow-lg hover:bg-teal-700 transition duration-300 transform hover:scale-105">
                     點此進入全園相簿連結 →
                 </a>
@@ -695,6 +701,45 @@
 
 
     </main>
+    
+    <!-- 聯絡我們 Modal (對話框) -->
+    <div id="contact-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg transition-all duration-300 transform scale-100">
+            <h2 class="text-2xl font-bold text-amber-700 mb-4 handwriting-font">✉️ 聯絡我們</h2>
+            <p class="text-sm text-stone-600 mb-6">請填寫您的問題，我們將盡快透過 Email 回覆您。</p>
+            <form id="general-contact-form" onsubmit="handleGeneralContactSubmit(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">對象/收件人</label>
+                        <select name="recipient" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                            <option value="幼兒園主任" selected>幼兒園主任 (一般行政)</option>
+                            <option value="行政教保員">行政教保員 (文書/招生)</option>
+                            <option value="總務">總務 (費用/雜項)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">您的姓名</label>
+                        <input type="text" name="senderName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入您的姓名" required>
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">您的電子郵件 (Email)</label>
+                        <input type="email" name="senderEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="用於接收回覆" required>
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">問題描述</label>
+                        <textarea name="question" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="4" placeholder="請詳細描述您的問題或建議" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150 shadow-md">
+                        送出問題
+                    </button>
+                </div>
+            </form>
+            <!-- Modal Close Button -->
+            <button onclick="closeContactModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
 
     <!-- 6. 頁腳 (Footer) & 聯絡資訊 -->
     <footer id="contact" class="bg-stone-700 text-white py-12">
@@ -715,17 +760,28 @@
                     <p class="text-stone-300">📞 (02) 2823-4212 </p>
                     <p class="text-stone-300">📧 wleskidstw@gmail.com</p>
                     <p class="text-stone-300 mt-2">📍 臺北市北投區文林北路 155 號</p>
+                    
+                    <!-- 新增社群連結 -->
+                    <div class="flex space-x-4 mt-4">
+                        <a href="https://www.facebook.com/profile.php?id=100076303928280" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">
+                            <!-- Facebook Icon (Simplified SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.588-1.333h2.412v-3.798c-0.457-0.054-1.83-0.215-3.565-0.215-4.516 0-7.435 2.768-7.435 7.422v2.578z"/></svg>
+                        </a>
+                        <a href="https://www.youtube.com/channel/UCgfaMP3hjcr_x78GK44VsIQ" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">
+                            <!-- YouTube Icon (Simplified SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-1.226-7.5-1.226-11.1 0-3.14 1.066-5.894 3.797-6.91 6.812-1.016 3.015-1.016 6.136 0 9.151 1.016 3.015 3.77 5.746 6.91 6.812 3.604 1.226 7.5 1.226 11.1 0 3.14-1.066 5.894-3.797 6.91-6.812 1.016-3.015 1.016-6.136 0-9.151-1.016-3.015-3.77-5.746-6.91-6.812zm-3.8 8.166l-5.7 3.639c-.58.375-1.1.054-1.1-.64v-7.278c0-.694.52-1.015 1.1-.64l5.7 3.639c.58.374.58 1.004 0 1.379z"/></svg>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- 快速連結 -->
+                <!-- 快速連結 (已修改為好站連結) -->
                 <div>
-                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">行政資源</h5>
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">好站連結</h5>
                     <ul class="space-y-2">
+                        <li><a href="https://fatraceschool.k12ea.gov.tw/frontend/" target="_blank" class="text-stone-300 hover:text-white transition duration-150">校園食材登錄平台</a></li>
+                        <li><a href="https://www.doe.gov.taipei/" target="_blank" class="text-stone-300 hover:text-white transition duration-150">臺北市政府教育局</a></li>
                         <li><a href="#admin" onclick="showAdminTab('leave')" class="text-stone-300 hover:text-white transition duration-150">線上請假</a></li>
-                        <li><a href="#admin" onclick="showAdminTab('policy')" class="text-stone-300 hover:text-white transition duration-150">託藥辦法</a></li>
-                        <li><a href="#news" class="text-stone-300 hover:text-white transition duration-150">最新消息</a></li>
-                        <!-- 新增教師登入連結 -->
-                         <li><a href="teacher_admin_panel.html" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">🧑‍🏫 教師後台登入</a></li>
+                        <li><a href="teacher_admin_panel.html" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">🧑‍🏫 教師後台登入</a></li>
                     </ul>
                 </div>
             </div>
@@ -778,6 +834,48 @@
             document.querySelector(`#admin-tabs button[onclick*="'${tabName}'"]`).classList.add('tab-active');
             document.getElementById('admin').scrollIntoView({ behavior: 'smooth' });
         }
+        
+        // --- 聯絡我們 Modal 邏輯 ---
+        function showContactModal() {
+            document.getElementById('contact-modal').classList.remove('hidden');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contact-modal').classList.add('hidden');
+        }
+        
+        function handleGeneralContactSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            
+            // In a real system, this data would be sent to wleskidstw@gmail.com via a server.
+            const senderName = form.senderName.value;
+            const recipient = form.recipient.value;
+            const senderEmail = form.senderEmail.value;
+            const question = form.question.value;
+            
+            // 模擬 Email 寄送內容，實際不會發送
+            console.log("--- 模擬聯繫單送出 ---");
+            console.log(`收件人: ${recipient}`);
+            console.log(`寄件人: ${senderName} <${senderEmail}>`);
+            console.log(`內容: ${question}`);
+            console.log("----------------------");
+            
+            closeContactModal();
+            form.reset();
+
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-5 right-5 p-4 bg-amber-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = `訊息已送出！(模擬寄給 ${recipient}) 我們將盡快以 Email 回覆您。`;
+            document.body.appendChild(message);
+
+            setTimeout(() => {
+                message.remove();
+            }, 4000);
+
+            return false;
+        }
+
 
         // --- 公告渲染邏輯 ---
         function renderPublicAnnouncements() {
