@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教師管理後台 - 文林附幼</title>
+    <!-- 載入 Tailwind CSS 函式庫 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f3ed; }
+        .handwriting-font { font-family: 'Klee One', cursive; }
+        .tab-btn.active { border-bottom: 3px solid #0f766e; color: #0f766e; font-weight: 700; }
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); }
+        .data-table th, .data-table td { padding: 12px 15px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <!-- 登入介面 (預設顯示) -->
+    <div id="login-view" class="min-h-screen flex items-center justify-center bg-teal-50">
+        <div class="bg-white p-8 rounded-xl card-shadow w-full max-w-sm">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 text-center handwriting-font">教師登入</h2>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="mb-4">
+                    <label for="username" class="block text-sm font-medium text-stone-700 mb-1">帳號 (Username)</label>
+                    <input type="text" id="username" value="teacher" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-stone-700 mb-1">密碼 (Password)</label>
+                    <input type="password" id="password" value="123456" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                </div>
+                <button type="submit" class="w-full py-3 bg-teal-700 text-white font-bold rounded-lg hover:bg-teal-800 transition duration-150 shadow-md">登入後台</button>
+                <p class="mt-4 text-xs text-stone-500 text-center">
+                    **提示:** 此處帳密僅供模擬展示 (teacher / 123456)。
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- 管理後台介面 (登入後顯示) -->
+    <div id="admin-view" class="min-h-screen bg-stone-50 hidden">
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-teal-700 handwriting-font">文林附幼 教師管理中心</h1>
+                <button onclick="handleLogout()" class="text-sm font-medium text-stone-600 hover:text-red-500 transition duration-150">登出</button>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Tab 導覽 -->
+            <div class="flex border-b border-gray-200 mb-6 space-x-4">
+                <button class="tab-btn py-3 px-4 active" onclick="showAdminTab('announcements')">最新公告管理</button>
+                <button class="tab-btn py-3 px-4" onclick="showAdminTab('leave-requests')">請假單審核 (<span id="leave-count" class="text-red-500">0</span>)</button>
+                <button class="tab-btn py-3 px-4" onclick="showAdminTab('medication-requests')">託藥單回覆 (<span id="medication-count" class="text-red-500">0</span>)</button>
+            </div>
+
+            <!-- Tab 內容區 -->
+            <div id="admin-content">
+                
+                <!-- 1. 公告管理 -->
+                <div id="announcements" class="tab-content bg-white p-6 rounded-xl card-shadow">
+                    <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">發布/編輯最新公告</h2>
+                    <form onsubmit="saveAnnouncement(event)" class="space-y-4 mb-6">
+                        <div>
+                            <label for="announcement-title" class="block text-sm font-medium text-stone-700 mb-1">公告標題</label>
+                            <input type="text" id="announcement-title" class="w-full p-2 border rounded-lg" placeholder="例如：新學期開學日通知" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="announcement-tag" class="block text-sm font-medium text-stone-700 mb-1">標籤 (Tag)</label>
+                                <select id="announcement-tag" class="w-full p-2 border rounded-lg">
+                                    <option value="重要">【重要】</option>
+                                    <option value="活動">【活動】</option>
+                                    <option value="行政">【行政】</option>
+                                    <option value="班級">【班級】</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="announcement-date" class="block text-sm font-medium text-stone-700 mb-1">發布日期</label>
+                                <input type="date" id="announcement-date" class="w-full p-2 border rounded-lg" value="${new Date().toISOString().split('T')[0]}" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="py-2 px-4 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150">儲存公告並發布</button>
+                    </form>
+                    
+                    <h3 class="text-lg font-bold text-stone-700 mb-3 border-t pt-4">現有公告列表</h3>
+                    <div id="announcement-list" class="space-y-3">
+                        <!-- 公告列表將由 JS 渲染 -->
+                    </div>
+                </div>
+
+                <!-- 2. 請假單審核 -->
+                <div id="leave-requests" class="tab-content bg-white p-6 rounded-xl card-shadow hidden">
+                    <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">待處理請假單</h2>
+                    <div id="leave-requests-list" class="space-y-4">
+                        <p class="text-stone-500">此處顯示所有家長提交的請假申請。</p>
+                        <!-- 請假單列表將由 JS 渲染 -->
+                    </div>
+                </div>
+
+                <!-- 3. 託藥單回覆 -->
+                <div id="medication-requests" class="tab-content bg-white p-6 rounded-xl card-shadow hidden">
+                    <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">待回覆託藥單</h2>
+                    <div id="medication-requests-list" class="space-y-4">
+                        <p class="text-stone-500">此處顯示所有家長提交的託藥申請及老師回覆介面。</p>
+                        <!-- 託藥單列表將由 JS 渲染 -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LEAVE_KEY = 'wenlin_leave_requests';
+        const MEDICATION_KEY = 'wenlin_medication_requests';
+        const ANNOUNCEMENT_KEY = 'wenlin_announcements';
+
+        // --- 數據存取通用函數 ---
+        function getRequests(key) {
+            try {
+                return JSON.parse(localStorage.getItem(key)) || [];
+            } catch (e) {
+                console.error("Error parsing data from localStorage:", e);
+                return [];
+            }
+        }
+        function saveRequests(key, requests) {
+            localStorage.setItem(key, JSON.stringify(requests));
+        }
+
+        // --- 登入/登出邏輯 (模擬) ---
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // 模擬驗證
+            if (username === 'teacher' && password === '123456') {
+                localStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('admin-view').classList.remove('hidden');
+                loadDashboardData();
+            } else {
+                // 替代 alert() 的訊息提示
+                const message = document.createElement('div');
+                message.className = 'fixed bottom-5 right-5 p-4 bg-red-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+                message.textContent = '登入失敗，請檢查帳號和密碼。';
+                document.body.appendChild(message);
+                setTimeout(() => { message.remove(); }, 3000);
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('adminLoggedIn');
+            // 清除 localStorage 避免下次登入時顯示舊的計數
+            localStorage.removeItem('wenlin_leave_requests'); 
+            localStorage.removeItem('wenlin_medication_requests'); 
+            document.getElementById('login-view').classList.remove('hidden');
+            document.getElementById('admin-view').classList.add('hidden');
+        }
+
+        // --- Tab 切換邏輯 ---
+        function showAdminTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelector(`.tab-btn[onclick*="'${tabName}'"]`).classList.add('active');
+
+            // 載入該 Tab 的數據
+            if (tabName === 'leave-requests') renderLeaveRequests();
+            if (tabName === 'medication-requests') renderMedicationRequests();
+            if (tabName === 'announcements') renderAnnouncements();
+        }
+        
+        // --- 公告管理邏輯 ---
+        function getAnnouncements() {
+            // 確保資料是按照日期降序排序
+            const announcements = getRequests(ANNOUNCEMENT_KEY);
+            return announcements.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        function saveAnnouncement(event) {
+            event.preventDefault();
+            const form = event.target;
+            const title = form.elements['announcement-title'].value;
+            const tag = form.elements['announcement-tag'].value;
+            const date = form.elements['announcement-date'].value;
+
+            const newAnnouncement = {
+                id: Date.now(),
+                title: title,
+                tag: tag,
+                date: date,
+                content: "公告內容將在主網頁呈現..."
+            };
+
+            const announcements = getRequests(ANNOUNCEMENT_KEY);
+            announcements.unshift(newAnnouncement); 
+            saveRequests(ANNOUNCEMENT_KEY, announcements);
+            
+            form.reset();
+            form.elements['announcement-date'].value = new Date().toISOString().split('T')[0];
+            
+            // 模擬提示
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = '公告已成功儲存！主網頁將同步更新。';
+            document.body.appendChild(message);
+            setTimeout(() => { message.remove(); }, 3000);
+            
+            renderAnnouncements();
+        }
+
+        function deleteAnnouncement(id) {
+            if (!confirm("確定要刪除這則公告嗎？")) return;
+            let announcements = getRequests(ANNOUNCEMENT_KEY);
+            announcements = announcements.filter(ann => ann.id !== id);
+            saveRequests(ANNOUNCEMENT_KEY, announcements);
+            renderAnnouncements();
+        }
+
+        function renderAnnouncements() {
+            const announcements = getAnnouncements();
+            const listContainer = document.getElementById('announcement-list');
+            listContainer.innerHTML = '';
+            
+            if (announcements.length === 0) {
+                listContainer.innerHTML = '<p class="text-stone-500">目前沒有公告。</p>';
+                return;
+            }
+
+            announcements.forEach(ann => {
+                const item = document.createElement('div');
+                item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-center';
+                item.innerHTML = `
+                    <div>
+                        <span class="text-xs font-semibold text-teal-700 mr-2">[${ann.tag}]</span>
+                        <span class="font-medium text-stone-800">${ann.title}</span>
+                        <p class="text-xs text-stone-500 mt-1">發布於: ${ann.date}</p>
+                    </div>
+                    <button onclick="deleteAnnouncement(${ann.id})" class="ml-4 text-sm text-red-500 hover:text-red-700">刪除</button>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+        
+        // --- 請假單列表邏輯 ---
+        function getLeaveRequests() {
+            // 確保資料是按照時間降序排序 (最新的在最前面)
+            const requests = getRequests(LEAVE_KEY);
+            return requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        }
+
+        function renderLeaveRequests() {
+            const requests = getLeaveRequests();
+            const listContainer = document.getElementById('leave-requests-list');
+            listContainer.innerHTML = '';
+            
+            const pendingRequests = requests.filter(r => r.status === '待審核').length;
+            document.getElementById('leave-count').textContent = pendingRequests;
+
+            if (requests.length === 0) {
+                listContainer.innerHTML = '<p class="text-stone-500">目前沒有新的請假申請。</p>';
+                return;
+            }
+
+            requests.forEach((req) => {
+                const isPending = req.status === '待審核';
+                const statusColor = isPending ? 'bg-amber-100 border-amber-500' : 'bg-teal-100 border-teal-500';
+                const statusText = isPending ? '待處理' : '已審核';
+
+                item = document.createElement('div');
+                item.className = `p-4 rounded-xl border-l-4 ${statusColor} card-shadow`;
+                item.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-lg font-bold text-stone-800">${req.childName} (${req.className})</p>
+                            <p class="text-sm text-stone-600">家長: ${req.parentName} (${req.relationship})</p>
+                            <p class="text-sm text-stone-600">期間: ${req.startDate} ~ ${req.endDate}</p>
+                            <p class="text-sm font-medium text-red-700 mt-1">原因: ${req.reason}</p>
+                            <p class="text-xs text-stone-500 mt-2">提交時間: ${new Date(req.timestamp).toLocaleString('zh-TW')}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-semibold px-2 py-1 rounded-full ${isPending ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}">${statusText}</span>
+                            ${isPending ? `<button onclick="updateLeaveStatus(${req.id}, '已審核')" class="mt-2 text-sm text-teal-700 hover:underline font-bold">標記為已審核</button>` : ''}
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function updateLeaveStatus(id, newStatus) {
+            let requests = getLeaveRequests();
+            const index = requests.findIndex(req => req.id === id);
+            if (index !== -1) {
+                requests[index].status = newStatus;
+                saveRequests(LEAVE_KEY, requests);
+                renderLeaveRequests();
+                loadDashboardData();
+            }
+        }
+        
+        // --- 託藥單列表與回覆邏輯 ---
+        function getMedicationRequests() {
+             // 確保資料是按照時間降序排序 (最新的在最前面)
+            const requests = getRequests(MEDICATION_KEY);
+            return requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        }
+
+        function renderMedicationRequests() {
+            const requests = getMedicationRequests();
+            const listContainer = document.getElementById('medication-requests-list');
+            listContainer.innerHTML = '';
+            
+            const pendingRequests = requests.filter(r => !r.teacherReply || !r.teacherReply.time).length;
+            document.getElementById('medication-count').textContent = pendingRequests;
+
+            if (requests.length === 0) {
+                listContainer.innerHTML = '<p class="text-stone-500">目前沒有新的託藥申請。</p>';
+                return;
+            }
+
+            requests.forEach((req) => {
+                const isReplied = req.teacherReply && req.teacherReply.time;
+                const statusColor = isReplied ? 'bg-green-100 border-green-500' : 'bg-amber-100 border-amber-500';
+                
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-xl border-l-4 ${statusColor} card-shadow`;
+                
+                item.innerHTML = `
+                    <div class="text-lg font-bold text-stone-800 flex justify-between items-center">
+                        ${req.childName} (${req.className}) - ${req.drugName}
+                        <span class="text-xs font-semibold px-2 py-1 rounded-full ${isReplied ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}">${isReplied ? '已回覆' : '待回覆'}</span>
+                    </div>
+                    <p class="text-sm text-stone-600">日期: ${req.date} | 服藥時間: ${req.time}</p>
+                    <p class="text-sm text-stone-600">病名/病徵: ${req.symptoms} | 需冷藏: <span class="font-bold text-red-600">${req.refrigeration ? '是 (請注意)' : '否'}</span></p>
+                    <p class="text-sm text-stone-600 mb-3">家長 Email: <span class="text-teal-700">${req.parentEmail}</span></p>
+                    <p class="text-xs text-stone-500 mb-3">家長簽名: ${req.parentSignature}</p>
+
+                    ${isReplied ? `
+                        <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-300">
+                            <p class="font-bold text-green-700">✅ 教師回覆記錄 (${req.teacherReply.teacher})</p>
+                            <p class="text-sm text-green-600">時間: ${req.teacherReply.time}</p>
+                            <p class="text-sm text-green-600">情況: ${req.teacherReply.note}</p>
+                            <button onclick="updateMedicationStatus(${req.id}, true)" class="mt-2 text-xs text-stone-500 hover:underline">刪除此記錄</button>
+                        </div>
+                    ` : `
+                        <form onsubmit="handleTeacherReply(event, ${req.id})" class="mt-3 space-y-2 p-3 bg-white rounded-lg border border-gray-300">
+                            <h5 class="font-semibold text-teal-700">老師回覆區 (將寄送 Email 給家長)</h5>
+                            <input type="text" name="teacher_time" placeholder="餵藥時間 (e.g., 12:35 PM)" class="w-full p-2 border rounded-lg text-sm" required>
+                            <textarea name="teacher_note" placeholder="餵藥情況回覆" rows="2" class="w-full p-2 border rounded-lg text-sm" required></textarea>
+                            <input type="text" name="teacher_name" placeholder="操作教師姓名 (e.g., 吳老師)" class="w-full p-2 border rounded-lg text-sm" required>
+                            <button type="submit" class="w-full py-2 bg-teal-600 text-white text-sm font-bold rounded-lg hover:bg-teal-700 transition">送出餵藥回覆</button>
+                        </form>
+                    `}
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function handleTeacherReply(event, id) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const reply = {
+                time: form.elements.teacher_time.value,
+                note: form.elements.teacher_note.value,
+                teacher: form.elements.teacher_name.value,
+                timestamp: new Date().toISOString()
+            };
+
+            let requests = getMedicationRequests();
+            const index = requests.findIndex(req => req.id === id);
+
+            if (index !== -1) {
+                requests[index].teacherReply = reply;
+                saveRequests(MEDICATION_KEY, requests);
+                
+                // 模擬 Email 寄送提示
+                const message = document.createElement('div');
+                message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+                message.textContent = `回覆已記錄，並模擬發送 Email 給家長: ${requests[index].parentEmail}`;
+                document.body.appendChild(message);
+                setTimeout(() => { message.remove(); }, 3000);
+                
+                renderMedicationRequests();
+                loadDashboardData();
+            }
+        }
+        
+        function updateMedicationStatus(id, isDelete) {
+            let requests = getMedicationRequests();
+            const index = requests.findIndex(req => req.id === id);
+            
+            if (isDelete) {
+                 if (!confirm("確定要刪除此託藥回覆記錄嗎？")) return;
+                 requests[index].teacherReply = null; // 清除回覆
+                 saveRequests(MEDICATION_KEY, requests);
+                 renderMedicationRequests();
+                 loadDashboardData();
+            }
+        }
+
+        // --- 儀表板通用加載 ---
+        function loadDashboardData() {
+            // 初始化數據
+            const leaveRequests = getLeaveRequests();
+            const medicationRequests = getMedicationRequests();
+
+            // 更新計數 (只計算待處理的)
+            document.getElementById('leave-count').textContent = leaveRequests.filter(r => r.status === '待審核').length;
+            document.getElementById('medication-count').textContent = medicationRequests.filter(r => !r.teacherReply || !r.teacherReply.time).length;
+            
+            // 預設渲染公告
+            showAdminTab('announcements');
+        }
+
+        // 檢查是否已登入
+        window.onload = function() {
+            // 確保公告的發布日期預設為今天
+            const dateInput = document.getElementById('announcement-date');
+            if (dateInput) {
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+            
+            if (localStorage.getItem('adminLoggedIn') === 'true') {
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('admin-view').classList.remove('hidden');
+                loadDashboardData();
+            }
+        };
+    </script>
+</body>
+</html>
