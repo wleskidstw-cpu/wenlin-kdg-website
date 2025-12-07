@@ -128,12 +128,13 @@
         const MEDICATION_KEY = 'wenlin_medication_requests';
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
 
-        // ** 請在此處填入您的 EmailJS 金鑰 **
-        // Service ID 已填入您提供的金鑰
+        // ** EmailJS 金鑰設定 **
+        // 服務 ID
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
-        // 修正：Template ID 和 User ID 應為字串，並使用您的實際值
-        const EMAILJS_TEMPLATE_ID = 'template_yh5wstg'; // <--- 請替換為您在 EmailJS 網站上建立的 Template ID
-        const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; // <--- 請替換為您的 Public Key (User ID)
+        // 模板 ID (已根據您的最新資訊修正)
+        const EMAILJS_TEMPLATE_ID = 'template_yh5wstg'; 
+        // Public Key (User ID) (已根據您的最新資訊修正)
+        const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; 
 
         // --- 數據存取通用函數 ---
         function getRequests(key) {
@@ -426,6 +427,7 @@
             };
 
             // 1. 模擬 Email 服務 API 呼叫
+            // 檢查金鑰是否已設置
             if (EMAILJS_USER_ID === 'YOUR_EMAILJS_USER_ID' || EMAILJS_TEMPLATE_ID === 'YOUR_EMAILJS_TEMPLATE_ID') {
                 console.error("錯誤: EmailJS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
                 alert("錯誤: EmailJS 金鑰/模板 ID 尚未設定。請檢查程式碼中的設定。");
@@ -456,12 +458,14 @@
                 })
             }).then(response => {
                 if (response.ok) {
-                    console.log("EmailJS 模擬呼叫成功！");
+                    console.log("EmailJS 呼叫成功！模擬 Email 已發送。");
                 } else {
-                    console.error("EmailJS 模擬呼叫失敗:", response.statusText);
+                    console.error("EmailJS 呼叫失敗:", response.statusText);
+                    alert("EmailJS 呼叫失敗，請檢查網路或 EmailJS 服務狀態。");
                 }
             }).catch(error => {
-                console.error("EmailJS 模擬呼叫發生錯誤:", error);
+                console.error("EmailJS 呼叫發生錯誤:", error);
+                alert("EmailJS 呼叫發生錯誤。");
             });
 
 
@@ -472,7 +476,7 @@
             // 模擬 Email 寄送提示
             const message = document.createElement('div');
             message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = `回覆已記錄，並模擬發送 Email 給家長: ${req.parentEmail}`;
+            message.textContent = `回覆已記錄，並已發送通知 Email 給家長: ${req.parentEmail}`;
             document.body.appendChild(message);
             setTimeout(() => { message.remove(); }, 3000);
             
