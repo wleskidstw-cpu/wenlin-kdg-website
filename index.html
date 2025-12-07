@@ -62,6 +62,18 @@
             border-color: #0f766e;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        /* 新增：手機版教職員水平捲動容器 */
+        #staff .scroll-container {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        /* 新增：確保手機版教職員卡片有最小寬度 */
+        #staff .staff-card {
+            display: inline-block;
+            width: 150px; /* 最小寬度 */
+            margin-right: 1rem;
+            white-space: normal;
+        }
     </style>
 </head>
 <body class="text-stone-700">
@@ -71,10 +83,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 
-                <!-- Logo/臺北市北投區文林國民小學附設幼兒園 - 已刪除 SVG 圖示 -->
+                <!-- Logo/臺北市北投區文林國民小學附設幼兒園 - 已刪除 SVG 圖示並調整字體大小 -->
                 <a href="#home" class="flex items-center space-x-2">
-                    <!-- 綠色圓形 SVG 圖示已移除 -->
-                    <span class="text-3xl md:text-4xl font-bold text-stone-800 handwriting-font">臺北市北投區文林國民小學附設幼兒園</span>
+                    <span class="text-2xl lg:text-3xl font-bold text-stone-800 handwriting-font whitespace-nowrap">臺北市北投區文林國民小學附設幼兒園</span>
                 </a>
 
                 <!-- 導覽連結 (桌面版) -->
@@ -89,14 +100,32 @@
                     <button onclick="showContactModal()" class="px-4 py-2 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition duration-150 font-medium shadow-md">聯絡我們</button>
                 </nav>
 
-                <!-- 手機版選單按鈕 (留空，因為單頁應用) -->
-                <button class="lg:hidden text-stone-500 hover:text-teal-700">
+                <!-- 手機版選單按鈕 (點擊彈出側邊選單) -->
+                <button class="lg:hidden text-stone-500 hover:text-teal-700" onclick="toggleSidebar()">
                     <!-- Menu Icon -->
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
         </div>
     </header>
+
+    <!-- 手機版側邊選單 (Sidebar Modal) -->
+    <div id="mobile-sidebar" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden z-50">
+        <div class="absolute right-0 top-0 w-64 h-full bg-white shadow-lg p-6 transform transition-transform duration-300 translate-x-full">
+            <button class="absolute top-4 right-4 text-stone-400 hover:text-stone-700" onclick="toggleSidebar()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-bold text-teal-700 mb-6 handwriting-font">網站導覽</h3>
+            <nav class="flex flex-col space-y-3">
+                <a href="#home" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">首頁簡介</a>
+                <a href="#news" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">最新公告</a>
+                <a href="#about" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">關於我們</a>
+                <a href="#gallery" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">活動花絮</a>
+                <a href="#admin" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">行政服務</a>
+                <button onclick="showContactModal(); toggleSidebar();" class="mt-4 py-2 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150">聯絡我們</button>
+            </nav>
+        </div>
+    </div>
 
     <main>
         
@@ -362,52 +391,53 @@
                         </div>
 
                         <h5 class="text-xl font-bold text-stone-800 mt-8 mb-4 border-b border-teal-300 pb-2">班級教師 (Class Teachers)</h5>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <!-- 新增水平捲動容器 -->
+                        <div class="scroll-container md:grid md:grid-cols-4 md:gap-6">
                             
                             <!-- 太陽班 (姓名下移) -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
                                 <p class="text-xs text-stone-500 mb-1">☀️ 太陽班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">周惠莉 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">鍾美玲 老師</p>
                             </div>
                             <!-- 藍天班 (姓名下移) -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
                                 <p class="text-xs text-stone-500 mb-1">☁️ 藍天班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">林佳蒨 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">張爾軒 老師</p>
                             </div>
                             <!-- 白雲班 (姓名下移) -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
                                 <p class="text-xs text-stone-500 mb-1">🤍 白雲班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">務琦 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">林耘慈 老師</p>
                             </div>
                             <!-- 月亮班 (姓名下移) -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
                                 <p class="text-xs text-stone-500 mb-1">🌙 月亮班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">郭家禎 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">陳應節 老師</p>
                             </div>
                             <!-- 星星班 (姓名下移) -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
                                 <p class="text-xs text-stone-500 mb-1">⭐ 星星班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">張曉萍 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">張家瑜 老師</p>
                             </div>
                             <!-- 荳荳班 (姓名下移) -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
                                 <p class="text-xs text-stone-500 mb-1">🌱 荳荳班</p>
                                 <p class="text-lg font-bold text-amber-700 leading-tight">李雅芬 教保員</p>
                                 <p class="text-lg font-bold text-amber-700 leading-tight">李品萱 教保員</p>
                             </div>
                             <!-- 朵朵班 (姓名下移) -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
                                 <p class="text-xs text-stone-500 mb-1">🌸 朵朵班</p>
                                 <p class="text-lg font-bold text-amber-700 leading-tight">鄭莉穎 教保員</p>
                                 <p class="text-lg font-bold text-amber-700 leading-tight">洪銓莉 教保員</p>
                             </div>
                             <!-- 彩虹班 (姓名下移) -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
                                 <p class="text-xs text-stone-500 mb-1">🌈 彩虹班</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">史佳玲 老師</p>
                                 <p class="text-lg font-bold text-teal-700 leading-tight">朱育萱 老師</p>
@@ -613,7 +643,7 @@
 
                     <!-- 託藥申請表內容 - 已新增欄位及教師回覆區 -->
                     <div id="medication" class="tab-content-admin hidden">
-                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">藥品委託管理申請表 (模擬)</h4>
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">藥品委託管理申請表 </h4>
                         <form id="medication-form" onsubmit="handleMedicationSubmit(event)">
                              <div class="space-y-4">
                                 <!-- 幼兒班級/姓名 -->
@@ -705,15 +735,7 @@
             <h2 class="text-2xl font-bold text-amber-700 mb-4 handwriting-font">✉️ 聯絡我們</h2>
             <p class="text-sm text-stone-600 mb-6">請填寫您的問題，我們將盡快透過 Email 回覆您。</p>
             <form id="general-contact-form" onsubmit="handleGeneralContactSubmit(event)">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-stone-700 font-medium mb-1">對象/收件人</label>
-                        <select name="recipient" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
-                            <option value="幼兒園主任" selected>幼兒園主任 (一般行政)</option>
-                            <option value="行政教保員">行政教保員 (文書/招生)</option>
-                            <option value="總務">總務 (費用/雜項)</option>
-                        </select>
-                    </div>
+                <div class="space-y-4">            
                     <div>
                         <label class="block text-stone-700 font-medium mb-1">您的姓名</label>
                         <input type="text" name="senderName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入您的姓名" required>
@@ -871,6 +893,25 @@
             }, 4000);
 
             return false;
+        }
+
+        // --- 手機版側邊選單邏輯 ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mobile-sidebar');
+            const innerContent = sidebar.querySelector('div');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                // 觸發重新繪製以應用過渡效果
+                setTimeout(() => {
+                    innerContent.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                innerContent.classList.add('translate-x-full');
+                setTimeout(() => {
+                    sidebar.classList.add('hidden');
+                }, 300); // 配合 CSS transition duration
+            }
         }
 
 
