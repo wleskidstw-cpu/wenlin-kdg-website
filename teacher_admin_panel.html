@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+    <!-- 引入 EmailJS SDK，用於實現真實的 Email 發送功能 -->
+    <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f7f3ed; }
         .handwriting-font { font-family: 'Klee One', cursive; }
@@ -129,7 +131,7 @@
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
 
         // ** EmailJS 金鑰設定 **
-        // 服務 ID
+        // Service ID
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
         // 模板 ID (已根據您的最新資訊修正)
         const EMAILJS_TEMPLATE_ID = 'template_yh5wstg'; 
@@ -395,7 +397,7 @@
                         </div>
                     ` : `
                         <form onsubmit="handleTeacherReply(event, ${req.id})" class="mt-3 space-y-2 p-3 bg-white rounded-lg border border-gray-300">
-                            <h5 class="font-semibold text-teal-700">老師回覆區 (模擬寄送 Email 給 ${req.parentEmail})</h5>
+                            <h5 class="font-semibold text-teal-700">老師回覆區 (即時發送 Email 給 ${req.parentEmail})</h5>
                             <input type="text" name="teacher_time" placeholder="餵藥時間 (e.g., 12:35 PM)" class="w-full p-2 border rounded-lg text-sm" required>
                             <textarea name="teacher_note" placeholder="餵藥情況回覆" rows="2" class="w-full p-2 border rounded-lg text-sm" required></textarea>
                             <input type="text" name="teacher_name" placeholder="操作教師姓名 (e.g., 吳老師)" class="w-full p-2 border rounded-lg text-sm" required>
@@ -407,7 +409,7 @@
             });
         }
 
-        // 實際的 Email 發送邏輯 (模擬 EmailJS 呼叫)
+        // 實際的 Email 發送邏輯 (使用 EmailJS SDK 呼叫)
         function handleTeacherReply(event, id) {
             event.preventDefault();
             
@@ -426,11 +428,10 @@
                 timestamp: new Date().toISOString()
             };
 
-            // 1. 模擬 Email 服務 API 呼叫
-            // 檢查金鑰是否已設置
-            if (EMAILJS_USER_ID === 'YOUR_EMAILJS_USER_ID' || EMAILJS_TEMPLATE_ID === 'YOUR_EMAILJS_TEMPLATE_ID') {
+            // 1. 執行 EmailJS SDK 呼叫
+            if (!EMAILJS_USER_ID || EMAILJS_USER_ID.startsWith('YOUR') || !EMAILJS_TEMPLATE_ID || EMAILJS_TEMPLATE_ID.startsWith('YOUR')) {
                 console.error("錯誤: EmailJS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
-                alert("錯誤: EmailJS 金鑰/模板 ID 尚未設定。請檢查程式碼中的設定。");
+                alert("錯誤: EmailJS 金鑰/模板 ID 尚未設定。請在程式碼頂部填入您的實際金鑰和 ID。");
                 return;
             }
             
@@ -444,44 +445,33 @@
                 teacher_name: reply.teacher
             };
             
-            // ------------------------------------------------
-            // *** 這是實際 EmailJS 發送的程式碼 (使用 fetch 模擬) ***
-            // ------------------------------------------------
-            fetch(`https://api.emailjs.com/api/v1.0/email/send`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    service_id: EMAILJS_SERVICE_ID,
-                    template_id: EMAILJS_TEMPLATE_ID,
-                    user_id: EMAILJS_USER_ID,
-                    template_params: emailParams
-                })
-            }).then(response => {
-                if (response.ok) {
-                    console.log("EmailJS 呼叫成功！模擬 Email 已發送。");
-                } else {
-                    console.error("EmailJS 呼叫失敗:", response.statusText);
-                    alert("EmailJS 呼叫失敗，請檢查網路或 EmailJS 服務狀態。");
-                }
-            }).catch(error => {
-                console.error("EmailJS 呼叫發生錯誤:", error);
-                alert("EmailJS 呼叫發生錯誤。");
-            });
-
-
-            // 2. 儲存回覆並更新後台介面
-            requests[index].teacherReply = reply;
-            saveRequests(MEDICATION_KEY, requests);
+            // EmailJS SDK 初始化 (在真實網站中，這通常在頁面載入時執行一次)
+            emailjs.init(EMAILJS_USER_ID); 
             
-            // 模擬 Email 寄送提示
-            const message = document.createElement('div');
-            message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = `回覆已記錄，並已發送通知 Email 給家長: ${req.parentEmail}`;
-            document.body.appendChild(message);
-            setTimeout(() => { message.remove(); }, 3000);
-            
-            renderMedicationRequests();
-            loadDashboardData();
+            // ------------------------------------------------
+            // *** EmailJS SDK 呼叫 ***
+            // ------------------------------------------------
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
+                .then((response) => {
+                    console.log('EmailJS 成功發送:', response.status, response.text);
+                    
+                    // 2. 儲存回覆並更新後台介面 (只有成功發送才更新狀態)
+                    requests[index].teacherReply = reply;
+                    saveRequests(MEDICATION_KEY, requests);
+                    
+                    const message = document.createElement('div');
+                    message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+                    message.textContent = `回覆已記錄，Email 成功發送給家長: ${req.parentEmail}`;
+                    document.body.appendChild(message);
+                    setTimeout(() => { message.remove(); }, 3000);
+                    
+                    renderMedicationRequests();
+                    loadDashboardData();
+
+                }, (error) => {
+                    console.error('EmailJS 發送失敗:', error);
+                    alert(`Email 發送失敗 (請檢查 EmailJS 網站設定或網路連線)：${error.text || error}`);
+                });
         }
         
         function updateMedicationStatus(id, isDelete) {
