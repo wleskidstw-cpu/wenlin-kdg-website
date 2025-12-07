@@ -39,6 +39,29 @@
             border-bottom: 1px solid #e5e7eb;
             text-align: left;
         }
+        /* 隱藏原生 Radio Button */
+        .class-radio input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        /* Radio Button 視覺效果 */
+        .class-radio label {
+            display: block;
+            padding: 8px 12px;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e5e7eb;
+            background-color: #f3f4f6;
+        }
+        .class-radio input[type="radio"]:checked + label {
+            background-color: #0f766e; /* Teal-700 */
+            color: white;
+            border-color: #0f766e;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body class="text-stone-700">
@@ -138,22 +161,9 @@
                     📢 文林附幼公告欄
                 </h3>
 
-                <div class="space-y-4">
-                    <!-- 公告範例 1 -->
-                    <a href="#" class="block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 border-amber-500">
-                        <p class="text-stone-500 text-sm">【重要】2025/09/01</p>
-                        <p class="text-lg font-semibold text-stone-800">新學年度招生登記開始，請查閱詳細辦法。</p>
-                    </a>
-                    <!-- 公告範例 2 -->
-                    <a href="#" class="block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 border-teal-500">
-                        <p class="text-stone-500 text-sm">【活動】2025/08/20</p>
-                        <p class="text-lg font-semibold text-stone-800">全園親職講座：「幼兒專注力培養」圓滿結束。</p>
-                    </a>
-                    <!-- 公告範例 3 -->
-                    <a href="#" class="block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 border-stone-500">
-                        <p class="text-stone-500 text-sm">【行政】2025/07/15</p>
-                        <p class="text-lg font-semibold text-stone-800">修訂版託藥辦法及申請書已上線，請至行政服務區下載。</p>
-                    </a>
+                <div id="public-announcement-list" class="space-y-4">
+                    <!-- 公告將由 JS 渲染 -->
+                    <p class="text-stone-500 text-center">正在載入公告...</p>
                 </div>
                 
                 <button class="mt-8 px-6 py-2 text-teal-700 font-semibold border border-teal-300 rounded-full hover:bg-teal-50 transition duration-150">
@@ -223,38 +233,101 @@
                         </table>
                     </div>
 
-                    <!-- 教職員介紹內容 -->
+                    <!-- 教職員介紹內容 (結構已更新) -->
                     <div id="staff" class="tab-content hidden p-6">
                         <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">教職員團隊</h4>
+
+                        <h5 class="text-xl font-bold text-stone-800 mt-6 mb-4 border-b border-teal-300 pb-2">行政人員 (Administrative Staff)</h5>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            <!-- 老師卡片範例 1 -->
+                            <!-- 幼兒園主任 -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
-                                <img src="https://placehold.co/100x100/fec7b3/f59e0b?text=李老師" alt="李老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">李雅雯 老師</p>
-                                <p class="text-sm text-amber-700">園長 / 教學總規劃</p>
+                                <img src="https://placehold.co/100x100/fec7b3/f59e0b?text=園主任" alt="園主任" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">李雅雯 主任</p>
+                                <p class="text-sm text-amber-700">幼兒園主任</p>
                             </div>
-                            <!-- 老師卡片範例 2 -->
+                            <!-- 行政教保員 -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
+                                <img src="https://placehold.co/100x100/fec7b3/f59e0b?text=行政教保員" alt="行政教保員" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">王志明 教保員</p>
+                                <p class="text-sm text-amber-700">行政教保員</p>
+                            </div>
+                            <!-- 廚工 1 (佔位符) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
+                                <img src="https://placehold.co/100x100/e7e5e4/57534e?text=廚工1" alt="廚工" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">陳美華 廚工</p>
+                                <p class="text-sm text-stone-600">廚工</p>
+                            </div>
+                            <!-- 廚工 2 (佔位符) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
+                                <img src="https://placehold.co/100x100/e7e5e4/57534e?text=廚工2" alt="廚工" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">林淑芬 廚工</p>
+                                <p class="text-sm text-stone-600">廚工</p>
+                            </div>
+                            <!-- 廚工 3 (佔位符) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
+                                <img src="https://placehold.co/100x100/e7e5e4/57534e?text=廚工3" alt="廚工" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">張文英 廚工</p>
+                                <p class="text-sm text-stone-600">廚工</p>
+                            </div>
+                        </div>
+
+                        <h5 class="text-xl font-bold text-stone-800 mt-8 mb-4 border-b border-teal-300 pb-2">班級教師 (Class Teachers)</h5>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <!-- 班級教師範例 1 (2人一班，8班共16人) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
-                                <img src="https://placehold.co/100x100/bae6fd/0e7490?text=王老師" alt="王老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">王志明 老師</p>
-                                <p class="text-sm text-teal-700">大班教師 / 體能指導</p>
+                                <img src="https://placehold.co/100x100/bae6fd/0e7490?text=太陽班+師" alt="太陽班老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">黃小潔 老師</p>
+                                <p class="text-sm text-teal-700">太陽班教師</p>
                             </div>
-                            <!-- 老師卡片範例 3 -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <img src="https://placehold.co/100x100/bae6fd/0e7490?text=藍天班+師" alt="藍天班老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">吳大衛 老師</p>
+                                <p class="text-sm text-teal-700">藍天班教師</p>
+                            </div>
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <img src="https://placehold.co/100x100/bae6fd/0e7490?text=彩虹班+師" alt="彩虹班老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">劉心語 老師</p>
+                                <p class="text-sm text-teal-700">彩虹班教師</p>
+                            </div>
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <img src="https://placehold.co/100x100/bae6fd/0e7490?text=朵朵班+師" alt="朵朵班老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">鄭美玲 老師</p>
+                                <p class="text-sm text-teal-700">朵朵班教師</p>
+                            </div>
+                            <div class="col-span-4 text-center text-sm text-stone-500 pt-4">
+                                (註：本園共有 8 個班級，共 16 位專任教師，此處僅列舉部分範例)
+                            </div>
+                        </div>
+
+                        <h5 class="text-xl font-bold text-stone-800 mt-8 mb-4 border-b border-teal-300 pb-2">其他人力資源 (Other Staff)</h5>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <!-- 實習生 (佔位符) -->
                             <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-green-400">
-                                <img src="https://placehold.co/100x100/d9f99d/4d7c0f?text=陳老師" alt="陳老師" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
-                                <p class="font-bold text-stone-800">陳美華 老師</p>
-                                <p class="text-sm text-green-700">廚房阿姨 / 營養師</p>
+                                <img src="https://placehold.co/100x100/d9f99d/4d7c0f?text=實習生" alt="實習生" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">實習生</p>
+                                <p class="text-sm text-green-700">依當學期配置</p>
+                            </div>
+                            <!-- 特教助理員 (佔位符) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-green-400">
+                                <img src="https://placehold.co/100x100/d9f99d/4d7c0f?text=特教助理員" alt="特教助理員" class="rounded-full w-24 h-24 mx-auto mb-3 object-cover">
+                                <p class="font-bold text-stone-800">特教助理員</p>
+                                <p class="text-sm text-green-700">依需求配置</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 班級網頁內容 -->
+                    <!-- 班級網頁內容 (班級名稱已確認) -->
                     <div id="classes" class="tab-content hidden bg-yellow-50 p-6 rounded-xl shadow-inner">
                         <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">各班級學習資源與網頁連結</h4>
                         <div class="space-y-4">
-                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-teal-600">🍎 蘋果班 (大班) - 點此進入班級網頁</a>
-                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-700">🌳 森林班 (中班) - 點此進入班級網頁</a>
-                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-amber-700">⭐ 星星班 (小班) - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-teal-600">☀️ 太陽班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-700">☁️ 藍天班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-amber-700">🤍 白雲班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-teal-600">🌙 月亮班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-700">⭐ 星星班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-amber-700">🌱 荳荳班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-teal-600">🌸 朵朵班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-700">🌈 彩虹班 - 點此進入班級網頁</a>
                         </div>
                     </div>
                 </div>
@@ -262,32 +335,22 @@
         </section>
 
 
-        <!-- 4. 全園活動花絮 (Gallery) -->
+        <!-- 4. 全園活動花絮 (Gallery) - 獨立頁面連結 -->
         <section id="gallery" class="py-16 sm:py-24 hero-bg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <span class="text-sm font-semibold text-amber-600 uppercase tracking-wider">成長瞬間</span>
-                <h3 class="mt-2 text-3xl font-extrabold text-stone-800 sm:text-4xl mb-12 handwriting-font">
+                <h3 class="mt-2 text-3xl font-extrabold text-stone-800 sm:text-4xl mb-8 handwriting-font">
                     📸 2024-2025 學年全園活動花絮
                 </h3>
 
-                <!-- 圖片網格 -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105">
-                        <img src="https://placehold.co/300x300/fecaca/dc2626?text=校外教學" alt="孩子們在校外教學" class="w-full h-auto object-cover aspect-square">
-                    </div>
-                    <div class="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105">
-                        <img src="https://placehold.co/300x300/a7f3d0/059669?text=戶外運動會" alt="戶外運動會照片" class="w-full h-auto object-cover aspect-square">
-                    </div>
-                    <div class="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105">
-                        <img src="https://placehold.co/300x300/c7d2fe/4f46e5?text=萬聖節裝扮" alt="萬聖節裝扮活動" class="w-full h-auto object-cover aspect-square">
-                    </div>
-                    <div class="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105">
-                        <img src="https://placehold.co/300x300/fed7aa/f97316?text=畢業典禮" alt="畢業典禮合影" class="w-full h-auto object-cover aspect-square">
-                    </div>
-                </div>
+                <p class="text-lg text-stone-600 mb-8 max-w-2xl mx-auto">
+                    點擊下方按鈕，連結至 Google 相簿或學校相簿系統，查看最新的全園活動照片和孩子們的精彩瞬間。
+                </p>
                 
-                <a href="#" class="mt-10 inline-block text-lg font-semibold text-teal-700 hover:text-teal-900 transition duration-150 border-b-2 border-teal-200 hover:border-teal-700">
-                    查看完整相簿 →
+                <!-- 獨立頁面連結按鈕 -->
+                <a href="https://example.com/wenlin-kdg-album" target="_blank" 
+                   class="mt-6 inline-block px-10 py-4 text-xl font-bold text-white bg-teal-600 rounded-full shadow-lg hover:bg-teal-700 transition duration-300 transform hover:scale-105">
+                    點此進入全園相簿連結 →
                 </a>
             </div>
         </section>
@@ -309,23 +372,54 @@
                 <!-- Tab 內容區 -->
                 <div id="admin-content" class="bg-yellow-50 p-8 rounded-xl shadow-2xl">
                     
-                    <!-- 線上請假表單 (Default Tab) -->
+                    <!-- 線上請假表單 (Default Tab) - 已新增欄位及區間式日期 -->
                     <div id="leave" class="tab-content-admin">
                         <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">幼兒線上請假通知單 (模擬)</h4>
-                        <form onsubmit="handleFormSubmit(event, '請假')">
+                        <form id="leave-form" onsubmit="handleLeaveSubmit(event)">
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-stone-700 font-medium mb-1">幼兒姓名</label>
-                                    <!-- 將 focus 顏色改為琥珀色 -->
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入幼兒全名" required>
+                                    <label class="block text-stone-700 font-medium mb-1">家長姓名</label>
+                                    <input type="text" name="parentName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入家長全名" required>
                                 </div>
                                 <div>
-                                    <label class="block text-stone-700 font-medium mb-1">請假日期</label>
-                                    <input type="date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                    <label class="block text-stone-700 font-medium mb-1">家長與幼兒關係</label>
+                                    <input type="text" name="relationship" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：爸爸/媽媽/祖母" required>
                                 </div>
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">幼兒姓名</label>
+                                    <input type="text" name="childName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入幼兒全名" required>
+                                </div>
+
+                                <!-- 班級勾選 (單選) 欄位 -->
+                                <fieldset>
+                                    <legend class="block text-stone-700 font-medium mb-1">幼兒班級 (請單選)</legend>
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 class-radio">
+                                        <input type="radio" id="l-class-sun" name="className" value="太陽班" required><label for="l-class-sun">☀️ 太陽班</label>
+                                        <input type="radio" id="l-class-sky" name="className" value="藍天班"><label for="l-class-sky">☁️ 藍天班</label>
+                                        <input type="radio" id="l-class-cloud" name="className" value="白雲班"><label for="l-class-cloud">🤍 白雲班</label>
+                                        <input type="radio" id="l-class-moon" name="className" value="月亮班"><label for="l-class-moon">🌙 月亮班</label>
+                                        <input type="radio" id="l-class-star" name="className" value="星星班"><label for="l-class-star">⭐ 星星班</label>
+                                        <input type="radio" id="l-class-bean" name="className" value="荳荳班"><label for="l-class-bean">🌱 荳荳班</label>
+                                        <input type="radio" id="l-class-flower" name="className" value="朵朵班"><label for="l-class-flower">🌸 朵朵班</label>
+                                        <input type="radio" id="l-class-rainbow" name="className" value="彩虹班"><label for="l-class-rainbow">🌈 彩虹班</label>
+                                    </div>
+                                </fieldset>
+
+                                <!-- 區間式請假日期 -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">請假開始日</label>
+                                        <input type="date" name="startDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">請假結束日</label>
+                                        <input type="date" name="endDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                    </div>
+                                </div>
+
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-1">請假原因</label>
-                                    <textarea class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="3" placeholder="例如：發燒、家庭旅遊、事假" required></textarea>
+                                    <textarea name="reason" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="3" placeholder="例如：發燒、家庭旅遊、事假" required></textarea>
                                 </div>
                                 <button type="submit" class="w-full py-3 bg-teal-700 text-white font-bold rounded-lg hover:bg-teal-800 transition duration-150 shadow-md">
                                     送出請假申請
@@ -351,28 +445,84 @@
                         </div>
                     </div>
 
-                    <!-- 託藥申請表內容 -->
+                    <!-- 託藥申請表內容 - 已新增欄位及教師回覆區 -->
                     <div id="medication" class="tab-content-admin hidden">
                         <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">藥品委託管理申請表 (模擬)</h4>
-                        <form onsubmit="handleFormSubmit(event, '託藥')">
+                        <form id="medication-form" onsubmit="handleMedicationSubmit(event)">
                              <div class="space-y-4">
+                                <!-- 幼兒班級/姓名 -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">幼兒班級 (請單選)</label>
+                                        <select name="className" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                            <option value="">請選擇</option>
+                                            <option value="太陽班">☀️ 太陽班</option>
+                                            <option value="藍天班">☁️ 藍天班</option>
+                                            <option value="白雲班">🤍 白雲班</option>
+                                            <option value="月亮班">🌙 月亮班</option>
+                                            <option value="星星班">⭐ 星星班</option>
+                                            <option value="荳荳班">🌱 荳荳班</option>
+                                            <option value="朵朵班">🌸 朵朵班</option>
+                                            <option value="彩虹班">🌈 彩虹班</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">幼兒姓名</label>
+                                        <input type="text" name="childName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入幼兒全名" required>
+                                    </div>
+                                </div>
+
+                                <!-- 用藥日期/病名 -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">用藥日期</label>
+                                        <input type="date" name="date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">病名或病徵</label>
+                                        <input type="text" name="symptoms" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：感冒咳嗽、輕微發燒" required>
+                                    </div>
+                                </div>
+                                
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-1">藥品名稱 (需與藥袋一致)</label>
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：安佳熱口服液" required>
+                                    <input type="text" name="drugName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：安佳熱口服液" required>
                                 </div>
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-1">服藥時間</label>
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：午餐後 12:30" required>
+                                    <input type="text" name="time" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：午餐後 12:30" required>
                                 </div>
+                                
+                                <!-- 家長備註與 Email -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-300">
+                                        <input id="refrigeration" name="refrigeration" type="checkbox" class="h-5 w-5 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
+                                        <label for="refrigeration" class="text-stone-700 font-medium">藥品是否需冷藏？ (家長備註)</label>
+                                    </div>
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">家長收訊息 Email</label>
+                                        <input type="email" name="parentEmail" id="parent-email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="用於接收老師餵藥回覆" required>
+                                    </div>
+                                </div>
+
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-1">家長簽名</label>
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入家長姓名代表簽名" required>
+                                    <input type="text" name="parentSignature" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入家長姓名代表簽名" required>
                                 </div>
+
                                 <button type="submit" class="w-full py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150 shadow-md">
                                     送出託藥申請
                                 </button>
                             </div>
                         </form>
+                        
+                        <!-- 教師餵藥後的回覆功能 (模擬教師填寫介面 - 已移除，避免混淆) -->
+                        <div class="mt-8 p-4 bg-teal-100 rounded-xl border-2 border-teal-300">
+                            <p class="text-stone-700 font-semibold">教師回覆介面提示：</p>
+                            <p class="text-sm text-stone-600 mt-1">
+                                在真實系統中，老師將透過**獨立的後台網頁**（如 `teacher_admin_panel.html`）登入，並在專門的管理介面中查看此託藥單並進行回覆。
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -410,6 +560,8 @@
                         <li><a href="#admin" onclick="showAdminTab('leave')" class="text-stone-300 hover:text-white transition duration-150">線上請假</a></li>
                         <li><a href="#admin" onclick="showAdminTab('policy')" class="text-stone-300 hover:text-white transition duration-150">託藥辦法</a></li>
                         <li><a href="#news" class="text-stone-300 hover:text-white transition duration-150">最新消息</a></li>
+                        <!-- 新增教師登入連結 -->
+                         <li><a href="teacher_admin_panel.html" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">🧑‍🏫 教師後台登入</a></li>
                     </ul>
                 </div>
             </div>
@@ -422,71 +574,158 @@
     </footer>
 
     <script>
-        // --- 核心 Tab 切換邏輯 (通用) ---
+        const LEAVE_KEY = 'wenlin_leave_requests';
+        const MEDICATION_KEY = 'wenlin_medication_requests';
+        const ANNOUNCEMENT_KEY = 'wenlin_announcements';
         
-        // 顯示 '關於我們' 區塊的 Tab
+        // --- 數據存取通用函數 ---
+        function getRequests(key) {
+            try {
+                return JSON.parse(localStorage.getItem(key)) || [];
+            } catch (e) {
+                console.error("Error parsing data from localStorage:", e);
+                return [];
+            }
+        }
+        function saveRequests(key, requests) {
+            localStorage.setItem(key, JSON.stringify(requests));
+        }
+
+        // --- 核心 Tab 切換邏輯 (通用) ---
         function showAboutTab(tabName) {
-            // 隱藏所有內容
             document.querySelectorAll('#about-content .tab-content').forEach(content => {
                 content.classList.add('hidden');
             });
-            // 移除所有按鈕的活躍樣式
             document.querySelectorAll('#about-tabs button').forEach(button => {
                 button.classList.remove('tab-active');
             });
-
-            // 顯示目標內容
             document.getElementById(tabName).classList.remove('hidden');
-            // 為點擊的按鈕添加活躍樣式
             document.querySelector(`#about-tabs button[onclick*="'${tabName}'"]`).classList.add('tab-active');
         }
 
-        // 顯示 '行政服務' 區塊的 Tab
         function showAdminTab(tabName) {
-            // 隱藏所有內容
             document.querySelectorAll('#admin-content .tab-content-admin').forEach(content => {
                 content.classList.add('hidden');
             });
-            // 移除所有按鈕的活躍樣式
             document.querySelectorAll('#admin-tabs button').forEach(button => {
                 button.classList.remove('tab-active');
             });
-
-            // 顯示目標內容
             document.getElementById(tabName).classList.remove('hidden');
-            // 為點擊的按鈕添加活躍樣式
             document.querySelector(`#admin-tabs button[onclick*="'${tabName}'"]`).classList.add('tab-active');
-
-            // 確保網頁捲動到行政服務區塊
             document.getElementById('admin').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // 表單提交處理函式 (由於沒有後端，這裡只做模擬提示)
-        function handleFormSubmit(event, formType) {
-            event.preventDefault(); // 阻止表單實際提交
+        // --- 公告渲染邏輯 ---
+        function renderPublicAnnouncements() {
+            // 從 localStorage 讀取教師發布的公告
+            const announcements = getRequests(ANNOUNCEMENT_KEY);
+            const listContainer = document.getElementById('public-announcement-list');
+            listContainer.innerHTML = '';
 
-            // 獲取表單元素並重置，模擬提交成功
-            event.target.reset(); 
+            if (announcements.length === 0) {
+                listContainer.innerHTML = `
+                    <a href="#" class="block p-4 bg-white rounded-xl shadow border-l-4 border-teal-500">
+                        <p class="text-stone-500 text-sm">【行政】${new Date().toLocaleDateString('zh-TW')}</p>
+                        <p class="text-lg font-semibold text-stone-800">歡迎使用文林附幼模擬網站！</p>
+                    </a>
+                `;
+                return;
+            }
 
-            // 替代 alert() 的訊息提示
+            // 只顯示前三個公告
+            announcements.slice(0, 3).forEach(ann => {
+                const tagColor = ann.tag === '重要' ? 'border-amber-500' : ann.tag === '活動' ? 'border-teal-500' : 'border-stone-500';
+                const item = document.createElement('a');
+                item.href = '#news'; // 點擊後捲動到公告區
+                item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor}`;
+                item.innerHTML = `
+                    <p class="text-stone-500 text-sm">【${ann.tag}】${ann.date}</p>
+                    <p class="text-lg font-semibold text-stone-800">${ann.title}</p>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+
+        // --- 請假表單提交邏輯 (寫入 localStorage) ---
+        function handleLeaveSubmit(event) {
+            event.preventDefault(); 
+            const form = event.target;
+            const requests = getRequests(LEAVE_KEY);
+            
+            // 收集表單數據
+            const newRequest = {
+                id: Date.now(),
+                parentName: form.parentName.value,
+                relationship: form.relationship.value,
+                childName: form.childName.value,
+                className: form.className.value,
+                startDate: form.startDate.value,
+                endDate: form.endDate.value,
+                reason: form.reason.value,
+                status: '待審核', // 初始狀態
+                timestamp: new Date().toISOString()
+            };
+
+            requests.unshift(newRequest);
+            saveRequests(LEAVE_KEY, requests); // 儲存到 localStorage
+            form.reset(); 
+
             const message = document.createElement('div');
             message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = `${formType}申請已成功送出！園方將會儘速處理。`;
+            message.textContent = `請假申請已成功送出！請老師登入後台審核。`;
             document.body.appendChild(message);
 
-            // 3 秒後自動移除提示訊息
             setTimeout(() => {
                 message.remove();
             }, 3000);
 
-            return false; // 確保不執行預設行為
+            return false;
         }
 
-        // 頁面載入時初始化 Tab
+        // --- 託藥表單提交邏輯 (寫入 localStorage) ---
+        function handleMedicationSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const requests = getRequests(MEDICATION_KEY);
+
+            // 收集表單數據
+            const newRequest = {
+                id: Date.now(),
+                className: form.className.value,
+                childName: form.childName.value,
+                date: form.date.value,
+                symptoms: form.symptoms.value,
+                drugName: form.drugName.value,
+                time: form.time.value,
+                refrigeration: form.refrigeration.checked,
+                parentEmail: form.parentEmail.value,
+                parentSignature: form.parentSignature.value,
+                teacherReply: null, // 初始回覆為 null
+                timestamp: new Date().toISOString()
+            };
+
+            requests.unshift(newRequest);
+            saveRequests(MEDICATION_KEY, requests); // 儲存到 localStorage
+            form.reset();
+
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = `託藥申請已成功送出！請老師登入後台回覆。`;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+
+            return false;
+        }
+
+        // 頁面載入時初始化 Tab 和公告
         window.onload = function() {
-            // 確保頁面載入時，預設顯示第一個 Tab (行事曆和請假表單)
             showAboutTab('calendar');
             showAdminTab('leave');
+            renderPublicAnnouncements();
         };
     </script>
 
