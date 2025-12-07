@@ -59,7 +59,7 @@
             <!-- Tab 內容區 -->
             <div id="admin-content">
                 
-                <!-- 1. 公告管理 -->
+                <!-- 1. 公告管理 (已新增內容和檔案欄位) -->
                 <div id="announcements" class="tab-content bg-white p-6 rounded-xl card-shadow">
                     <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">發布/編輯最新公告</h2>
                     <form onsubmit="saveAnnouncement(event)" class="space-y-4 mb-6">
@@ -89,7 +89,7 @@
                         <div>
                             <label for="announcement-file" class="block text-sm font-medium text-stone-700 mb-1">附加檔案 (模擬)</label>
                             <input type="file" id="announcement-file" class="w-full p-2 border rounded-lg bg-gray-50">
-                            <p class="text-xs text-stone-500 mt-1">此功能僅為模擬，實際檔案不會上傳。</p>
+                            <p class="text-xs text-stone-500 mt-1">此功能僅為模擬，實際檔案不會上傳，僅記錄文件名。</p>
                         </div>
                         <button type="submit" class="py-2 px-4 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150">儲存公告並發布</button>
                     </form>
@@ -189,7 +189,7 @@
             if (tabName === 'announcements') renderAnnouncements();
         }
         
-        // --- 公告管理邏輯 ---
+        // --- 公告管理邏輯 (已更新) ---
         function getAnnouncements() {
             // 確保資料是按照日期降序排序
             const announcements = getRequests(ANNOUNCEMENT_KEY);
@@ -200,9 +200,10 @@
             event.preventDefault();
             const form = event.target;
             const title = form.elements['announcement-title'].value;
-            const content = form.elements['announcement-content'].value; // 新增內容欄位
+            const content = form.elements['announcement-content'].value;
             const tag = form.elements['announcement-tag'].value;
             const date = form.elements['announcement-date'].value;
+            
             // 模擬檔案上傳 (實際只記錄文件名)
             const fileInput = document.getElementById('announcement-file');
             const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : '';
@@ -211,10 +212,10 @@
             const newAnnouncement = {
                 id: Date.now(),
                 title: title,
-                content: content,
+                content: content, // 新增內容
                 tag: tag,
                 date: date,
-                fileName: fileName
+                fileName: fileName // 新增附件名稱
             };
 
             const announcements = getRequests(ANNOUNCEMENT_KEY);
@@ -270,8 +271,8 @@
 
                 // Metadata and Content
                 item.innerHTML += `
-                    <p class="text-sm text-stone-600">${ann.content.substring(0, 50)}...</p>
-                    <p class="text-xs text-stone-500">發布於: ${ann.date}</p>
+                    <p class="text-sm text-stone-600 whitespace-pre-wrap">${ann.content.substring(0, 50)}...</p>
+                    <p class="text-xs text-stone-500 mt-1">發布於: ${ann.date}</p>
                     ${ann.fileName ? `<p class="text-xs text-teal-700 font-medium">附件: ${ann.fileName}</p>` : ''}
                 `;
                 
@@ -370,7 +371,7 @@
                     </div>
                     <p class="text-sm text-stone-600">期間: ${req.startDate} ~ ${req.endDate} | 服藥時間: ${req.time}</p>
                     <p class="text-sm text-stone-600">病名/病徵: ${req.symptoms}</p>
-                    <p class="text-sm text-stone-800 font-medium mt-1">用藥內容: <span class="text-teal-700">${req.medicationDetails}</span></p>
+                    <p class="text-sm text-stone-800 font-medium mt-1">用藥內容: <span class="text-teal-700 whitespace-pre-wrap">${req.medicationDetails}</span></p>
                     <p class="text-sm text-stone-600 mb-3">家長 Email: <span class="text-teal-700">${req.parentEmail}</span></p>
                     <p class="text-xs text-stone-500 mb-3">家長簽名: ${req.parentSignature}</p>
 
@@ -378,12 +379,12 @@
                         <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-300">
                             <p class="font-bold text-green-700">✅ 教師回覆記錄 (${req.teacherReply.teacher})</p>
                             <p class="text-sm text-green-600">時間: ${req.teacherReply.time}</p>
-                            <p class="text-sm text-green-600">情況: ${req.teacherReply.note}</p>
+                            <p class="text-sm text-green-600 whitespace-pre-wrap">情況: ${req.teacherReply.note}</p>
                             <button onclick="updateMedicationStatus(${req.id}, true)" class="mt-2 text-xs text-red-500 hover:underline">刪除此記錄</button>
                         </div>
                     ` : `
                         <form onsubmit="handleTeacherReply(event, ${req.id})" class="mt-3 space-y-2 p-3 bg-white rounded-lg border border-gray-300">
-                            <h5 class="font-semibold text-teal-700">老師回覆區 (將寄送 Email 給家長)</h5>
+                            <h5 class="font-semibold text-teal-700">老師回覆區 (模擬寄送 Email 給 ${req.parentEmail})</h5>
                             <input type="text" name="teacher_time" placeholder="餵藥時間 (e.g., 12:35 PM)" class="w-full p-2 border rounded-lg text-sm" required>
                             <textarea name="teacher_note" placeholder="餵藥情況回覆" rows="2" class="w-full p-2 border rounded-lg text-sm" required></textarea>
                             <input type="text" name="teacher_name" placeholder="操作教師姓名 (e.g., 吳老師)" class="w-full p-2 border rounded-lg text-sm" required>
@@ -399,6 +400,13 @@
             event.preventDefault();
             
             const form = event.target;
+            const requests = getMedicationRequests();
+            const index = requests.findIndex(req => req.id === id);
+
+            if (index === -1) return;
+
+            const req = requests[index];
+
             const reply = {
                 time: form.elements.teacher_time.value,
                 note: form.elements.teacher_note.value,
@@ -406,23 +414,37 @@
                 timestamp: new Date().toISOString()
             };
 
-            let requests = getMedicationRequests();
-            const index = requests.findIndex(req => req.id === id);
-
-            if (index !== -1) {
-                requests[index].teacherReply = reply;
-                saveRequests(MEDICATION_KEY, requests);
-                
-                // 模擬 Email 寄送提示
-                const message = document.createElement('div');
-                message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-                message.textContent = `回覆已記錄，並模擬發送 Email 給家長: ${requests[index].parentEmail}`;
-                document.body.appendChild(message);
-                setTimeout(() => { message.remove(); }, 3000);
-                
-                renderMedicationRequests();
-                loadDashboardData();
-            }
+            // 模擬 Email 發送
+            const emailContent = `
+                幼兒姓名: ${req.childName} (${req.className})
+                託藥內容: ${req.medicationDetails}
+                餵藥時間: ${reply.time}
+                餵藥情況: ${reply.note}
+                操作教師: ${reply.teacher}
+            `;
+            sendEmail(req.parentEmail, `【文林附幼】${req.childName} 託藥回覆通知`, emailContent);
+            
+            requests[index].teacherReply = reply;
+            saveRequests(MEDICATION_KEY, requests);
+            
+            // 模擬 Email 寄送提示
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = `回覆已記錄，並模擬發送 Email 給家長: ${req.parentEmail}`;
+            document.body.appendChild(message);
+            setTimeout(() => { message.remove(); }, 3000);
+            
+            renderMedicationRequests();
+            loadDashboardData();
+        }
+        
+        // 模擬的 Email 發送函數 (在真實系統中需要後端或服務)
+        function sendEmail(to, subject, body) {
+            console.log("--- 模擬 Email 寄送 ---");
+            console.log(`To: ${to}`);
+            console.log(`Subject: ${subject}`);
+            console.log(`Body: ${body}`);
+            console.log("-----------------------");
         }
         
         function updateMedicationStatus(id, isDelete) {
@@ -468,4 +490,3 @@
         };
     </script>
 </body>
-</html>
