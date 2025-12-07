@@ -8,8 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
-    <!-- 引入 EmailJS SDK，用於實現真實的 Email 發送功能 (已修正為最新版本 CDN) -->
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <!-- 移除 EmailJS SDK 連結，改用原生 Fetch 呼叫 API，避免版本問題 -->
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f7f3ed; }
         .handwriting-font { font-family: 'Klee One', cursive; }
@@ -131,8 +130,11 @@
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
 
         // ** EmailJS 金鑰設定 (已填入您的資訊) **
+        // 服務 ID
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
+        // 模板 ID (已根據您的最新資訊修正)
         const EMAILJS_TEMPLATE_ID = 'template_yh5wstg'; 
+        // Public Key (User ID) (已根據您的最新資訊修正)
         const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; 
 
         // --- 數據存取通用函數 ---
@@ -443,15 +445,21 @@
                 teacher_name: reply.teacher
             };
             
-            // EmailJS SDK 初始化 (在真實網站中，這通常在頁面載入時執行一次)
-            emailjs.init(EMAILJS_USER_ID); 
-            
-            // ------------------------------------------------
-            // *** EmailJS SDK 呼叫 ***
-            // ------------------------------------------------
-            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
-                .then((response) => {
-                    console.log('EmailJS 成功發送:', response.status, response.text);
+            // 由於我們移除了 SDK 連結，直接使用 fetch 呼叫 API
+            const API_URL = `https://api.emailjs.com/api/v1.0/email/send`;
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    service_id: EMAILJS_SERVICE_ID,
+                    template_id: EMAILJS_TEMPLATE_ID,
+                    user_id: EMAILJS_USER_ID,
+                    template_params: emailParams
+                })
+            }).then(response => {
+                if (response.ok) {
+                    console.log("EmailJS API 呼叫成功！");
                     
                     // 2. 儲存回覆並更新後台介面 (只有成功發送才更新狀態)
                     requests[index].teacherReply = reply;
@@ -466,10 +474,14 @@
                     renderMedicationRequests();
                     loadDashboardData();
 
-                }, (error) => {
-                    console.error('EmailJS 發送失敗:', error);
-                    alert(`Email 發送失敗 (請檢查 EmailJS 網站設定或網路連線)：${error.text || error}`);
-                });
+                } else {
+                    console.error("EmailJS API 呼叫失敗:", response.statusText);
+                    alert(`Email 發送失敗 (API 呼叫失敗，請檢查 EmailJS 網站設定或網路連線)：${response.statusText}`);
+                }
+            }).catch(error => {
+                console.error("EmailJS API 呼叫發生錯誤:", error);
+                alert(`Email 發送發生錯誤：${error}`);
+            });
         }
         
         function updateMedicationStatus(id, isDelete) {
