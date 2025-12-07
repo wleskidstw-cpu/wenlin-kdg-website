@@ -8,8 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
-    <!-- 引入 EmailJS SDK，用於實現真實的 Email 發送功能 -->
-    <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+    <!-- 引入 EmailJS SDK，用於實現真實的 Email 發送功能 (已修正為最新版本 CDN) -->
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f7f3ed; }
         .handwriting-font { font-family: 'Klee One', cursive; }
@@ -130,12 +130,9 @@
         const MEDICATION_KEY = 'wenlin_medication_requests';
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
 
-        // ** EmailJS 金鑰設定 **
-        // Service ID
+        // ** EmailJS 金鑰設定 (已填入您的資訊) **
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
-        // 模板 ID (已根據您的最新資訊修正)
         const EMAILJS_TEMPLATE_ID = 'template_yh5wstg'; 
-        // Public Key (User ID) (已根據您的最新資訊修正)
         const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; 
 
         // --- 數據存取通用函數 ---
@@ -429,6 +426,7 @@
             };
 
             // 1. 執行 EmailJS SDK 呼叫
+            // 檢查金鑰是否已設置
             if (!EMAILJS_USER_ID || EMAILJS_USER_ID.startsWith('YOUR') || !EMAILJS_TEMPLATE_ID || EMAILJS_TEMPLATE_ID.startsWith('YOUR')) {
                 console.error("錯誤: EmailJS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
                 alert("錯誤: EmailJS 金鑰/模板 ID 尚未設定。請在程式碼頂部填入您的實際金鑰和 ID。");
