@@ -74,6 +74,17 @@
             margin-right: 1rem;
             white-space: normal;
         }
+        /* 公告彈出視窗背景 */
+        #announcement-modal {
+            background-color: rgba(17, 24, 39, 0.75);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        #announcement-modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="text-stone-700">
@@ -968,8 +979,9 @@
             modal.className = 'fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4';
             modal.onclick = () => document.body.removeChild(modal);
 
-            const fileLink = ann.fileName 
-                ? `<p class="mt-4 text-sm text-teal-700 font-bold">附件：<a href="#" onclick="alert('模擬下載附件: ${ann.fileName}')" class="underline">${ann.fileName}</a></p>`
+            // 確保 fileURL 存在且不為空
+            const fileLink = ann.fileURL && ann.fileURL.trim()
+                ? `<p class="mt-4 text-sm text-teal-700 font-bold">附件：<a href="${ann.fileURL}" target="_blank" class="underline hover:text-teal-900">${ann.fileURL.split('/').pop()}</a></p>`
                 : '';
 
             const contentHtml = ann.content.replace(/\n/g, '<br>');
@@ -978,7 +990,7 @@
                 <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-100" onclick="event.stopPropagation()">
                     <h2 class="text-2xl font-bold text-teal-700 mb-2 handwriting-font">${ann.title}</h2>
                     <p class="text-xs text-stone-500 mb-4 border-b pb-2">【${ann.tag}】發布日期: ${ann.date}</p>
-                    <div class="text-stone-700 text-base">${contentHtml}</div>
+                    <div class="text-stone-700 text-base whitespace-pre-wrap">${contentHtml}</div>
                     ${fileLink}
                     <button onclick="document.body.removeChild(this.parentNode.parentNode);" class="mt-6 py-2 px-4 bg-amber-600 text-white rounded-lg hover:bg-amber-700">關閉</button>
                 </div>
