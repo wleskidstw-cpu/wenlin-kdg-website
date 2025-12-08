@@ -51,20 +51,24 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Tab 導覽 -->
-            <div class="flex border-b border-gray-200 mb-6 space-x-4">
+            <div class="flex border-b border-gray-200 mb-6 space-x-4 overflow-x-auto whitespace-nowrap">
                 <button class="tab-btn py-3 px-4 active" onclick="showAdminTab('announcements')">最新公告管理</button>
                 <button class="tab-btn py-3 px-4" onclick="showAdminTab('leave-requests')">請假單審核 (<span id="leave-count" class="text-red-500">0</span>)</button>
                 <button class="tab-btn py-3 px-4" onclick="showAdminTab('medication-requests')">託藥單回覆 (<span id="medication-count" class="text-red-500">0</span>)</button>
+                <!-- 新增活動花絮圖片管理 Tab -->
+                <button class="tab-btn py-3 px-4" onclick="showAdminTab('gallery-management')">活動花絮圖片</button>
             </div>
 
             <!-- Tab 內容區 -->
             <div id="admin-content">
                 
-                <!-- 1. 公告管理 (已新增內容和檔案欄位) -->
+                <!-- 1. 公告管理 (已新增編輯功能) -->
                 <div id="announcements" class="tab-content bg-white p-6 rounded-xl card-shadow">
                     <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">發布/編輯最新公告</h2>
-                    <form onsubmit="saveAnnouncement(event)" class="space-y-4 mb-6">
+                    <form id="announcement-form" onsubmit="saveAnnouncement(event)" class="space-y-4 mb-6">
+                        <!-- 隱藏欄位用於儲存正在編輯的公告 ID -->
                         <input type="hidden" id="edit-announcement-id" value="">
+
                         <div>
                             <label for="announcement-title" class="block text-sm font-medium text-stone-700 mb-1">公告標題</label>
                             <input type="text" id="announcement-title" class="w-full p-2 border rounded-lg" placeholder="例如：新學期開學日通知" required>
@@ -90,7 +94,7 @@
                         </div>
                         <div>
                             <!-- 附加檔案欄位已改為連結輸入 -->
-                            <label for="announcement-file-url" class="block text-sm font-medium text-stone-700 mb-1">附加檔案連結 (URL)</label>
+                            <label for="announcement-file-url" class="block text-sm font-medium text-stone-700 mb-1">附加檔案公開連結 (URL)</label>
                             <input type="text" id="announcement-file-url" class="w-full p-2 border rounded-lg bg-gray-50" placeholder="貼上公開檔案的網址 (例如 GitHub 或 Google Drive 公開連結)">
                             <p class="text-xs text-stone-500 mt-1">請確保連結是公開且可存取的。</p>
                         </div>
@@ -121,6 +125,38 @@
                     </div>
                 </div>
 
+                <!-- 4. 活動花絮圖片管理 (新增) -->
+                <div id="gallery-management" class="tab-content bg-white p-6 rounded-xl card-shadow hidden">
+                    <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">網站首頁活動花絮圖片設定</h2>
+                    <form onsubmit="saveGalleryImages(event)" class="space-y-4 mb-6">
+                        <p class="text-sm text-stone-600">請貼上 **4 張**您希望在網站首頁展示的活動圖片公開連結。請確保這些圖片是公開可存取的，並應為正方形或接近正方形以確保顯示效果。</p>
+                        
+                        <div>
+                            <label for="image-url-0" class="block text-sm font-medium text-stone-700 mb-1">預覽圖片 1 連結 (URL)</label>
+                            <input type="url" id="image-url-0" class="w-full p-2 border rounded-lg" placeholder="圖片 1 連結 (例如: https://.../photo.jpg)" required>
+                        </div>
+                        <div>
+                            <label for="image-url-1" class="block text-sm font-medium text-stone-700 mb-1">預覽圖片 2 連結 (URL)</label>
+                            <input type="url" id="image-url-1" class="w-full p-2 border rounded-lg" placeholder="圖片 2 連結" required>
+                        </div>
+                        <div>
+                            <label for="image-url-2" class="block text-sm font-medium text-stone-700 mb-1">預覽圖片 3 連結 (URL)</label>
+                            <input type="url" id="image-url-2" class="w-full p-2 border rounded-lg" placeholder="圖片 3 連結" required>
+                        </div>
+                        <div>
+                            <label for="image-url-3" class="block text-sm font-medium text-stone-700 mb-1">預覽圖片 4 連結 (URL)</label>
+                            <input type="url" id="image-url-3" class="w-full p-2 border rounded-lg" placeholder="圖片 4 連結" required>
+                        </div>
+                        <button type="submit" class="py-2 px-4 bg-teal-600 text-white font-bold rounded-lg hover:bg-teal-700 transition duration-150">更新首頁預覽圖</button>
+                    </form>
+                    
+                    <h3 class="text-lg font-bold text-stone-700 mb-3 border-t pt-4">目前預覽 (預計顯示於家長網頁)</h3>
+                    <div id="gallery-preview-admin" class="grid grid-cols-2 gap-4">
+                        <!-- 預覽圖將由 JS 渲染 -->
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
@@ -129,14 +165,12 @@
         const LEAVE_KEY = 'wenlin_leave_requests';
         const MEDICATION_KEY = 'wenlin_medication_requests';
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
+        const GALLERY_KEY = 'wenlin_gallery_images'; // 新增：用於儲存活動花絮圖片 URL
 
         // ** EmailJS 金鑰設定 (已填入您的資訊) **
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
-        // 託藥模板 ID (已根據您的最新資訊修正)
-        const EMAILJS_TEMPLATE_ID_MEDICATION = 'template_yh5wstg'; 
-        // 請假模板 ID (已根據您的最新資訊修正)
-        const EMAILJS_TEMPLATE_ID_LEAVE = 'template_3q1tinr'; 
-        // Public Key (User ID) (已根據您的最新資訊修正)
+        const EMAILJS_TEMPLATE_ID_MEDICATION = 'template_yh5wstg'; // 託藥回覆模板
+        const EMAILJS_TEMPLATE_ID_LEAVE = 'template_3q1tinr'; // 請假審核模板
         const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; 
 
         // --- 數據存取通用函數 ---
@@ -151,6 +185,50 @@
         function saveRequests(key, requests) {
             localStorage.setItem(key, JSON.stringify(requests));
         }
+        
+        // --- 活動花絮圖片管理邏輯 ---
+        function loadGalleryManagement() {
+            const imageURLs = getRequests(GALLERY_KEY) || [];
+            for (let i = 0; i < 4; i++) {
+                const input = document.getElementById(`image-url-${i}`);
+                if (input) {
+                    input.value = imageURLs[i] || '';
+                }
+            }
+            renderGalleryPreviewAdmin();
+        }
+
+        function saveGalleryImages(event) {
+            event.preventDefault();
+            const newURLs = [];
+            for (let i = 0; i < 4; i++) {
+                const url = document.getElementById(`image-url-${i}`).value.trim();
+                newURLs.push(url);
+            }
+            // 只保存非空链接
+            const validURLs = newURLs.filter(url => url !== '');
+
+            saveRequests(GALLERY_KEY, validURLs);
+            alert('活動花絮圖片連結已更新！');
+            renderGalleryPreviewAdmin();
+        }
+
+        function renderGalleryPreviewAdmin() {
+            const container = document.getElementById('gallery-preview-admin');
+            const imageURLs = getRequests(GALLERY_KEY) || [];
+            container.innerHTML = '';
+
+            const defaultPlaceholder = "https://placehold.co/150x150/cccccc/333333?text=預覽圖";
+            
+            for(let i = 0; i < 4; i++) {
+                const url = imageURLs[i] || defaultPlaceholder;
+                const div = document.createElement('div');
+                div.className = 'rounded-xl overflow-hidden shadow-lg aspect-square';
+                div.innerHTML = `<img src="${url}" alt="預覽圖 ${i + 1}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${defaultPlaceholder}';">`;
+                container.appendChild(div);
+            }
+        }
+
 
         // --- 登入/登出邏輯 (模擬) ---
         function handleLogin(event) {
@@ -199,9 +277,10 @@
             if (tabName === 'leave-requests') renderLeaveRequests();
             if (tabName === 'medication-requests') renderMedicationRequests();
             if (tabName === 'announcements') renderAnnouncements();
+            if (tabName === 'gallery-management') loadGalleryManagement(); // 載入圖片管理數據
         }
         
-        // --- 公告管理邏輯 (已新增編輯功能) ---
+        // --- 公告管理邏輯 ---
         function getAnnouncements() {
             // 確保資料是按照日期降序排序
             const announcements = getRequests(ANNOUNCEMENT_KEY);
@@ -482,7 +561,7 @@
                     <p class="text-sm text-stone-600">病名/病徵: ${req.symptoms} | 處方簽確認: ${req.prescriptionConfirm ? '是' : '否'}</p>
                     <p class="text-sm text-stone-800 font-medium mt-1">用藥內容: <span class="text-teal-700 whitespace-pre-wrap">${req.medicationDetails}</span></p>
                     <p class="text-sm text-stone-600 mb-3">家長 Email: <span class="text-teal-700">${req.parentEmail}</span></p>
-                    <p class="text-xs text-stone-500 mb-3">家長簽名: ${req.parentSignature}</p>
+                    <p class="text-xs text-stone-500 mb-3">家長簽名: <a href="${req.parentSignature}" target="_blank" class="text-teal-700 hover:underline">查看簽名圖</a></p>
 
                     ${isReplied ? `
                         <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-300">
@@ -545,18 +624,16 @@
             // 由於我們移除了 SDK 連結，我們直接使用 fetch 呼叫 API
             const API_URL = `https://api.emailjs.com/api/v1.0/email/send`;
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        service_id: EMAILJS_SERVICE_ID,
-                        template_id: EMAILJS_TEMPLATE_ID_MEDICATION,
-                        user_id: EMAILJS_USER_ID,
-                        template_params: emailParams
-                    })
-                });
-
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    service_id: EMAILJS_SERVICE_ID,
+                    template_id: EMAILJS_TEMPLATE_ID_MEDICATION,
+                    user_id: EMAILJS_USER_ID,
+                    template_params: emailParams
+                })
+            }).then(response => {
                 if (response.ok) {
                     console.log("EmailJS API 呼叫成功！");
                     
@@ -578,10 +655,10 @@
                     // 即使 API 呼叫失敗，我們仍應給予錯誤提示
                     alert(`Email 發送失敗 (API 呼叫失敗，請檢查 EmailJS 網站設定或網路連線)：${response.statusText}`);
                 }
-            } catch (error) {
+            }).catch(error => {
                 console.error("EmailJS API 呼叫發生錯誤:", error);
                 alert(`Email 發送發生錯誤：${error}`);
-            }
+            });
         }
         
         function updateMedicationStatus(id, isDelete) {
