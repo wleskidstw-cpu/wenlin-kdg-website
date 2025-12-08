@@ -909,6 +909,7 @@
 
             resizeCanvas() {
                 const rect = this.canvas.parentNode.getBoundingClientRect();
+                // 必須設置 canvas 的 width 和 height 屬性，而不是 CSS 樣式
                 this.canvas.width = rect.width;
                 this.canvas.height = 128; // 固定的高度
                 this.clear(); // 清除重繪時的內容
@@ -974,6 +975,7 @@
         let medicationSignaturePad;
         
         document.addEventListener('DOMContentLoaded', () => {
+            // 由於 Canvas 必須在 DOM 內容載入後初始化，我們在這裡執行
             const leaveCanvas = document.getElementById('leaveSignatureCanvas');
             if (leaveCanvas) {
                 leaveSignaturePad = new SignaturePad('leaveSignatureCanvas');
