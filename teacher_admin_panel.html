@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+    <!-- 移除 EmailJS SDK 連結，改用原生 Fetch 呼叫 API，避免版本問題 -->
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f7f3ed; }
         .handwriting-font { font-family: 'Klee One', cursive; }
@@ -208,6 +209,7 @@
         // --- 數據存取通用函數 ---
         function getRequests(key) {
             try {
+                // 修正：確保在讀取時，如果 key 不存在，返回空陣列
                 return JSON.parse(localStorage.getItem(key)) || [];
             } catch (e) {
                 console.error("Error parsing data from localStorage:", e);
@@ -402,6 +404,158 @@
             });
         }
         
+        // --- 活動花絮圖片管理邏輯 ---
+        function loadGalleryManagement() {
+            const imageURLs = getRequests(GALLERY_KEY) || [];
+            for (let i = 0; i < 4; i++) {
+                const input = document.getElementById(`image-url-${i}`);
+                if (input) {
+                    input.value = imageURLs[i] || '';
+                }
+            }
+            renderGalleryPreviewAdmin();
+        }
+
+        function saveGalleryImages(event) {
+            event.preventDefault();
+            const newURLs = [];
+            for (let i = 0; i < 4; i++) {
+                const url = document.getElementById(`image-url-${i}`).value.trim();
+                newURLs.push(url);
+            }
+            const validURLs = newURLs.filter(url => url !== '');
+
+            saveRequests(GALLERY_KEY, validURLs);
+            alert('活動花絮圖片連結已更新！');
+            renderGalleryPreviewAdmin();
+        }
+
+        function renderGalleryPreviewAdmin() {
+            const container = document.getElementById('gallery-preview-admin');
+            const imageURLs = getRequests(GALLERY_KEY) || [];
+            container.innerHTML = '';
+
+            const defaultPlaceholder = "https://placehold.co/150x150/cccccc/333333?text=預覽圖";
+            
+            for(let i = 0; i < 4; i++) {
+                const url = imageURLs[i] || defaultPlaceholder;
+                const div = document.createElement('div');
+                div.className = 'rounded-xl overflow-hidden shadow-lg aspect-square';
+                div.innerHTML = `<img src="${url}" alt="預覽圖 ${i + 1}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${defaultPlaceholder}';">`;
+                container.appendChild(div);
+            }
+        }
+
+        // --- 行事曆管理邏輯 (新增) ---
+        function loadCalendarManagement() {
+            document.getElementById('calendar-form').reset();
+            document.getElementById('edit-calendar-id').value = '';
+            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
+            renderCalendarEntries();
+        }
+
+        function getCalendarEntries() {
+            // 確保資料是按照日期升序排序
+            const entries = getRequests(CALENDAR_KEY);
+            return entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
+
+        function saveCalendarEntry(event) {
+            event.preventDefault();
+            const form = event.target;
+            const date = form.elements['calendar-date'].value;
+            const title = form.elements['calendar-title'].value;
+            const note = form.elements['calendar-note'].value;
+            const editIdInput = document.getElementById('edit-calendar-id');
+            const editId = editIdInput.value ? parseInt(editIdInput.value) : null;
+
+            let entries = getRequests(CALENDAR_KEY);
+            let messageText = '';
+
+            if (editId) {
+                // 執行更新
+                const index = entries.findIndex(entry => entry.id === editId);
+                if (index !== -1) {
+                    entries[index] = { ...entries[index], date: date, title: title, note: note };
+                    messageText = '行事曆項目已成功更新！';
+                }
+            } else {
+                // 執行創建
+                const newEntry = {
+                    id: Date.now(),
+                    date: date,
+                    title: title,
+                    note: note
+                };
+                entries.push(newEntry);
+                messageText = '行事曆項目已成功新增！';
+            }
+            saveRequests(CALENDAR_KEY, entries);
+            
+            form.reset();
+            editIdInput.value = '';
+            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
+            
+            alert(messageText);
+            renderCalendarEntries();
+        }
+
+        function deleteCalendarEntry(id) {
+            if (!confirm("確定要刪除此行事曆項目嗎？")) return;
+            let entries = getRequests(CALENDAR_KEY);
+            entries = entries.filter(entry => entry.id !== id);
+            saveRequests(CALENDAR_KEY, entries);
+            renderCalendarEntries();
+        }
+
+        function editCalendarEntry(id) {
+            const entries = getCalendarEntries();
+            const entry = entries.find(e => e.id === id);
+
+            if (!entry) return;
+
+            // 填入表單
+            document.getElementById('calendar-date').value = entry.date;
+            document.getElementById('calendar-title').value = entry.title;
+            document.getElementById('calendar-note').value = entry.note;
+
+            // 設定編輯模式
+            document.getElementById('edit-calendar-id').value = id;
+            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '更新項目';
+            
+            // 捲動到表單頂部
+            document.getElementById('calendar-management').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderCalendarEntries() {
+            const entries = getCalendarEntries();
+            const listContainer = document.getElementById('calendar-list');
+            listContainer.innerHTML = '';
+
+            if (entries.length === 0) {
+                listContainer.innerHTML = '<p class="text-stone-500">目前沒有行事曆項目。</p>';
+                return;
+            }
+
+            entries.forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-start space-x-4';
+                
+                item.innerHTML = `
+                    <div>
+                        <p class="text-xs font-semibold text-teal-700">${entry.date}</p>
+                        <span class="font-bold text-base text-stone-800">${entry.title}</span>
+                        ${entry.note ? `<p class="text-xs text-stone-500">${entry.note}</p>` : ''}
+                    </div>
+                    <div class="flex space-x-2 flex-shrink-0">
+                        <button onclick="editCalendarEntry(${entry.id})" class="text-sm text-teal-600 hover:underline">編輯</button>
+                        <button onclick="deleteCalendarEntry(${entry.id})" class="text-sm text-red-500 hover:text-red-700">刪除</button>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
         // --- 請假單列表邏輯 ---
         function getLeaveRequests() {
             const requests = getRequests(LEAVE_KEY);
@@ -654,6 +808,115 @@
                  renderMedicationRequests();
                  loadDashboardData();
             }
+        }
+        
+        // --- 行事曆管理邏輯 ---
+        function loadCalendarManagement() {
+            document.getElementById('calendar-form').reset();
+            document.getElementById('edit-calendar-id').value = '';
+            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
+            renderCalendarEntries();
+        }
+
+        function getCalendarEntries() {
+            const entries = getRequests(CALENDAR_KEY);
+            return entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
+
+        function saveCalendarEntry(event) {
+            event.preventDefault();
+            const form = event.target;
+            const date = form.elements['calendar-date'].value;
+            const title = form.elements['calendar-title'].value;
+            const note = form.elements['calendar-note'].value;
+            const editIdInput = document.getElementById('edit-calendar-id');
+            const editId = editIdInput.value ? parseInt(editIdInput.value) : null;
+
+            let entries = getRequests(CALENDAR_KEY);
+            let messageText = '';
+
+            if (editId) {
+                // 執行更新
+                const index = entries.findIndex(entry => entry.id === editId);
+                if (index !== -1) {
+                    entries[index] = { ...entries[index], date: date, title: title, note: note };
+                    messageText = '行事曆項目已成功更新！';
+                }
+            } else {
+                // 執行創建
+                const newEntry = {
+                    id: Date.now(),
+                    date: date,
+                    title: title,
+                    note: note
+                };
+                entries.push(newEntry);
+                messageText = '行事曆項目已成功新增！';
+            }
+            saveRequests(CALENDAR_KEY, entries);
+            
+            form.reset();
+            editIdInput.value = '';
+            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
+            
+            alert(messageText);
+            renderCalendarEntries();
+        }
+
+        function deleteCalendarEntry(id) {
+            if (!confirm("確定要刪除此行事曆項目嗎？")) return;
+            let entries = getRequests(CALENDAR_KEY);
+            entries = entries.filter(entry => entry.id !== id);
+            saveRequests(CALENDAR_KEY, entries);
+            renderCalendarEntries();
+        }
+
+        function editCalendarEntry(id) {
+            const entries = getCalendarEntries();
+            const entry = entries.find(e => e.id === id);
+
+            if (!entry) return;
+
+            // 填入表單
+            document.getElementById('calendar-date').value = entry.date;
+            document.getElementById('calendar-title').value = entry.title;
+            document.getElementById('calendar-note').value = entry.note;
+
+            // 設定編輯模式
+            document.getElementById('edit-calendar-id').value = id;
+            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '更新項目';
+            
+            // 捲動到表單頂部
+            document.getElementById('calendar-management').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderCalendarEntries() {
+            const entries = getCalendarEntries();
+            const listContainer = document.getElementById('calendar-list');
+            listContainer.innerHTML = '';
+
+            if (entries.length === 0) {
+                listContainer.innerHTML = '<p class="text-stone-500">目前沒有行事曆項目。</p>';
+                return;
+            }
+
+            entries.forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-start space-x-4';
+                
+                item.innerHTML = `
+                    <div>
+                        <p class="text-xs font-semibold text-teal-700">${entry.date}</p>
+                        <span class="font-bold text-base text-stone-800">${entry.title}</span>
+                        ${entry.note ? `<p class="text-xs text-stone-500">${entry.note}</p>` : ''}
+                    </div>
+                    <div class="flex space-x-2 flex-shrink-0">
+                        <button onclick="editCalendarEntry(${entry.id})" class="text-sm text-teal-600 hover:underline">編輯</button>
+                        <button onclick="deleteCalendarEntry(${entry.id})" class="text-sm text-red-500 hover:text-red-700">刪除</button>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
         }
 
         // --- 儀表板通用加載 ---
