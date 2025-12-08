@@ -62,12 +62,13 @@
             border-color: #0f766e;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        /* 新增：簽名板樣式 */
+        /* 修正：簽名板樣式 - 確保 box-sizing 正確 */
         .signature-box {
             border: 2px solid #ccc;
             border-radius: 0.5rem;
             background-color: #fff;
             touch-action: none; /* 允許觸控繪圖 */
+            box-sizing: border-box; /* 確保邊框不影響佈局 */
         }
         /* 新增：手機版教職員水平捲動容器 */
         #staff .scroll-container {
@@ -530,20 +531,9 @@
                     📸 全園活動花絮
                 </h3>
 
-                <!-- 相簿預覽 (4張圖片) -->
-                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10">
-                    <div class="rounded-xl overflow-hidden shadow-lg aspect-square">
-                        <img src="https://placehold.co/300x300/fecaca/dc2626?text=校外教學" alt="活動花絮預覽圖1" class="w-full h-full object-cover">
-                    </div>
-                    <div class="rounded-xl overflow-hidden shadow-lg aspect-square">
-                        <img src="https://placehold.co/300x300/a7f3d0/059669?text=美術課" alt="活動花絮預覽圖2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="rounded-xl overflow-hidden shadow-lg aspect-square">
-                        <img src="https://placehold.co/300x300/c7d2fe/4f46e5?text=故事時間" alt="活動花絮預覽圖3" class="w-full h-full object-cover">
-                    </div>
-                    <div class="rounded-xl overflow-hidden shadow-lg aspect-square">
-                        <img src="https://placehold.co/300x300/fed7aa/f97316?text=體能活動" alt="活動花絮預覽圖4" class="w-full h-full object-cover">
-                    </div>
+                <!-- 相簿預覽 (4張圖片) - 從 localStorage 讀取圖片 URL -->
+                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10" id="gallery-preview-container">
+                    <!-- 圖片將由 JS 渲染 -->
                 </div>
                 
                 <p class="text-lg text-stone-600 mb-8 max-w-2xl mx-auto">
@@ -881,7 +871,8 @@
         const LEAVE_KEY = 'wenlin_leave_requests';
         const MEDICATION_KEY = 'wenlin_medication_requests';
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
-        
+        const GALLERY_KEY = 'wenlin_gallery_images'; // 新增：用於儲存活動花絮圖片 URL 
+
         // ** EmailJS 金鑰設定 (已複製到主網頁) **
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
         const EMAILJS_TEMPLATE_ID_MEDICATION = 'template_yh5wstg'; // 託藥回覆模板
@@ -898,66 +889,82 @@
 
                 // 設置 Canvas 初始大小和樣式
                 this.resizeCanvas();
+                // 修正：當視窗大小改變時，重新設置 Canvas 大小
                 window.addEventListener('resize', this.resizeCanvas.bind(this));
                 
                 this.ctx.lineWidth = 2;
                 this.ctx.lineCap = 'round';
                 this.ctx.strokeStyle = '#000';
+                this.ctx.fillStyle = '#fff';
 
                 this.addListeners();
             }
 
             resizeCanvas() {
                 const rect = this.canvas.parentNode.getBoundingClientRect();
-                // 必須設置 canvas 的 width 和 height 屬性，而不是 CSS 樣式
-                this.canvas.width = rect.width;
-                this.canvas.height = 128; // 固定的高度
+                const dpr = window.devicePixelRatio || 1;
+                
+                // 設置 Canvas 的實際繪圖解析度
+                this.canvas.width = rect.width * dpr;
+                this.canvas.height = 128 * dpr;
+                
+                // 設置 Canvas 的顯示尺寸
+                this.canvas.style.width = rect.width + 'px';
+                this.canvas.style.height = 128 + 'px';
+                
+                // 縮放繪圖上下文，使繪製清晰
+                this.ctx.scale(dpr, dpr);
                 this.clear(); // 清除重繪時的內容
             }
 
             clear() {
                 this.ctx.fillStyle = '#fff';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.fillRect(0, 0, this.canvas.width / (window.devicePixelRatio || 1), this.canvas.height / (window.devicePixelRatio || 1));
                 this.isSigned = false;
             }
 
             addListeners() {
+                // Helper to get normalized coordinates
+                const getCoords = (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    return {
+                        x: (e.clientX - rect.left),
+                        y: (e.clientY - rect.top)
+                    };
+                };
+
                 // Mouse Events
-                this.canvas.addEventListener('mousedown', this.startDrawing.bind(this));
+                this.canvas.addEventListener('mousedown', (e) => this.startDrawing(getCoords(e)));
                 this.canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
-                this.canvas.addEventListener('mousemove', this.draw.bind(this));
+                this.canvas.addEventListener('mousemove', (e) => this.draw(getCoords(e)));
 
                 // Touch Events
                 this.canvas.addEventListener('touchstart', (e) => {
                     e.preventDefault(); // 防止滾動
-                    this.startDrawing(e.touches[0]);
+                    this.startDrawing(getCoords(e.touches[0]));
                 });
                 this.canvas.addEventListener('touchend', this.stopDrawing.bind(this));
                 this.canvas.addEventListener('touchmove', (e) => {
                     e.preventDefault(); // 防止滾動
-                    this.draw(e.touches[0]);
+                    this.draw(getCoords(e.touches[0]));
                 });
             }
 
-            startDrawing(e) {
+            startDrawing(coords) {
                 this.drawing = true;
                 this.isSigned = true;
                 this.ctx.beginPath();
-                this.ctx.moveTo(e.offsetX || e.layerX, e.offsetY || e.layerY);
+                this.ctx.moveTo(coords.x, coords.y);
             }
 
             stopDrawing() {
                 this.drawing = false;
             }
 
-            draw(e) {
+            draw(coords) {
                 if (!this.drawing) return;
                 
-                // 處理 touch 事件的座標
-                const x = e.offsetX || e.layerX;
-                const y = e.offsetY || e.layerY;
-
-                this.ctx.lineTo(x, y);
+                this.ctx.lineTo(coords.x, coords.y);
                 this.ctx.stroke();
             }
 
@@ -975,17 +982,16 @@
         let medicationSignaturePad;
         
         document.addEventListener('DOMContentLoaded', () => {
-            // 由於 Canvas 必須在 DOM 內容載入後初始化，我們在這裡執行
             const leaveCanvas = document.getElementById('leaveSignatureCanvas');
             if (leaveCanvas) {
                 leaveSignaturePad = new SignaturePad('leaveSignatureCanvas');
-                leaveSignaturePad.clear(); // 確保初始為空白
             }
             const medicationCanvas = document.getElementById('medicationSignatureCanvas');
             if (medicationCanvas) {
                 medicationSignaturePad = new SignaturePad('medicationSignatureCanvas');
-                medicationSignaturePad.clear(); // 確保初始為空白
             }
+            renderPublicAnnouncements();
+            renderGalleryPreview(); // 新增：初始化活動花絮預覽
         });
 
         function clearSignature(canvasId) {
@@ -1007,6 +1013,31 @@
         function saveRequests(key, requests) {
             localStorage.setItem(key, JSON.stringify(requests));
         }
+        
+        // --- 活動花絮圖片渲染 ---
+        function renderGalleryPreview() {
+            const container = document.getElementById('gallery-preview-container');
+            const imageURLs = getRequests(GALLERY_KEY) || [];
+            container.innerHTML = '';
+
+            // 確保有 4 個 Placeholder URL，如果 localStorage 不足 4 個
+            const defaultURLs = [
+                "https://placehold.co/300x300/fecaca/dc2626?text=校外教學",
+                "https://placehold.co/300x300/a7f3d0/059669?text=美術課",
+                "https://placehold.co/300x300/c7d2fe/4f46e5?text=故事時間",
+                "https://placehold.co/300x300/fed7aa/f97316?text=體能活動"
+            ];
+
+            const previewURLs = imageURLs.concat(defaultURLs).slice(0, 4);
+
+            previewURLs.forEach(url => {
+                const div = document.createElement('div');
+                div.className = 'rounded-xl overflow-hidden shadow-lg aspect-square';
+                div.innerHTML = `<img src="${url}" alt="活動花絮預覽圖" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/300x300/cccccc/333333?text=無法載入圖片';">`;
+                container.appendChild(div);
+            });
+        }
+
 
         // --- 核心 Tab 切換邏輯 (通用) ---
         function showAboutTab(tabName) {
@@ -1264,6 +1295,10 @@
             showAboutTab('calendar');
             showAdminTab('leave');
             renderPublicAnnouncements();
+            // 在頁面載入時確保簽名板初始化
+            // 由於 DOMContentLoaded 已經處理了初始化，這裡只需要確保 resize 被呼叫
+            if (leaveSignaturePad) leaveSignaturePad.resizeCanvas();
+            if (medicationSignaturePad) medicationSignaturePad.resizeCanvas();
         };
     </script>
 
