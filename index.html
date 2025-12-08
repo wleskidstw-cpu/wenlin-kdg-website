@@ -74,17 +74,6 @@
             margin-right: 1rem;
             white-space: normal;
         }
-        /* 公告彈出視窗背景 */
-        #announcement-modal {
-            background-color: rgba(17, 24, 39, 0.75);
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-        #announcement-modal.active {
-            visibility: visible;
-            opacity: 1;
-        }
     </style>
 </head>
 <body class="text-stone-700">
@@ -579,7 +568,7 @@
                 <!-- Tab 內容區 -->
                 <div id="admin-content" class="bg-yellow-50 p-8 rounded-xl shadow-2xl">
                     
-                    <!-- 線上請假表單 (Default Tab) - 已移除 (模擬) 文本 -->
+                    <!-- 線上請假表單 (Default Tab) - 已新增 Email 欄位 -->
                     <div id="leave" class="tab-content-admin">
                         <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">幼兒線上請假通知單</h4>
                         <form id="leave-form" onsubmit="handleLeaveSubmit(event)">
@@ -596,6 +585,12 @@
                                     <label class="block text-stone-700 font-medium mb-1">幼兒姓名</label>
                                     <input type="text" name="childName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入幼兒全名" required>
                                 </div>
+                                <!-- 新增 Email 欄位 -->
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">接收審核通知 Email</label>
+                                    <input type="email" name="parentEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="用於接收審核結果" required>
+                                </div>
+
 
                                 <!-- 班級勾選 (單選) 欄位 -->
                                 <fieldset>
@@ -652,9 +647,10 @@
                         </div>
                     </div>
 
-                    <!-- 託藥申請表內容 - 已新增欄位及教師回覆區 -->
+                    <!-- 託藥申請表內容 - 已重構用藥欄位 -->
                     <div id="medication" class="tab-content-admin hidden">
-                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">藥品委託管理申請表 (模擬)</h4>
+                        <!-- 修正標題 -->
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">委託用藥申請單</h4>
                         <form id="medication-form" onsubmit="handleMedicationSubmit(event)">
                              <div class="space-y-4">
                                 <!-- 幼兒班級/姓名 -->
@@ -696,21 +692,51 @@
                                     <input type="text" name="symptoms" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：感冒咳嗽、輕微發燒" required>
                                 </div>
                                 
-                                <!-- 藥品名稱改為用藥內容及分量 -->
-                                <div>
-                                    <label class="block text-stone-700 font-medium mb-1">用藥內容 (藥粉/藥水/藥膏) 及分量</label>
-                                    <textarea name="medicationDetails" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="3" placeholder="例如：藥水 5ml (早晚飯後)、藥粉 1 包 (中午服用)。請說明是否需冷藏。" required></textarea>
-                                </div>
+                                <!-- 藥品名稱改為用藥內容 (重構) -->
+                                <fieldset>
+                                    <legend class="block text-stone-700 font-medium mb-2">用藥內容及分量</legend>
+                                    <div class="space-y-3 p-3 bg-white rounded-lg border border-gray-300">
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="med_powder" name="medType" value="藥粉/藥丸" class="h-4 w-4 text-teal-600 border-gray-300 rounded">
+                                            <label for="med_powder" class="text-sm">1. 藥粉或藥丸，</label>
+                                            <input type="text" name="powderQty" class="w-16 p-1 border rounded-lg text-sm" placeholder="數量">
+                                            <span class="text-sm">包</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="med_liquid" name="medType" value="藥水" class="h-4 w-4 text-teal-600 border-gray-300 rounded">
+                                            <label for="med_liquid" class="text-sm">2. 藥水，</label>
+                                            <input type="text" name="liquidQty" class="w-16 p-1 border rounded-lg text-sm" placeholder="數量">
+                                            <span class="text-sm">c.c.</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="med_other" name="medType" value="藥膏/其他" class="h-4 w-4 text-teal-600 border-gray-300 rounded">
+                                            <label for="med_other" class="text-sm">3. 其他，</label>
+                                            <input type="text" name="otherQty" class="w-20 p-1 border rounded-lg text-sm" placeholder="份量/內容">
+                                        </div>
+                                    </div>
+                                </fieldset>
                                 
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-1">服藥時間</label>
                                     <input type="text" name="time" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：午餐後 12:30" required>
                                 </div>
                                 
+                                <!-- 備註欄位 (冰冷藏等) -->
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">其他注意事項</label>
+                                    <textarea name="refrigerationNote" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="2" placeholder="請註明是否需冷藏、特殊注意事項等"></textarea>
+                                </div>
+                                
                                 <!-- 家長 Email -->
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-1">家長收訊息 Email</label>
                                     <input type="email" name="parentEmail" id="parent-email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="用於接收老師餵藥回覆" required>
+                                </div>
+                                
+                                <!-- 處方簽確認勾選欄位 -->
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="prescription_confirm" name="prescriptionConfirm" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500" required>
+                                    <label for="prescription_confirm" class="ml-2 text-sm text-stone-700 font-medium">我確認已附有醫療院所開立之處方簽</label>
                                 </div>
 
                                 <div>
@@ -835,6 +861,12 @@
         const MEDICATION_KEY = 'wenlin_medication_requests';
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
         
+        // ** EmailJS 金鑰設定 (已複製到主網頁) **
+        const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
+        const EMAILJS_TEMPLATE_ID_MEDICATION = 'template_yh5wstg'; // 託藥回覆模板
+        const EMAILJS_TEMPLATE_ID_LEAVE = 'template_3q1tinr'; // 請假審核模板
+        const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; 
+
         // --- 數據存取通用函數 ---
         function getRequests(key) {
             try {
@@ -933,7 +965,7 @@
         }
 
 
-        // --- 公告渲染邏輯 (已更新以準備顯示完整內容) ---
+        // --- 公告渲染邏輯 ---
         function renderPublicAnnouncements() {
             // 從 localStorage 讀取教師發布的公告
             const announcements = getRequests(ANNOUNCEMENT_KEY);
@@ -1011,6 +1043,7 @@
                 parentName: form.parentName.value,
                 relationship: form.relationship.value,
                 childName: form.childName.value,
+                parentEmail: form.parentEmail.value, // 新增 Email 欄位
                 className: form.className.value,
                 startDate: form.startDate.value,
                 endDate: form.endDate.value,
@@ -1041,18 +1074,37 @@
             const form = event.target;
             const requests = getRequests(MEDICATION_KEY);
 
+            // 處理複雜的用藥內容欄位
+            let medicationDetails = '';
+            
+            // 1. 藥粉/藥丸
+            if (form.medType[0].checked && form.powderQty.value) {
+                medicationDetails += `藥粉/藥丸: ${form.powderQty.value} 包\n`;
+            }
+            // 2. 藥水
+            if (form.medType[1].checked && form.liquidQty.value) {
+                medicationDetails += `藥水: ${form.liquidQty.value} c.c.\n`;
+            }
+            // 3. 藥膏/其他
+            if (form.medType[2].checked && form.otherQty.value) {
+                medicationDetails += `其他用藥/藥膏: ${form.otherQty.value}\n`;
+            }
+            medicationDetails += `備註 (冷藏等): ${form.refrigerationNote.value || '無備註'}`;
+
+
             // 收集表單數據
             const newRequest = {
                 id: Date.now(),
                 className: form.className.value,
                 childName: form.childName.value,
-                startDate: form.startDate.value, // 更新：區間開始日
-                endDate: form.endDate.value,     // 更新：區間結束日
+                startDate: form.startDate.value,
+                endDate: form.endDate.value,
                 symptoms: form.symptoms.value,
-                medicationDetails: form.medicationDetails.value, // 更新：用藥內容與分量
+                medicationDetails: medicationDetails, // 使用重構後的內容
                 time: form.time.value,
                 parentEmail: form.parentEmail.value,
                 parentSignature: form.parentSignature.value,
+                prescriptionConfirm: form.prescriptionConfirm.checked, // 處方簽確認
                 teacherReply: null, // 初始回覆為 null
                 timestamp: new Date().toISOString()
             };
