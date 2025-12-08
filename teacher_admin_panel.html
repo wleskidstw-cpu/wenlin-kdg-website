@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
-    <!-- 移除 EmailJS SDK 連結，改用原生 Fetch 呼叫 API，避免版本問題 -->
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f7f3ed; }
         .handwriting-font { font-family: 'Klee One', cursive; }
@@ -193,13 +192,14 @@
     </div>
 
     <script>
+        // --- 常數定義 ---
         const LEAVE_KEY = 'wenlin_leave_requests';
         const MEDICATION_KEY = 'wenlin_medication_requests';
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
         const GALLERY_KEY = 'wenlin_gallery_images';
-        const CALENDAR_KEY = 'wenlin_calendar_entries'; // 新增：用於行事曆管理
-
-        // ** EmailJS 金鑰設定 (已填入您的資訊) **
+        const CALENDAR_KEY = 'wenlin_calendar_entries'; 
+        
+        // ** EmailJS 金鑰設定 **
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
         const EMAILJS_TEMPLATE_ID_MEDICATION = 'template_yh5wstg'; 
         const EMAILJS_TEMPLATE_ID_LEAVE = 'template_3q1tinr'; 
@@ -208,7 +208,6 @@
         // --- 數據存取通用函數 ---
         function getRequests(key) {
             try {
-                // 修正：確保在讀取時，如果 key 不存在，返回空陣列
                 return JSON.parse(localStorage.getItem(key)) || [];
             } catch (e) {
                 console.error("Error parsing data from localStorage:", e);
@@ -218,7 +217,7 @@
         function saveRequests(key, requests) {
             localStorage.setItem(key, JSON.stringify(requests));
         }
-
+        
         // --- 登入/登出邏輯 (模擬) ---
         function handleLogin(event) {
             event.preventDefault();
@@ -246,6 +245,9 @@
             // 清除 localStorage 避免下次登入時顯示舊的計數
             localStorage.removeItem('wenlin_leave_requests'); 
             localStorage.removeItem('wenlin_medication_requests'); 
+            localStorage.removeItem(CALENDAR_KEY); // 清除行事曆
+            localStorage.removeItem(ANNOUNCEMENT_KEY); // 清除公告
+            localStorage.removeItem(GALLERY_KEY); // 清除圖片
             document.getElementById('login-view').classList.remove('hidden');
             document.getElementById('admin-view').classList.add('hidden');
         }
@@ -272,7 +274,6 @@
         
         // --- 公告管理邏輯 ---
         function getAnnouncements() {
-            // 確保資料是按照日期降序排序
             const announcements = getRequests(ANNOUNCEMENT_KEY);
             return announcements.sort((a, b) => new Date(b.date) - new Date(a.date));
         }
@@ -285,7 +286,6 @@
             const tag = form.elements['announcement-tag'].value;
             const date = form.elements['announcement-date'].value;
             
-            // 新增：檔案 URL
             const fileURL = document.getElementById('announcement-file-url').value.trim();
             const editIdInput = document.getElementById('edit-announcement-id');
             const editId = editIdInput.value ? parseInt(editIdInput.value) : null;
@@ -295,11 +295,10 @@
             let messageText = '';
 
             if (editId) {
-                // 執行更新
                 const index = announcements.findIndex(ann => ann.id === editId);
                 if (index !== -1) {
                     announcements[index] = { 
-                        ...announcements[index], // 保留舊的 timestamp 等
+                        ...announcements[index], 
                         title: title, 
                         content: content, 
                         tag: tag, 
@@ -309,7 +308,6 @@
                     messageText = '公告已成功更新！主網頁將同步更新。';
                 }
             } else {
-                // 執行創建
                 const newAnnouncement = {
                     id: Date.now(),
                     title: title,
@@ -323,13 +321,11 @@
             }
             saveRequests(ANNOUNCEMENT_KEY, announcements);
             
-            // 重置表單和編輯狀態
             form.reset();
             document.getElementById('announcement-form').querySelector('button[type="submit"]').textContent = '儲存公告並發布';
             editIdInput.value = '';
             document.getElementById('announcement-date').value = new Date().toISOString().split('T')[0];
             
-            // 模擬提示
             const message = document.createElement('div');
             message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
             message.textContent = messageText;
@@ -353,18 +349,15 @@
 
             if (!ann) return;
             
-            // 填入表單
             document.getElementById('announcement-title').value = ann.title;
             document.getElementById('announcement-content').value = ann.content;
             document.getElementById('announcement-tag').value = ann.tag;
             document.getElementById('announcement-date').value = ann.date;
             document.getElementById('announcement-file-url').value = ann.fileURL;
 
-            // 設定編輯模式
             document.getElementById('edit-announcement-id').value = id;
             document.querySelector('#announcements button[type="submit"]').textContent = '更新公告';
             
-            // 捲動到表單頂部
             document.getElementById('announcements').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -382,7 +375,6 @@
                 const item = document.createElement('div');
                 item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2';
                 
-                // Header (Title and Buttons)
                 const header = document.createElement('div');
                 header.className = 'flex justify-between items-start';
                 header.innerHTML = `
@@ -397,7 +389,6 @@
                 `;
                 item.appendChild(header);
 
-                // Metadata and Content
                 const contentPreview = ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : '無內容';
                 const fileName = ann.fileURL ? ann.fileURL.split('/').pop() : '';
 
@@ -413,7 +404,6 @@
         
         // --- 請假單列表邏輯 ---
         function getLeaveRequests() {
-            // 確保資料是按照時間降序排序 (最新的在最前面)
             const requests = getRequests(LEAVE_KEY);
             return requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
@@ -440,8 +430,7 @@
                     start_date: req.startDate,
                     end_date: req.endDate,
                     reason: req.reason,
-                    // 將簽名 Base64 數據作為附件內容傳遞
-                    signature_img: req.signature
+                    signature_img: req.signature // 簽名 Base64
                 };
                 
                 const API_URL = `https://api.emailjs.com/api/v1.0/email/send`;
