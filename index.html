@@ -62,7 +62,7 @@
             border-color: #0f766e;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        /* 修正：簽名板樣式 - 確保 box-sizing 正確 */
+        /* 新增：簽名板樣式 */
         .signature-box {
             border: 2px solid #ccc;
             border-radius: 0.5rem;
@@ -229,25 +229,13 @@
                 <!-- Tab 內容區 -->
                 <div id="about-content">
                     
-                    <!-- 行事曆內容 (Default Tab) -->
+                    <!-- 行事曆內容 (Default Tab) - 已連動教師後台數據 -->
                     <div id="calendar" class="tab-content bg-yellow-50 p-6 rounded-xl shadow-inner">
                         <h4 class="text-2xl font-bold text-teal-700 mb-4 handwriting-font">學年重要行事曆</h4>
-                        <table class="data-table w-full bg-white rounded-lg shadow-sm">
-                            <thead>
-                                <tr class="bg-teal-100 text-teal-800">
-                                    <th>日期</th>
-                                    <th>活動名稱</th>
-                                    <th>備註</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>2025/08/29</td><td>新生家長座談會</td><td>上午 10:00，活動中心</td></tr>
-                                <tr><td>2025/09/01</td><td>正式開學日</td><td>歡迎所有幼兒返校</td></tr>
-                                <tr><td>2025/10/10</td><td>雙十國慶</td><td>放假一日</td></tr>
-                                <tr><td>2025/12/24</td><td>聖誕節聯歡會</td><td>下午活動，家長可參與</td></tr>
-                            </tbody>
-                        </table>
-                        <!-- 備註區已刪除 -->
+                        <div id="calendar-table-container">
+                            <!-- 行事曆數據將由 JS 渲染 -->
+                            <p class="text-stone-500 text-center py-8">正在載入行事曆數據...</p>
+                        </div>
                     </div>
 
                     <!-- 作息表內容 (已更新) -->
@@ -872,6 +860,7 @@
         const MEDICATION_KEY = 'wenlin_medication_requests';
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
         const GALLERY_KEY = 'wenlin_gallery_images'; // 新增：用於儲存活動花絮圖片 URL 
+        const CALENDAR_KEY = 'wenlin_calendar_entries'; // 行事曆數據 Key
 
         // ** EmailJS 金鑰設定 (已複製到主網頁) **
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
@@ -919,6 +908,7 @@
 
             clear() {
                 this.ctx.fillStyle = '#fff';
+                // 修正: 填充整個 Canvas 顯示區域
                 this.ctx.fillRect(0, 0, this.canvas.width / (window.devicePixelRatio || 1), this.canvas.height / (window.devicePixelRatio || 1));
                 this.isSigned = false;
             }
@@ -927,9 +917,10 @@
                 // Helper to get normalized coordinates
                 const getCoords = (e) => {
                     const rect = this.canvas.getBoundingClientRect();
+                    const dpr = window.devicePixelRatio || 1;
                     return {
-                        x: (e.clientX - rect.left),
-                        y: (e.clientY - rect.top)
+                        x: (e.clientX - rect.left), // X 座標
+                        y: (e.clientY - rect.top)   // Y 座標
                     };
                 };
 
@@ -959,6 +950,7 @@
 
             stopDrawing() {
                 this.drawing = false;
+                this.ctx.closePath();
             }
 
             draw(coords) {
@@ -1049,6 +1041,11 @@
             });
             document.getElementById(tabName).classList.remove('hidden');
             document.querySelector(`#about-tabs button[onclick*="'${tabName}'"]`).classList.add('tab-active');
+            
+            // 修正：當切換到行事曆時，確保行事曆內容被渲染
+            if (tabName === 'calendar') {
+                renderPublicCalendar();
+            }
         }
 
         function showAdminTab(tabName) {
@@ -1179,6 +1176,47 @@
             document.body.appendChild(modal);
         }
 
+        // --- 行事曆渲染邏輯 (新增) ---
+        function renderPublicCalendar() {
+            const container = document.getElementById('calendar-table-container');
+            const entries = getRequests(CALENDAR_KEY) || [];
+            container.innerHTML = ''; // Clear previous content
+
+            if (entries.length === 0) {
+                container.innerHTML = '<p class="text-stone-500 text-center py-8">目前尚無行事曆資料，請老師登入後台新增。</p>';
+                return;
+            }
+
+            // Sort entries by date (ascending)
+            entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            let tableHtml = `
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full min-w-[500px] bg-white rounded-lg shadow-sm">
+                        <thead>
+                            <tr class="bg-teal-100 text-teal-800">
+                                <th class="w-[15%]">日期</th>
+                                <th class="w-[65%]">活動名稱</th>
+                                <th class="w-[20%]">備註/地點</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            entries.forEach(entry => {
+                tableHtml += `
+                    <tr>
+                        <td>${entry.date}</td>
+                        <td>${entry.title}</td>
+                        <td>${entry.note || ''}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `</tbody></table></div>`;
+            container.innerHTML = tableHtml;
+        }
+
 
         // --- 請假表單提交邏輯 (寫入 localStorage) ---
         function handleLeaveSubmit(event) {
@@ -1296,7 +1334,6 @@
             showAdminTab('leave');
             renderPublicAnnouncements();
             // 在頁面載入時確保簽名板初始化
-            // 由於 DOMContentLoaded 已經處理了初始化，這裡只需要確保 resize 被呼叫
             if (leaveSignaturePad) leaveSignaturePad.resizeCanvas();
             if (medicationSignaturePad) medicationSignaturePad.resizeCanvas();
         };
