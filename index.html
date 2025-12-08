@@ -62,6 +62,13 @@
             border-color: #0f766e;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        /* 新增：簽名板樣式 */
+        .signature-box {
+            border: 2px solid #ccc;
+            border-radius: 0.5rem;
+            background-color: #fff;
+            touch-action: none; /* 允許觸控繪圖 */
+        }
         /* 新增：手機版教職員水平捲動容器 */
         #staff .scroll-container {
             overflow-x: auto;
@@ -623,6 +630,16 @@
                                     <label class="block text-stone-700 font-medium mb-1">請假原因</label>
                                     <textarea name="reason" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="3" placeholder="例如：發燒、家庭旅遊、事假" required></textarea>
                                 </div>
+                                
+                                <!-- 家長簽名欄位 (Canvas) -->
+                                <div class="space-y-2">
+                                    <label class="block text-stone-700 font-medium mb-1">家長簽名 (請在框內簽名)</label>
+                                    <canvas id="leaveSignatureCanvas" class="signature-box w-full h-32"></canvas>
+                                    <button type="button" onclick="clearSignature('leaveSignatureCanvas')" class="w-full py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">
+                                        清除簽名
+                                    </button>
+                                </div>
+
                                 <button type="submit" class="w-full py-3 bg-teal-700 text-white font-bold rounded-lg hover:bg-teal-800 transition duration-150 shadow-md">
                                     送出請假申請
                                 </button>
@@ -739,9 +756,13 @@
                                     <label for="prescription_confirm" class="ml-2 text-sm text-stone-700 font-medium">我確認已附有醫療院所開立之處方簽</label>
                                 </div>
 
-                                <div>
-                                    <label class="block text-stone-700 font-medium mb-1">家長簽名</label>
-                                    <input type="text" name="parentSignature" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入家長姓名代表簽名" required>
+                                <!-- 簽名欄位 (Canvas) -->
+                                <div class="space-y-2">
+                                    <label class="block text-stone-700 font-medium mb-1">家長簽名 (請在框內簽名)</label>
+                                    <canvas id="medicationSignatureCanvas" class="signature-box w-full h-32"></canvas>
+                                    <button type="button" onclick="clearSignature('medicationSignatureCanvas')" class="w-full py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">
+                                        清除簽名
+                                    </button>
                                 </div>
 
                                 <button type="submit" class="w-full py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150 shadow-md">
@@ -867,6 +888,111 @@
         const EMAILJS_TEMPLATE_ID_LEAVE = 'template_3q1tinr'; // 請假審核模板
         const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; 
 
+        // --- 簽名板類別 ---
+        class SignaturePad {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.drawing = false;
+                this.isSigned = false;
+
+                // 設置 Canvas 初始大小和樣式
+                this.resizeCanvas();
+                window.addEventListener('resize', this.resizeCanvas.bind(this));
+                
+                this.ctx.lineWidth = 2;
+                this.ctx.lineCap = 'round';
+                this.ctx.strokeStyle = '#000';
+
+                this.addListeners();
+            }
+
+            resizeCanvas() {
+                const rect = this.canvas.parentNode.getBoundingClientRect();
+                this.canvas.width = rect.width;
+                this.canvas.height = 128; // 固定的高度
+                this.clear(); // 清除重繪時的內容
+            }
+
+            clear() {
+                this.ctx.fillStyle = '#fff';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                this.isSigned = false;
+            }
+
+            addListeners() {
+                // Mouse Events
+                this.canvas.addEventListener('mousedown', this.startDrawing.bind(this));
+                this.canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
+                this.canvas.addEventListener('mousemove', this.draw.bind(this));
+
+                // Touch Events
+                this.canvas.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // 防止滾動
+                    this.startDrawing(e.touches[0]);
+                });
+                this.canvas.addEventListener('touchend', this.stopDrawing.bind(this));
+                this.canvas.addEventListener('touchmove', (e) => {
+                    e.preventDefault(); // 防止滾動
+                    this.draw(e.touches[0]);
+                });
+            }
+
+            startDrawing(e) {
+                this.drawing = true;
+                this.isSigned = true;
+                this.ctx.beginPath();
+                this.ctx.moveTo(e.offsetX || e.layerX, e.offsetY || e.layerY);
+            }
+
+            stopDrawing() {
+                this.drawing = false;
+            }
+
+            draw(e) {
+                if (!this.drawing) return;
+                
+                // 處理 touch 事件的座標
+                const x = e.offsetX || e.layerX;
+                const y = e.offsetY || e.layerY;
+
+                this.ctx.lineTo(x, y);
+                this.ctx.stroke();
+            }
+
+            toDataURL() {
+                return this.isSigned ? this.canvas.toDataURL('image/png') : null;
+            }
+
+            getIsSigned() {
+                return this.isSigned;
+            }
+        }
+        
+        // --- 初始化簽名板 ---
+        let leaveSignaturePad;
+        let medicationSignaturePad;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const leaveCanvas = document.getElementById('leaveSignatureCanvas');
+            if (leaveCanvas) {
+                leaveSignaturePad = new SignaturePad('leaveSignatureCanvas');
+                leaveSignaturePad.clear(); // 確保初始為空白
+            }
+            const medicationCanvas = document.getElementById('medicationSignatureCanvas');
+            if (medicationCanvas) {
+                medicationSignaturePad = new SignaturePad('medicationSignatureCanvas');
+                medicationSignaturePad.clear(); // 確保初始為空白
+            }
+        });
+
+        function clearSignature(canvasId) {
+            const pad = canvasId === 'leaveSignatureCanvas' ? leaveSignaturePad : medicationSignaturePad;
+            if (pad) {
+                pad.clear();
+            }
+        }
+        
         // --- 數據存取通用函數 ---
         function getRequests(key) {
             try {
@@ -917,25 +1043,15 @@
             event.preventDefault();
             const form = event.target;
             
-            // In a real system, this data would be sent to wleskidstw@gmail.com via a server.
-            const senderName = form.senderName.value;
-            const recipient = form.recipient.value;
-            const senderEmail = form.senderEmail.value;
-            const question = form.question.value;
-            
             // 模擬 Email 寄送內容，實際不會發送
             console.log("--- 模擬聯繫單送出 ---");
-            console.log(`收件人: ${recipient}`);
-            console.log(`寄件人: ${senderName} <${senderEmail}>`);
-            console.log(`內容: ${question}`);
-            console.log("----------------------");
             
             closeContactModal();
             form.reset();
 
             const message = document.createElement('div');
             message.className = 'fixed bottom-5 right-5 p-4 bg-amber-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = `訊息已送出！(模擬寄給 ${recipient}) 我們將盡快以 Email 回覆您。`;
+            message.textContent = `訊息已送出！我們將盡快以 Email 回覆您。`;
             document.body.appendChild(message);
 
             setTimeout(() => {
@@ -1037,17 +1153,24 @@
             const form = event.target;
             const requests = getRequests(LEAVE_KEY);
             
+            // 驗證簽名
+            if (!leaveSignaturePad || !leaveSignaturePad.getIsSigned()) {
+                alert('請務必在簽名框內簽名，以完成提交！');
+                return;
+            }
+
             // 收集表單數據
             const newRequest = {
                 id: Date.now(),
                 parentName: form.parentName.value,
                 relationship: form.relationship.value,
                 childName: form.childName.value,
-                parentEmail: form.parentEmail.value, // 新增 Email 欄位
+                parentEmail: form.parentEmail.value, 
                 className: form.className.value,
                 startDate: form.startDate.value,
                 endDate: form.endDate.value,
                 reason: form.reason.value,
+                signature: leaveSignaturePad.toDataURL(), // 儲存 Base64 簽名
                 status: '待審核', // 初始狀態
                 timestamp: new Date().toISOString()
             };
@@ -1055,6 +1178,7 @@
             requests.unshift(newRequest);
             saveRequests(LEAVE_KEY, requests); // 儲存到 localStorage
             form.reset(); 
+            leaveSignaturePad.clear(); // 清空簽名板
 
             const message = document.createElement('div');
             message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
@@ -1074,6 +1198,12 @@
             const form = event.target;
             const requests = getRequests(MEDICATION_KEY);
 
+            // 驗證簽名
+            if (!medicationSignaturePad || !medicationSignaturePad.getIsSigned()) {
+                alert('請務必在簽名框內簽名，以完成提交！');
+                return;
+            }
+            
             // 處理複雜的用藥內容欄位
             let medicationDetails = '';
             
@@ -1103,8 +1233,9 @@
                 medicationDetails: medicationDetails, // 使用重構後的內容
                 time: form.time.value,
                 parentEmail: form.parentEmail.value,
-                parentSignature: form.parentSignature.value,
+                parentSignature: medicationSignaturePad.toDataURL(), // 儲存 Base64 簽名
                 prescriptionConfirm: form.prescriptionConfirm.checked, // 處方簽確認
+                refrigerationNote: form.refrigerationNote.value, // 其他注意事項
                 teacherReply: null, // 初始回覆為 null
                 timestamp: new Date().toISOString()
             };
@@ -1112,6 +1243,7 @@
             requests.unshift(newRequest);
             saveRequests(MEDICATION_KEY, requests); // 儲存到 localStorage
             form.reset();
+            medicationSignaturePad.clear(); // 清空簽名板
 
             const message = document.createElement('div');
             message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
