@@ -378,7 +378,7 @@
                                 <p class="font-bold text-stone-800 mt-1">鄭雅萍</p>
                             </div>
                             <!-- 廚工 3 (職稱上移) -->
-                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
                                 <p class="text-sm text-stone-600">廚工</p>
                                 <p class="font-bold text-stone-800 mt-1">李愛琪</p>
                             </div>
@@ -730,7 +730,7 @@
                                 <div class="flex items-center">
                                     <input type="checkbox" id="prescription_confirm" name="prescriptionConfirm" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500" required>
                                     <label for="prescription_confirm" class="ml-2 text-sm text-stone-700 font-medium">我確認已附有醫療院所開立之處方簽</label>
-                                }
+                                </div>
 
                                 <!-- 簽名欄位 (Canvas) -->
                                 <div class="space-y-2">
@@ -830,7 +830,7 @@
                         </a>
                         <a href="https://www.youtube.com/channel/UCgfaMP3hjcr_x78GK44VsIQ" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">
                             <!-- YouTube Icon (Simplified SVG) -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-1.226-7.5-1.226-11.1 0-3.14 1.066-5.894 3.797-6.91 6.812-1.016 3.015-1.016 6.136 0 9.151 1.016 3.015 3.77 5.746 6.91 6.812 3.604 1.226 7.5 1.226 11.1 0 3.14-1.066 5.894-3.797 6.91-6.812 1.016-3.015 1.016-6.136 0-9.151-1.016-3.015-3.77-5.746-6.91-6.812zm-3.8 8.166l-5.7 3.639c-.58.375-1.1.054-1.1-.64v-7.278c0-.694.52-1.015 1.1-.64l5.7 3.639c.58.374.58 1.004 0 1.379z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-1.226-7.5-1.226-11.1 0-3.14 1.066-5.894 3.797-6.91 6.812-1.016 3.015-1.016 6.136 0 9.151 1.016 3.015 3.77 5.746 6.91 6.812 3.604 1.226 7.5 1.226 11.1 0-3.14-1.066-5.894-3.797-6.91-6.812 1.016-3.015 1.016-6.136 0-9.151-1.016-3.015-3.77-5.746-6.91-6.812zm-3.8 8.166l-5.7 3.639c-.58.375-1.1.054-1.1-.64v-7.278c0-.694.52-1.015 1.1-.64l5.7 3.639c.58.374.58 1.004 0 1.379z"/></svg>
                         </a>
                     </div>
                 </div>
@@ -896,7 +896,7 @@
                 this.canvas.width = rect.width * dpr;
                 this.canvas.height = 128 * dpr;
                 
-                // 設置 Canvas 的顯示尺寸
+                // 設置 Canvas 的顯示尺寸 (CSS 尺寸)
                 this.canvas.style.width = rect.width + 'px';
                 this.canvas.style.height = 128 + 'px';
                 
