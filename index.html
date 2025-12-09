@@ -8,104 +8,1106 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
-    <!-- 引入 Firebase 相關 SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <style>
         body {
             /* 內文使用清晰的 Inter */
-@@ -84,7 +87,7 @@
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* New style for main headings using the handwriting font */
+        .handwriting-font {
+            /* 標題使用手寫風格的 Klee One */
+            font-family: 'Klee One', cursive;
+        }
+        /* 自定義一個柔和的背景圖案 (淺米白/奶油色) */
+        .hero-bg {
+            background-color: #fcf9f2; /* Light Cream/Beige */
+            background-image: radial-gradient(#ffffff 1px, transparent 1px),
+                              radial-gradient(#ffffff 1px, #fcf9f2 1px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        /* 活躍 Tab 樣式 (茶綠色) */
+        .tab-active {
+            border-bottom: 3px solid #0f766e; /* Teal-700 */
+            color: #0f766e; /* Teal-700 */
+            font-weight: 700;
+        }
+        /* 表格樣式 */
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        /* 隱藏原生 Radio Button */
+        .class-radio input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        /* Radio Button 視覺效果 */
+        .class-radio label {
+            display: block;
+            padding: 8px 12px;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e5e7eb;
+            background-color: #f3f4f6;
+        }
+        .class-radio input[type="radio"]:checked + label {
+            background-color: #0f766e; /* Teal-700 */
+            color: white;
+            border-color: #0f766e;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        /* 新增：簽名板樣式 */
+        .signature-box {
+            border: 2px solid #ccc;
+            border-radius: 0.5rem;
+            background-color: #fff;
+            touch-action: none; /* 允許觸控繪圖 */
+            box-sizing: border-box; /* 確保邊框不影響佈局 */
+        }
+        /* 新增：手機版教職員水平捲動容器 */
+        #staff .scroll-container {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        /* 新增：確保手機版教職員卡片有最小寬度 */
+        #staff .staff-card {
+            display: inline-block;
+            width: 150px; /* 最小寬度 */
+            margin-right: 1rem;
+            white-space: normal;
         }
     </style>
 </head>
 <body class="text-stone-700">
-<body>
-
+    
     <!-- 導覽列 (Header) -->
     <header class="sticky top-0 z-50 bg-white shadow-xl">
-@@ -120,7 +123,7 @@
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Logo/臺北市北投區文林國民小學附設幼兒園 - 已刪除 SVG 圖示並調整字體大小 -->
+                <a href="#home" class="flex items-center space-x-2">
+                    <span class="text-2xl lg:text-3xl font-bold text-stone-800 handwriting-font whitespace-nowrap">臺北市北投區文林國民小學附設幼兒園</span>
+                </a>
+
+                <!-- 導覽連結 (桌面版) -->
+                <nav class="hidden lg:flex space-x-8 text-lg items-center">
+                    <a href="#home" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">首頁簡介</a>
+                    <a href="#news" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">最新公告</a>
+                    <a href="#about" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">關於我們</a>
+                    <a href="#gallery" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">活動花絮</a>
+                    <a href="#admin" class="text-stone-600 hover:text-teal-700 transition duration-150 font-medium">行政服務</a>
+                    
+                    <!-- 新增聯絡我們按鈕 -->
+                    <button onclick="showContactModal()" class="px-4 py-2 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition duration-150 font-medium shadow-md">聯絡我們</button>
+                </nav>
+
+                <!-- 手機版選單按鈕 (點擊彈出側邊選單) -->
+                <button class="lg:hidden text-stone-500 hover:text-teal-700" onclick="toggleSidebar()">
+                    <!-- Menu Icon -->
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
     <!-- 手機版側邊選單 (Sidebar Modal) -->
     <div id="mobile-sidebar" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden z-50">
         <div class="absolute right-0 top-0 w-64 h-full bg-white shadow-lg p-6 transform transition-transform duration-300 translate-x-full">
             <button class="absolute top-4 right-4 text-stone-400 hover:text-stone-700" onclick="toggleSidebar()">
-            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <h3 class="text-xl font-bold text-teal-700 mb-6 handwriting-font">網站導覽</h3>
-@@ -518,18 +521,18 @@
+            <nav class="flex flex-col space-y-3">
+                <a href="#home" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">首頁簡介</a>
+                <a href="#news" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">最新公告</a>
+                <a href="#about" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">關於我們</a>
+                <a href="#gallery" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">活動花絮</a>
+                <a href="#admin" onclick="toggleSidebar()" class="text-lg text-stone-700 hover:text-teal-700 transition duration-150">行政服務</a>
+                <button onclick="showContactModal(); toggleSidebar();" class="mt-4 py-2 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150">聯絡我們</button>
+            </nav>
+        </div>
+    </div>
+
+    <main>
+        
+        <!-- 1. 首頁焦點區 (Hero Section) & 幼兒園簡介 (環境介紹、教學理念) -->
+        <section id="home" class="hero-bg py-16 sm:py-24 lg:py-32">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="lg:w-3/4 mx-auto">
+                    <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-800 leading-tight mb-4 handwriting-font">
+                        <span class="text-amber-600">閱讀自然</span>
+                    </h2>
+                    <p class="text-xl sm:text-2xl text-stone-600 mb-8">
+                        和孩子一起創造安全、多元、快樂的學習環境。
+                    </p>
+                    <div class="mt-12 w-full max-w-5xl mx-auto rounded-xl overflow-hidden shadow-2xl">
+                        <!-- 圖片已替換為靜態圖片 '入口.jpg' -->
+                        <img src="入口.jpg" 
+                             alt="文林附幼入口照片" 
+                             class="w-full h-auto object-cover">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+                <!-- 簡介卡片區 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    
+                    <!-- 環境介紹 (茶綠色邊框) -->
+                    <div class="bg-white p-8 rounded-3xl shadow-xl border-t-4 border-teal-500">
+                        <h3 class="text-3xl font-extrabold text-teal-700 mb-4 handwriting-font">🏡 環境介紹</h3>
+                        <p class="text-stone-600 mb-4">
+                            幼兒園位於文林國小校區內，享有寬廣的戶外空間和資源。我們擁有獨立的遊戲場、沙坑、生態園區和陽光充足的活動室。所有的設施均通過安全檢驗，為幼兒提供一個無憂無慮的探索天地。
+                        </p>
+                        <ul class="text-sm text-stone-500 space-y-2 list-disc list-inside">
+                            <li>多功能體能活動室</li>
+                            <li>豐富的主題學習區</li>
+                            <li>專屬的午睡與用餐區域</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 教學理念 (琥珀色邊框) -->
+                    <div class="bg-white p-8 rounded-3xl shadow-xl border-t-4 border-amber-500">
+                        <h3 class="text-3xl font-extrabold text-amber-700 mb-4 handwriting-font">💡 教學理念</h3>
+                        <p class="text-stone-600 mb-4">
+                            我們採學習區模式，以幼兒的生活經驗為核心，引導孩子從「做中學」。我們注重培養幼兒各個不同面向的能力，鼓勵孩子成為主動的學習者。
+                        </p>
+                        <ul class="text-sm text-stone-500 space-y-2 list-disc list-inside">
+                            <li>以幼兒為中心的教學法</li>
+                            <li>鼓勵動手操作與合作學習</li>
+                            <li>重視生活自理能力與情商發展</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 最新公告欄位 (News Section) -->
+        <section id="news" class="py-16 sm:py-24 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <span class="text-sm font-semibold text-teal-700 uppercase tracking-wider">最新資訊</span>
+                <h3 class="mt-2 text-3xl font-extrabold text-stone-800 sm:text-4xl mb-10 handwriting-font">
+                    📢 文林附幼公告欄
+                </h3>
+
+                <div id="public-announcement-list" class="space-y-4">
+                    <!-- 公告將由 JS 渲染 -->
+                    <p class="text-stone-500 text-center py-4">載入公告中...</p>
+                </div>
+                
+                <button class="mt-8 px-6 py-2 text-teal-700 font-semibold border border-teal-300 rounded-full hover:bg-teal-50 transition duration-150">
+                    查看所有公告
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. 關於我們 (About Us) - 使用 Tab 切換：行事曆、作息表、教職員介紹及班級網頁 -->
+        <section id="about" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- 標題已修改 -->
+                <h3 class="text-3xl font-extrabold text-stone-800 sm:text-4xl mb-10 text-center handwriting-font">
+                    📖 關於我們與聯繫方式
+                </h3>
+
+                <!-- Tab 導覽列 (已新增聯絡資訊 Tab) -->
+                <div id="about-tabs" class="flex flex-wrap justify-center border-b border-gray-200 mb-8 space-x-4 sm:space-x-8">
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700 tab-active" onclick="showAboutTab('calendar')">行事曆</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('schedule')">作息表</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('staff')">教職員介紹</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('classes')">班級網頁</button>
+                    <!-- 新增聯絡資訊 Tab -->
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAboutTab('contact-info')">聯絡資訊</button>
+                </div>
+
+                <!-- Tab 內容區 -->
+                <div id="about-content">
+                    
+                    <!-- 行事曆內容 (Default Tab) - 已連動教師後台數據 -->
+                    <div id="calendar" class="tab-content bg-yellow-50 p-6 rounded-xl shadow-inner">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-4 handwriting-font">學年重要行事曆</h4>
+                        <div id="calendar-table-container">
+                            <!-- 行事曆數據將由 JS 渲染 -->
+                            <p class="text-stone-500 text-center py-8">載入行事曆數據中...</p>
+                        </div>
+                    </div>
+
+                    <!-- 作息表內容 (已更新) -->
+                    <div id="schedule" class="tab-content hidden bg-yellow-50 p-6 rounded-xl shadow-inner">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-4 handwriting-font">幼兒園一日作息表</h4>
+                        <div class="overflow-x-auto">
+                            <table class="data-table w-full min-w-[700px] bg-white rounded-lg shadow-sm">
+                                <thead>
+                                    <tr class="bg-teal-100 text-teal-800 font-bold">
+                                        <th class="w-[10%]">時間</th>
+                                        <th class="w-[18%]">星期一</th>
+                                        <th class="w-[18%]">星期二</th>
+                                        <th class="w-[18%]">星期三</th>
+                                        <th class="w-[18%]">星期四</th>
+                                        <th class="w-[18%]">星期五</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 0730-0800 導護老師接送 (已統一並置中) -->
+                                    <tr>
+                                        <td class="font-semibold align-top text-center">07:30-08:00</td>
+                                        <td colspan="5" class="text-sm text-stone-700 align-top text-center">
+                                            導護老師於防洪教室看顧幼兒
+                                        </td>
+                                    </tr>
+                                    <!-- 0800-0830 物品歸位/聯絡袋 (已更新並置中) -->
+                                    <tr>
+                                        <td class="font-semibold align-top text-center">08:00-08:30</td>
+                                        <td colspan="5" class="text-sm align-top text-center">物品歸位及常規練習 (二至四) / 交聯絡袋資料 (一) / 收聯絡袋資料 (五)</td>
+                                    </tr>
+                                    <!-- 0830-1130 課程時段 (字體已縮小並置中) -->
+                                    <tr>
+                                        <td class="font-semibold align-top text-center">08:30-11:30</td>
+                                        <td colspan="5" class="text-sm align-top p-0 border-none">
+                                            <table class="w-full data-table border-none">
+                                                <!-- 中大班 -->
+                                                <tr>
+                                                    <td class="w-[20%] font-bold text-teal-700 border-none text-center">●中大班群</td>
+                                                    <td colspan="4" class="text-sm border-none text-center">
+                                                        8:30-9:40 大肌肉體能活動、戶外自然探索 >> 9:40-10:00 享用點心 >> 10:00-11:30 學習區探索、紀錄與分享
+                                                    </td>
+                                                </tr>
+                                                <!-- 中小班 -->
+                                                <tr class="bg-teal-50">
+                                                    <td class="w-[20%] font-bold text-amber-700 border-none text-center">●中小班群</td>
+                                                    <td colspan="4" class="text-sm border-none text-center">
+                                                        8:40-9:20 享用點心 >> 9:20-10:20 大肌肉體能活動、戶外自然探索 >> 10:20-11:30 學習區探索、紀錄與分享
+                                                    </td>
+                                                </tr>
+                                                <!-- 幼幼班 -->
+                                                <tr>
+                                                    <td class="w-[20%] font-bold text-red-600 border-none text-center">●幼幼班群</td>
+                                                    <td colspan="4" class="text-sm border-none text-center">
+                                                        8:40-9:00 大肌肉體能活動 / 戶外自然探索 >> 9:20-10:00 享用點心 >> 10:00-10:40 學習區探索、紀錄與分享 >> 10:40-11:30 大肌肉體能活動/戶外自然探索
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <!-- 1130-1220 午餐相關 (已修正時段並置中) -->
+                                    <tr>
+                                        <td class="font-semibold align-top text-center">11:30-12:20</td>
+                                        <td colspan="5" class="text-base align-top text-center font-bold">
+                                            享用午餐 & 半日班放學
+                                        </td>
+                                    </tr>
+                                    <!-- 1220-1250 環境清潔 & 睡前緩和活動 (已合併並置中) -->
+                                    <tr>
+                                        <td class="font-semibold align-top text-center">12:20-12:50</td>
+                                        <td colspan="5" class="text-base align-top text-center">
+                                            環境清潔 & 睡前緩和活動
+                                        </td>
+                                    </tr>
+                                    <!-- 1250-1430 午休 (已更新並置中) -->
+                                    <tr>
+                                        <td class="font-semibold align-top text-center">12:50-14:30</td>
+                                        <td colspan="5" class="text-base align-top text-center font-bold">
+                                            午休
+                                        </td>
+                                    </tr>
+                                    <!-- 1430-1500 寢具收拾 & 下午點心 (已更新並置中) -->
+                                     <tr>
+                                        <td class="font-semibold align-top text-center">14:30-15:00</td>
+                                        <td colspan="5" class="text-base align-top text-center">
+                                             寢具收拾 & 享用下午點心
+                                        </td>
+                                    </tr>
+                                     <!-- 1500-1550 下午課程 (已更新並置中) -->
+                                     <tr>
+                                        <td class="font-semibold align-top text-center">15:00-15:50</td>
+                                        <td colspan="5" class="text-base align-top text-center">
+                                            宣導教育、體能活動、自然探索、故事閱讀、藝文賞析......
+                                        </td>
+                                    </tr>
+                                    <!-- 1550-1600 分流放學 (已更新並置中) -->
+                                    <tr>
+                                        <td class="font-semibold align-top text-center">15:50-16:00</td>
+                                        <td colspan="5" class="text-base align-top text-center font-bold">
+                                            全日班分流放學
+                                        </td>
+                                    </tr>
+                                    <!-- 1600-1830 課後留園 (已更新並置中) -->
+                                    <tr>
+                                        <td class="font-semibold align-top text-center">16:00-18:30</td>
+                                        <td colspan="5" class="text-base align-top text-center">
+                                            課後留園依報名時段參加
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                        <!-- 備註區 (已移除) -->
+                    </div>
+
+                    <!-- 教職員介紹內容 (已更新：移除照片，簡化行政人員稱謂) -->
+                    <div id="staff" class="tab-content hidden p-6">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">教職員團隊</h4>
+
+                        <h5 class="text-xl font-bold text-stone-800 mt-6 mb-4 border-b border-teal-300 pb-2">行政人員 (Administrative Staff)</h5>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <!-- 幼兒園主任 (職稱上移) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
+                                <p class="text-sm text-amber-700">幼兒園主任</p>
+                                <p class="font-bold text-stone-800 mt-1">許昱蓁</p>
+                            </div>
+                            <!-- 行政教保員 (職稱上移) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
+                                <p class="text-sm text-amber-700">行政教保員</p>
+                                <p class="font-bold text-stone-800 mt-1">林璟璿</p>
+                            </div>
+                            <!-- 廚工 1 (職稱上移) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
+                                <p class="text-sm text-stone-600">廚工</p>
+                                <p class="font-bold text-stone-800 mt-1">莊淑慧</p>
+                            </div>
+                            <!-- 廚工 2 (職稱上移) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
+                                <p class="text-sm text-stone-600">廚工</p>
+                                <p class="font-bold text-stone-800 mt-1">鄭雅萍</p>
+                            </div>
+                            <!-- 廚工 3 (職稱上移) -->
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-stone-400">
+                                <p class="text-sm text-stone-600">廚工</p>
+                                <p class="font-bold text-stone-800 mt-1">李愛琪</p>
+                            </div>
+                        </div>
+
+                        <h5 class="text-xl font-bold text-stone-800 mt-8 mb-4 border-b border-teal-300 pb-2">班級教師 (Class Teachers)</h5>
+                        <!-- 新增水平捲動容器 -->
+                        <div class="scroll-container md:grid md:grid-cols-4 md:gap-6">
+                            
+                            <!-- 太陽班 (姓名下移) -->
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <p class="text-xs text-stone-500 mb-1">☀️ 太陽班</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">周惠莉 老師</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">鍾美玲 老師</p>
+                            </div>
+                            <!-- 藍天班 (姓名下移) -->
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <p class="text-xs text-stone-500 mb-1">☁️ 藍天班</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">林佳蒨 老師</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">張爾軒 老師</p>
+                            </div>
+                            <!-- 白雲班 (姓名下移) -->
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <p class="text-xs text-stone-500 mb-1">🤍 白雲班</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">務琦 老師</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">林耘慈 老師</p>
+                            </div>
+                            <!-- 月亮班 (姓名下移) -->
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <p class="text-xs text-stone-500 mb-1">🌙 月亮班</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">郭家禎 老師</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">陳應節 老師</p>
+                            </div>
+                            <!-- 星星班 (姓名下移) -->
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <p class="text-xs text-stone-500 mb-1">⭐ 星星班</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">張曉萍 老師</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">張家瑜 老師</p>
+                            </div>
+                            <!-- 荳荳班 (姓名下移) -->
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
+                                <p class="text-xs text-stone-500 mb-1">🌱 荳荳班</p>
+                                <p class="text-lg font-bold text-amber-700 leading-tight">李雅芬 教保員</p>
+                                <p class="text-lg font-bold text-amber-700 leading-tight">李品萱 教保員</p>
+                            </div>
+                            <!-- 朵朵班 (姓名下移) -->
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-amber-400">
+                                <p class="text-xs text-stone-500 mb-1">🌸 朵朵班</p>
+                                <p class="text-lg font-bold text-amber-700 leading-tight">鄭莉穎 教保員</p>
+                                <p class="text-lg font-bold text-amber-700 leading-tight">洪銓莉 教保員</p>
+                            </div>
+                            <!-- 彩虹班 (姓名下移) -->
+                            <div class="staff-card bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-teal-400">
+                                <p class="text-xs text-stone-500 mb-1">🌈 彩虹班</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">史佳玲 老師</p>
+                                <p class="text-lg font-bold text-teal-700 leading-tight">朱育萱 老師</p>
+                            </div>
+                            
+                            <div class="col-span-4 text-center text-sm text-stone-500 pt-4">
+                                (註：教師照片欄位已移除)
+                            </div>
+                        </div>
+
+                        <h5 class="text-xl font-bold text-stone-800 mt-8 mb-4 border-b border-teal-300 pb-2">其他人力資源 (Other Staff)</h5>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <!-- 實習生 (移除照片欄位) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-green-400">
+                                <p class="font-bold text-stone-800 mt-2">實習生</p>
+                                <p class="text-sm text-green-700">依當學期配置</p>
+                            </div>
+                            <!-- 特教助理員 (移除照片欄位) -->
+                            <div class="bg-white p-4 text-center rounded-xl shadow-md border-t-2 border-green-400">
+                                <p class="font-bold text-stone-800 mt-2">特教助理員</p>
+                                <p class="text-sm text-green-700">依需求配置</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 班級網頁內容 (班級名稱已確認) -->
+                    <div id="classes" class="tab-content hidden bg-yellow-50 p-6 rounded-xl shadow-inner">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">各班網頁連結</h4>
+                        <div class="space-y-4">
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-teal-600">☀️ 太陽班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-700">☁️ 藍天班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-amber-700">🤍 白雲班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-teal-600">🌙 月亮班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-700">⭐ 星星班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-amber-700">🌱 荳荳班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-teal-600">🌸 朵朵班 - 點此進入班級網頁</a>
+                            <a href="#" class="block p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition duration-150 font-semibold text-green-700">🌈 彩虹班 - 點此進入班級網頁</a>
+                        </div>
+                    </div>
+                    
+                    <!-- 新增聯絡資訊 Tab -->
+                    <div id="contact-info" class="tab-content hidden bg-yellow-50 p-6 rounded-xl shadow-inner">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">📞 聯絡資訊</h4>
+                        <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                            <p class="text-xl font-bold text-stone-800 mb-4">臺北市北投區文林國民小學附設幼兒園</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="font-bold text-teal-700">學校總機</p>
+                                    <p class="text-lg">(02) 2823-4212</p>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-teal-700">辦公室分機</p>
+                                    <p class="text-lg">辦公室: 800, 801</p>
+                                </div>
+                            </div>
+
+                            <h5 class="text-lg font-bold text-amber-700 pt-3 border-t border-gray-100">各班級分機</h5>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-base">
+                                <p>☀️ 太陽班: 809</p>
+                                <p>☁️ 藍天班: 810</p>
+                                <p>🤍 白雲班: 805</p>
+                                <p>🌙 月亮班: 808</p>
+                                <p>⭐ 星星班: 807</p>
+                                <p>🌱 荳荳班: 803</p>
+                                <p>🌸 朵朵班: 804</p>
+                                <p>🌈 彩虹班: 806</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 4. 全園活動花絮 (Gallery) - 連結到 Google 相簿，並保留預覽圖 -->
+        <section id="gallery" class="py-16 sm:py-24 hero-bg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <span class="text-sm font-semibold text-amber-600 uppercase tracking-wider">成長瞬間</span>
+                <!-- 已刪除 2024-2025 學年的名稱 -->
+                <h3 class="mt-2 text-3xl font-extrabold text-stone-800 sm:text-4xl mb-8 handwriting-font">
+                    📸 全園活動花絮
                 </h3>
 
                 <!-- 相簿預覽 (4張圖片) - 從 localStorage 讀取圖片 URL -->
                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10" id="gallery-preview-container">
-                 <div id="gallery-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10">
                     <!-- 圖片將由 JS 渲染 -->
                 </div>
-
+                
                 <p class="text-lg text-stone-600 mb-8 max-w-2xl mx-auto">
                     點擊下方按鈕，連結至 Google 相簿或學校相簿系統，查看更多的全園活動照片和孩子們的精彩瞬間。
                 </p>
-
+                
                 <!-- 獨立頁面連結按鈕 (已修正為指向 Google 相簿網址) -->
                 <a href="https://photos.google.com/u/1/albums" target="_blank" 
-                <!-- 獨立頁面連結按鈕 (已修正為指向 teacher_admin_panel.html) -->
-                <a href="teacher_admin_panel.html" target="_blank" 
                    class="mt-6 inline-block px-10 py-4 text-xl font-bold text-white bg-teal-600 rounded-full shadow-lg hover:bg-teal-700 transition duration-300 transform hover:scale-105">
                     點此進入全園相簿連結 →
-                    🧑‍🏫 教師後台登入 →
                 </a>
             </div>
         </section>
-@@ -916,26 +919,40 @@
+
+        <!-- 5. 行政服務 (Admin Forms) - 使用 Tab 切換：線上請假、託藥辦法及託藥申請 -->
+        <section id="admin" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                 <h3 class="text-3xl font-extrabold text-stone-800 sm:text-4xl mb-10 text-center handwriting-font">
+                    📋 家長行政服務區
+                </h3>
+
+                <!-- Tab 導覽列 -->
+                <div id="admin-tabs" class="flex flex-wrap justify-center border-b border-gray-200 mb-8 space-x-4 sm:space-x-8">
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700 tab-active" onclick="showAdminTab('leave')">線上請假表單</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAdminTab('policy')">託藥辦法</button>
+                    <button class="py-3 px-3 text-stone-600 hover:text-teal-700" onclick="showAdminTab('medication')">託藥申請表</button>
+                </div>
+                
+                <!-- Tab 內容區 -->
+                <div id="admin-content" class="bg-yellow-50 p-8 rounded-xl shadow-2xl">
+                    
+                    <!-- 線上請假表單 (Default Tab) - 已新增 Email 欄位 -->
+                    <div id="leave" class="tab-content-admin">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">幼兒線上請假通知單</h4>
+                        <form id="leave-form" onsubmit="handleLeaveSubmit(event)">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">家長姓名</label>
+                                    <input type="text" name="parentName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入家長全名" required>
+                                </div>
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">家長與幼兒關係</label>
+                                    <input type="text" name="relationship" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：爸爸/媽媽/祖母" required>
+                                </div>
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">幼兒姓名</label>
+                                    <input type="text" name="childName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入幼兒全名" required>
+                                </div>
+                                <!-- 新增 Email 欄位 -->
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">接收審核通知 Email</label>
+                                    <input type="email" name="parentEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="用於接收審核結果" required>
+                                </div>
+
+
+                                <!-- 班級勾選 (單選) 欄位 -->
+                                <fieldset>
+                                    <legend class="block text-stone-700 font-medium mb-1">幼兒班級 (請單選)</legend>
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 class-radio">
+                                        <input type="radio" id="l-class-sun" name="className" value="太陽班" required><label for="l-class-sun">☀️ 太陽班</label>
+                                        <input type="radio" id="l-class-sky" name="className" value="藍天班"><label for="l-class-sky">☁️ 藍天班</label>
+                                        <input type="radio" id="l-class-cloud" name="className" value="白雲班"><label for="l-class-cloud">🤍 白雲班</label>
+                                        <input type="radio" id="l-class-moon" name="className" value="月亮班"><label for="l-class-moon">🌙 月亮班</label>
+                                        <input type="radio" id="l-class-star" name="className" value="星星班"><label for="l-class-star">⭐ 星星班</label>
+                                        <input type="radio" id="l-class-bean" name="className" value="荳荳班"><label for="l-class-bean">🌱 荳荳班</label>
+                                        <input type="radio" id="l-class-flower" name="className" value="朵朵班"><label for="l-class-flower">🌸 朵朵班</label>
+                                        <input type="radio" id="l-class-rainbow" name="className" value="彩虹班"><label for="l-class-rainbow">🌈 彩虹班</label>
+                                    </div>
+                                </fieldset>
+
+                                <!-- 區間式請假日期 -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">請假開始日</label>
+                                        <input type="date" name="startDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">請假結束日</label>
+                                        <input type="date" name="endDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">請假原因</label>
+                                    <textarea name="reason" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="3" placeholder="例如：發燒、家庭旅遊、事假" required></textarea>
+                                </div>
+                                
+                                <!-- 家長簽名欄位 (Canvas) -->
+                                <div class="space-y-2">
+                                    <label class="block text-stone-700 font-medium mb-1">家長簽名 (請在框內簽名)</label>
+                                    <canvas id="leaveSignatureCanvas" class="signature-box w-full h-32"></canvas>
+                                    <button type="button" onclick="clearSignature('leaveSignatureCanvas')" class="w-full py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">
+                                        清除簽名
+                                    </button>
+                                </div>
+
+                                <button type="submit" class="w-full py-3 bg-teal-700 text-white font-bold rounded-lg hover:bg-teal-800 transition duration-150 shadow-md">
+                                    送出請假申請
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- 託藥辦法內容 -->
+                    <div id="policy" class="tab-content-admin hidden">
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">💊 幼兒園委託幼兒服藥辦法</h4>
+                        <div class="bg-white p-6 rounded-lg shadow-inner space-y-4 text-stone-700">
+                            <p class="font-bold">一、基本原則：</p>
+                            <p class="pl-4">幼兒服藥以在家自行服藥為原則，如因特殊疾病或療程需要，家長需填寫本園之「託藥申請表」。</p>
+                            <p class="font-bold">二、託藥要求：</p>
+                            <ul class="list-disc list-inside pl-4 space-y-2">
+                                <li>藥品必須由**醫師開立**，並附有完整的藥袋、藥名、劑量、服藥時間及幼兒姓名。</li>
+                                <li>園方僅協助餵食**當次劑量**，不接受自行分裝或非處方藥物（如：維他命、中藥材）。</li>
+                                <li>藥物必須是**當日且當次**的劑量，不可存放隔夜藥。</li>
+                            </ul>
+                            <p class="font-bold">三、服藥流程：</p>
+                            <p class="pl-4">幼兒入園時，由家長親自將藥品交給導師或保健人員，並簽署託藥單。服藥後，園方將記錄服藥情況。</p>
+                        </div>
+                    </div>
+
+                    <!-- 託藥申請表內容 - 已重構用藥欄位 -->
+                    <div id="medication" class="tab-content-admin hidden">
+                        <!-- 修正標題 -->
+                        <h4 class="text-2xl font-bold text-teal-700 mb-6 handwriting-font">委託用藥申請單</h4>
+                        <form id="medication-form" onsubmit="handleMedicationSubmit(event)">
+                             <div class="space-y-4">
+                                <!-- 幼兒班級/姓名 -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">幼兒班級 (請單選)</label>
+                                        <select name="className" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                            <option value="">請選擇</option>
+                                            <option value="太陽班">☀️ 太陽班</option>
+                                            <option value="藍天班">☁️ 藍天班</option>
+                                            <option value="白雲班">🤍 白雲班</option>
+                                            <option value="月亮班">🌙 月亮班</option>
+                                            <option value="星星班">⭐ 星星班</option>
+                                            <option value="荳荳班">🌱 荳荳班</option>
+                                            <option value="朵朵班">🌸 朵朵班</option>
+                                            <option value="彩虹班">🌈 彩虹班</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">幼兒姓名</label>
+                                        <input type="text" name="childName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入幼兒全名" required>
+                                    </div>
+                                </div>
+
+                                <!-- 用藥日期區間 -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">用藥開始日期</label>
+                                        <input type="date" name="startDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-stone-700 font-medium mb-1">用藥結束日期</label>
+                                        <input type="date" name="endDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">病名或病徵</label>
+                                    <input type="text" name="symptoms" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：感冒咳嗽、輕微發燒" required>
+                                </div>
+                                
+                                <!-- 藥品名稱改為用藥內容 (重構) -->
+                                <fieldset>
+                                    <legend class="block text-stone-700 font-medium mb-2">用藥內容及分量</legend>
+                                    <div class="space-y-3 p-3 bg-white rounded-lg border border-gray-300">
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="med_powder" name="medType" value="藥粉/藥丸" class="h-4 w-4 text-teal-600 border-gray-300 rounded">
+                                            <label for="med_powder" class="text-sm">1. 藥粉或藥丸，</label>
+                                            <input type="text" name="powderQty" class="w-16 p-1 border rounded-lg text-sm" placeholder="數量">
+                                            <span class="text-sm">包</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="med_liquid" name="medType" value="藥水" class="h-4 w-4 text-teal-600 border-gray-300 rounded">
+                                            <label for="med_liquid" class="text-sm">2. 藥水，</label>
+                                            <input type="text" name="liquidQty" class="w-16 p-1 border rounded-lg text-sm" placeholder="數量">
+                                            <span class="text-sm">c.c.</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="med_other" name="medType" value="藥膏/其他" class="h-4 w-4 text-teal-600 border-gray-300 rounded">
+                                            <label for="med_other" class="text-sm">3. 其他，</label>
+                                            <input type="text" name="otherQty" class="w-20 p-1 border rounded-lg text-sm" placeholder="份量/內容">
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">服藥時間</label>
+                                    <input type="text" name="time" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="例如：午餐後 12:30" required>
+                                </div>
+                                
+                                <!-- 備註欄位 (冰冷藏等) -->
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">其他注意事項</label>
+                                    <textarea name="refrigerationNote" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="2" placeholder="請註明是否需冷藏、特殊注意事項等"></textarea>
+                                </div>
+                                
+                                <!-- 家長 Email -->
+                                <div>
+                                    <label class="block text-stone-700 font-medium mb-1">家長收訊息 Email</label>
+                                    <input type="email" name="parentEmail" id="parent-email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="用於接收老師餵藥回覆" required>
+                                </div>
+                                
+                                <!-- 處方簽確認勾選欄位 -->
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="prescription_confirm" name="prescriptionConfirm" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500" required>
+                                    <label for="prescription_confirm" class="ml-2 text-sm text-stone-700 font-medium">我確認已附有醫療院所開立之處方簽</label>
+                                </div>
+
+                                <!-- 簽名欄位 (Canvas) -->
+                                <div class="space-y-2">
+                                    <label class="block text-stone-700 font-medium mb-1">家長簽名 (請在框內簽名)</label>
+                                    <canvas id="medicationSignatureCanvas" class="signature-box w-full h-32"></canvas>
+                                    <button type="button" onclick="clearSignature('medicationSignatureCanvas')" class="w-full py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">
+                                        清除簽名
+                                    </button>
+                                </div>
+
+                                <button type="submit" class="w-full py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150 shadow-md">
+                                    送出託藥申請
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- 教師餵藥後的回覆功能 (提示區) -->
+                        <div class="mt-8 p-4 bg-teal-100 rounded-xl border-2 border-teal-300">
+                            <p class="text-stone-700 font-semibold">教師回覆介面提示：</p>
+                            <p class="text-sm text-stone-600 mt-1">
+                                在真實系統中，老師將透過**獨立的後台網頁**（如 `teacher_admin_panel.html`）登入，並在專門的管理介面中查看此託藥單並進行回覆。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+    </main>
+    
+    <!-- 聯絡我們 Modal (對話框) -->
+    <div id="contact-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg transition-all duration-300 transform scale-100">
+            <h2 class="text-2xl font-bold text-amber-700 mb-4 handwriting-font">✉️ 聯絡我們</h2>
+            <p class="text-sm text-stone-600 mb-6">請填寫您的問題，我們將盡快透過 Email 回覆您。</p>
+            <form id="general-contact-form" onsubmit="handleGeneralContactSubmit(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">對象/收件人</label>
+                        <select name="recipient" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                            <option value="幼兒園主任" selected>幼兒園主任 (一般行政)</option>
+                            <option value="行政教保員">行政教保員 (文書/招生)</option>
+                            <option value="總務">總務 (費用/雜項)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">您的姓名</label>
+                        <input type="text" name="senderName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入您的姓名" required>
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">您的電子郵件 (Email)</label>
+                        <input type="email" name="senderEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="用於接收回覆" required>
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">問題描述</label>
+                        <textarea name="question" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="4" placeholder="請詳細描述您的問題或建議" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150 shadow-md">
+                        送出問題
+                    </button>
+                </div>
+            </form>
+            <!-- Modal Close Button -->
+            <button onclick="closeContactModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- 6. 頁腳 (Footer) & 聯絡資訊 -->
+    <footer id="contact" class="bg-stone-700 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 border-b border-stone-600 pb-8 mb-8">
+                
+                <!-- 關於學校 -->
+                <div>
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">文林附幼</h5>
+                    <p class="text-stone-300 text-sm">
+                        我們承諾提供最優質的學前教育，為每個孩子在未來的小學生活打下堅實的基礎。
+                    </p>
+                </div>
+
+                <!-- 聯絡資訊 -->
+                <div>
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">聯絡我們</h5>
+                    <p class="text-stone-300">📞 (02) 2823-4212 </p>
+                    <p class="text-stone-300">📧 wleskidstw@gmail.com</p>
+                    <p class="text-stone-300 mt-2">📍 臺北市北投區文林北路 155 號</p>
+                    
+                    <!-- 新增社群連結 -->
+                    <div class="flex space-x-4 mt-4">
+                        <a href="https://www.facebook.com/profile.php?id=100076303928280" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">
+                            <!-- Facebook Icon (Simplified SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.588-1.333h2.412v-3.798c-0.457-0.054-1.83-0.215-3.565-0.215-4.516 0-7.435 2.768-7.435 7.422v2.578z"/></svg>
+                        </a>
+                        <a href="https://www.youtube.com/channel/UCgfaMP3hjcr_x78GK44VsIQ" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">
+                            <!-- YouTube Icon (Simplified SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-1.226-7.5-1.226-11.1 0-3.14 1.066-5.894 3.797-6.91 6.812-1.016 3.015-1.016 6.136 0 9.151 1.016 3.015 3.77 5.746 6.91 6.812 3.604 1.226 7.5 1.226 11.1 0 3.14-1.066 5.894-3.797 6.91-6.812 1.016-3.015 1.016-6.136 0-9.151-1.016-3.015-3.77-5.746-6.91-6.812zm-3.8 8.166l-5.7 3.639c-.58.375-1.1.054-1.1-.64v-7.278c0-.694.52-1.015 1.1-.64l5.7 3.639c.58.374.58 1.004 0 1.379z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 快速連結 (已修改為好站連結) -->
+                <div>
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">好站連結</h5>
+                    <ul class="space-y-2">
+                        <li><a href="https://fatraceschool.k12ea.gov.tw/frontend/" target="_blank" class="text-stone-300 hover:text-white transition duration-150">校園食材登錄平台</a></li>
+                        <li><a href="https://www.doe.gov.taipei/" target="_blank" class="text-stone-300 hover:text-white transition duration-150">臺北市政府教育局</a></li>
+                        <li><a href="teacher_admin_panel.html" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">🧑‍🏫 教師後台登入</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 版權聲明 -->
+            <div class="text-center text-sm text-stone-400 pt-4">
+                &copy; 2024 臺北市北投區文林國民小學附設幼兒園. 設計：程式夥伴
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- 常數定義 ---
+        const LEAVE_KEY = 'wenlin_leave_requests';
+        const MEDICATION_KEY = 'wenlin_medication_requests';
+        const ANNOUNCEMENT_KEY = 'wenlin_announcements';
+        const GALLERY_KEY = 'wenlin_gallery_images'; // 新增：用於儲存活動花絮圖片 URL 
+        const CALENDAR_KEY = 'wenlin_calendar_entries'; // 行事曆模板
+        
+        // ** EmailJS 金鑰設定 (已複製到主網頁) **
+        const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
+        const EMAILJS_TEMPLATE_ID_MEDICATION = 'template_yh5wstg'; // 託藥回覆模板
+        const EMAILJS_TEMPLATE_ID_LEAVE = 'template_3q1tinr'; // 請假審核模板
+        const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; 
+
+        // --- 簽名板類別 ---
+        class SignaturePad {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.drawing = false;
+                this.isSigned = false;
+
+                // 設置 Canvas 初始大小和樣式
+                this.resizeCanvas();
+                // 修正：當視窗大小改變時，重新設置 Canvas 大小
+                window.addEventListener('resize', this.resizeCanvas.bind(this));
+                
+                this.ctx.lineWidth = 2;
+                this.ctx.lineCap = 'round';
+                this.ctx.strokeStyle = '#000';
+                this.ctx.fillStyle = '#fff';
+
+                this.addListeners();
+            }
+
+            resizeCanvas() {
+                const rect = this.canvas.parentNode.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                
+                // 設置 Canvas 的實際繪圖解析度
+                this.canvas.width = rect.width * dpr;
+                this.canvas.height = 128 * dpr;
+                
+                // 設置 Canvas 的顯示尺寸
+                this.canvas.style.width = rect.width + 'px';
+                this.canvas.style.height = 128 + 'px';
+                
+                // 縮放繪圖上下文，使繪製清晰
+                this.ctx.scale(dpr, dpr);
+                this.clear(); // 清除重繪時的內容
+            }
+
+            clear() {
+                this.ctx.fillStyle = '#fff';
+                // 修正: 填充整個 Canvas 顯示區域
+                this.ctx.fillRect(0, 0, this.canvas.width / (window.devicePixelRatio || 1), this.canvas.height / (window.devicePixelRatio || 1));
+                this.isSigned = false;
+            }
+
+            addListeners() {
                 // Helper to get normalized coordinates
                 const getCoords = (e) => {
                     const rect = this.canvas.getBoundingClientRect();
-                    // 修正: 使用 clientX/Y 並減去 Canvas 相對視口的偏移量
-                    const clientX = e.clientX || e.touches?.[0].clientX;
-                    const clientY = e.clientY || e.touches?.[0].clientY;
-
-                    if (clientX === undefined || clientY === undefined) return null;
-
                     return {
                         x: (e.clientX - rect.left),
                         y: (e.clientY - rect.top)
-                        x: (clientX - rect.left),
-                        y: (clientY - rect.top)
                     };
                 };
 
                 // Mouse Events
                 this.canvas.addEventListener('mousedown', (e) => this.startDrawing(getCoords(e)));
-                this.canvas.addEventListener('mousedown', (e) => {
-                    const coords = getCoords(e);
-                    if (coords) this.startDrawing(coords);
-                });
                 this.canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
                 this.canvas.addEventListener('mousemove', (e) => this.draw(getCoords(e)));
-                this.canvas.addEventListener('mousemove', (e) => {
-                    const coords = getCoords(e);
-                    if (coords) this.draw(coords);
-                });
 
                 // Touch Events
-                // Touch Events (確保觸控動作被 Canvas 捕獲)
                 this.canvas.addEventListener('touchstart', (e) => {
                     e.preventDefault(); // 防止滾動
                     this.startDrawing(getCoords(e.touches[0]));
-                    e.preventDefault(); 
-                    const coords = getCoords(e);
-                    if (coords) this.startDrawing(coords);
                 });
                 this.canvas.addEventListener('touchend', this.stopDrawing.bind(this));
                 this.canvas.addEventListener('touchmove', (e) => {
                     e.preventDefault(); // 防止滾動
                     this.draw(getCoords(e.touches[0]));
-                    e.preventDefault(); 
-                    const coords = getCoords(e);
-                    if (coords) this.draw(coords);
                 });
             }
 
-@@ -1111,32 +1128,32 @@
+            startDrawing(coords) {
+                this.drawing = true;
+                this.isSigned = true;
+                this.ctx.beginPath();
+                this.ctx.moveTo(coords.x, coords.y);
+            }
+
+            stopDrawing() {
+                this.drawing = false;
+                this.ctx.closePath();
+            }
+
+            draw(coords) {
+                if (!this.drawing) return;
+                
+                this.ctx.lineTo(coords.x, coords.y);
+                this.ctx.stroke();
+            }
+
+            toDataURL() {
+                return this.isSigned ? this.canvas.toDataURL('image/png') : null;
+            }
+
+            getIsSigned() {
+                return this.isSigned;
+            }
+        }
+        
+        // --- 初始化簽名板 ---
+        let leaveSignaturePad;
+        let medicationSignaturePad;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const leaveCanvas = document.getElementById('leaveSignatureCanvas');
+            if (leaveCanvas) {
+                leaveSignaturePad = new SignaturePad('leaveSignatureCanvas');
+            }
+            const medicationCanvas = document.getElementById('medicationSignatureCanvas');
+            if (medicationCanvas) {
+                medicationSignaturePad = new SignaturePad('medicationSignatureCanvas');
+            }
+            renderPublicAnnouncements();
+            renderGalleryPreview(); // 新增：初始化活動花絮預覽
+        });
+
+        function clearSignature(canvasId) {
+            const pad = canvasId === 'leaveSignatureCanvas' ? leaveSignaturePad : medicationSignaturePad;
+            if (pad) {
+                pad.clear();
+            }
+        }
+        
+        // --- 數據存取通用函數 ---
+        function getRequests(key) {
+            try {
+                return JSON.parse(localStorage.getItem(key)) || [];
+            } catch (e) {
+                console.error("Error parsing data from localStorage:", e);
+                return [];
+            }
+        }
+        function saveRequests(key, requests) {
+            localStorage.setItem(key, JSON.stringify(requests));
+        }
+        
+        // --- 活動花絮圖片渲染 ---
+        function renderGalleryPreview() {
+            const container = document.getElementById('gallery-preview-container');
+            const imageURLs = getRequests(GALLERY_KEY) || [];
+            container.innerHTML = '';
+
+            // 確保有 4 個 Placeholder URL，如果 localStorage 不足 4 個
+            const defaultURLs = [
+                "https://placehold.co/300x300/fecaca/dc2626?text=校外教學",
+                "https://placehold.co/300x300/a7f3d0/059669?text=美術課",
+                "https://placehold.co/300x300/c7d2fe/4f46e5?text=故事時間",
+                "https://placehold.co/300x300/fed7aa/f97316?text=體能活動"
+            ];
+
+            const previewURLs = imageURLs.concat(defaultURLs).slice(0, 4);
+
+            previewURLs.forEach(url => {
+                const div = document.createElement('div');
+                div.className = 'rounded-xl overflow-hidden shadow-lg aspect-square';
+                div.innerHTML = `<img src="${url}" alt="活動花絮預覽圖" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/300x300/cccccc/333333?text=無法載入圖片';">`;
+                container.appendChild(div);
+            });
+        }
+
+
+        // --- 核心 Tab 切換邏輯 (通用) ---
+        function showAboutTab(tabName) {
+            document.querySelectorAll('#about-content .tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('#about-tabs button').forEach(button => {
+                button.classList.remove('tab-active');
+            });
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelector(`#about-tabs button[onclick*="'${tabName}'"]`).classList.add('tab-active');
+            
+            // 修正：當切換到行事曆時，確保行事曆內容被渲染
+            if (tabName === 'calendar') {
+                renderPublicCalendar();
+            }
+        }
+
+        function showAdminTab(tabName) {
+            document.querySelectorAll('#admin-content .tab-content-admin').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('#admin-tabs button').forEach(button => {
+                button.classList.remove('tab-active');
+            });
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelector(`#admin-tabs button[onclick*="'${tabName}'"]`).classList.add('active');
+            document.getElementById('admin').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // --- 聯絡我們 Modal 邏輯 ---
+        function showContactModal() {
+            document.getElementById('contact-modal').classList.remove('hidden');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contact-modal').classList.add('hidden');
+        }
+        
+        function handleGeneralContactSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            
+            // 模擬 Email 寄送內容，實際不會發送
+            console.log("--- 模擬聯繫單送出 ---");
+            
+            closeContactModal();
+            form.reset();
+
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-5 right-5 p-4 bg-amber-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = `訊息已送出！我們將盡快以 Email 回覆您。`;
+            document.body.appendChild(message);
+
+            setTimeout(() => {
+                message.remove();
+            }, 4000);
+
+            return false;
+        }
+
+        // --- 手機版側邊選單邏輯 ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mobile-sidebar');
+            const innerContent = sidebar.querySelector('div');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                // 觸發重新繪製以應用過渡效果
+                setTimeout(() => {
+                    innerContent.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                innerContent.classList.add('translate-x-full');
+                setTimeout(() => {
+                    sidebar.classList.add('hidden');
+                }, 300); // 配合 CSS transition duration
+            }
+        }
+
 
         // --- 公告渲染邏輯 ---
         function renderPublicAnnouncements() {
@@ -125,11 +1127,7 @@
                 const tagColor = ann.tag === '重要' ? 'border-amber-500' : ann.tag === '活動' ? 'border-teal-500' : 'border-stone-500';
                 const item = document.createElement('div');
                 item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor} cursor-pointer`;
-            // 從 Firestore 讀取教師發布的公告
-            getAnnouncements().then(announcements => {
-                const listContainer = document.getElementById('public-announcement-list');
-                listContainer.innerHTML = '';
-
+                
                 // 使用 onclick 顯示完整的公告內容
                 item.onclick = () => showAnnouncementDetails(ann.id);
 
@@ -139,31 +1137,39 @@
                     <p class="text-sm text-stone-600 mt-1">${ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : ''}</p>
                 `;
                 listContainer.appendChild(item);
-                if (announcements.length === 0) {
-                    listContainer.innerHTML = `<p class="text-stone-500 text-center py-4">目前尚無公告內容。</p>`;
-                    return;
-                }
-
-                // 只顯示前三個公告
-                announcements.slice(0, 3).forEach((ann, index) => {
-                    const tagColor = ann.tag === '重要' ? 'border-amber-500' : ann.tag === '活動' ? 'border-teal-500' : 'border-stone-500';
-                    const item = document.createElement('div');
-                    item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor} cursor-pointer`;
-                    
-                    // 使用 onclick 顯示完整的公告內容
-                    item.onclick = () => showAnnouncementDetails(ann.id);
-
-                    item.innerHTML = `
-                        <p class="text-stone-500 text-sm">【${ann.tag}】${ann.date}</p>
-                        <p class="text-lg font-semibold text-stone-800">${ann.title}</p>
-                        <p class="text-sm text-stone-600 mt-1">${ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : ''}</p>
-                    `;
-                    listContainer.appendChild(item);
-                });
             });
         }
+        
+        // 新增：顯示完整公告內容的 Modal
+        function showAnnouncementDetails(id) {
+            const announcements = getRequests(ANNOUNCEMENT_KEY);
+            const ann = announcements.find(a => a.id == id);
+            
+            if (!ann) return;
 
-@@ -1173,50 +1190,50 @@
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4';
+            modal.onclick = () => document.body.removeChild(modal);
+
+            // 確保 fileURL 存在且不為空
+            const fileLink = ann.fileURL && ann.fileURL.trim()
+                ? `<p class="mt-4 text-sm text-teal-700 font-bold">附件：<a href="${ann.fileURL}" target="_blank" class="underline hover:text-teal-900">${ann.fileURL.split('/').pop()}</a></p>`
+                : '';
+
+            const contentHtml = ann.content.replace(/\n/g, '<br>');
+
+            modal.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-100" onclick="event.stopPropagation()">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-2 handwriting-font">${ann.title}</h2>
+                    <p class="text-xs text-stone-500 mb-4 border-b pb-2">【${ann.tag}】發布日期: ${ann.date}</p>
+                    <div class="text-stone-700 text-base whitespace-pre-wrap">${contentHtml}</div>
+                    ${fileLink}
+                    <button onclick="document.body.removeChild(this.parentNode.parentNode);" class="mt-6 py-2 px-4 bg-amber-600 text-white rounded-lg hover:bg-amber-700">關閉</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
         // --- 行事曆渲染邏輯 (新增) ---
         function renderPublicCalendar() {
             const container = document.getElementById('calendar-table-container');
@@ -174,29 +1180,6 @@
                 container.innerHTML = '<p class="text-stone-500 text-center py-8">目前尚無行事曆資料，請老師登入後台新增。</p>';
                 return;
             }
-            getCalendarEntries().then(entries => {
-                container.innerHTML = ''; // Clear previous content
-
-                if (entries.length === 0) {
-                    container.innerHTML = '<p class="text-stone-500 text-center py-8">目前尚無行事曆資料，請老師登入後台新增。</p>';
-                    return;
-                }
-
-                // Sort entries by date (ascending)
-                entries.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                let tableHtml = `
-                    <div class="overflow-x-auto">
-                        <table class="data-table w-full min-w-[500px] bg-white rounded-lg shadow-sm">
-                            <thead>
-                                <tr class="bg-teal-100 text-teal-800">
-                                    <th class="w-[15%]">日期</th>
-                                    <th class="w-[65%]">活動名稱</th>
-                                    <th class="w-[20%]">備註/地點</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
 
             // Sort entries by date (ascending)
             entries.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -213,15 +1196,6 @@
                         </thead>
                         <tbody>
             `;
-                entries.forEach(entry => {
-                    tableHtml += `
-                        <tr>
-                            <td>${entry.date}</td>
-                            <td>${entry.title}</td>
-                            <td>${entry.note || ''}</td>
-                        </tr>
-                    `;
-                });
 
             entries.forEach(entry => {
                 tableHtml += `
@@ -231,8 +1205,6 @@
                         <td>${entry.note || ''}</td>
                     </tr>
                 `;
-                tableHtml += `</tbody></table></div>`;
-                container.innerHTML = tableHtml;
             });
 
             tableHtml += `</tbody></table></div>`;
@@ -242,15 +1214,15 @@
 
         // --- 請假表單提交邏輯 (寫入 localStorage) ---
         function handleLeaveSubmit(event) {
-        // --- 請假表單提交邏輯 (寫入 Firestore) ---
-        async function handleLeaveSubmit(event) {
             event.preventDefault(); 
             const form = event.target;
             const requests = getRequests(LEAVE_KEY);
-
+            
             // 驗證簽名
             if (!leaveSignaturePad || !leaveSignaturePad.getIsSigned()) {
-@@ -1226,7 +1243,6 @@
+                alert('請務必在簽名框內簽名，以完成提交！');
+                return;
+            }
 
             // 收集表單數據
             const newRequest = {
@@ -258,7 +1230,13 @@
                 parentName: form.parentName.value,
                 relationship: form.relationship.value,
                 childName: form.childName.value,
-@@ -1240,28 +1256,33 @@
+                parentEmail: form.parentEmail.value, 
+                className: form.className.value,
+                startDate: form.startDate.value,
+                endDate: form.endDate.value,
+                reason: form.reason.value,
+                signature: leaveSignaturePad.toDataURL(), // 儲存 Base64 簽名
+                status: '待審核', // 初始狀態
                 timestamp: new Date().toISOString()
             };
 
@@ -266,47 +1244,48 @@
             saveRequests(LEAVE_KEY, requests); // 儲存到 localStorage
             form.reset(); 
             leaveSignaturePad.clear(); // 清空簽名板
-            // 使用 Firestore 寫入數據
-            try {
-                await addDoc(collection(db, LEAVE_KEY), newRequest);
-                
-                form.reset(); 
-                leaveSignaturePad.clear(); // 清空簽名板
 
             const message = document.createElement('div');
             message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
             message.textContent = `請假申請已成功送出！請老師登入後台審核。`;
             document.body.appendChild(message);
-                const message = document.createElement('div');
-                message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-                message.textContent = `請假申請已成功送出！數據已同步至雲端。`;
-                document.body.appendChild(message);
 
             setTimeout(() => {
                 message.remove();
             }, 3000);
-                setTimeout(() => {
-                    message.remove();
-                }, 3000);
-            } catch (e) {
-                console.error("提交請假單失敗:", e);
-                alert("提交請假單失敗，請稍後再試。");
-            }
 
             return false;
         }
 
         // --- 託藥表單提交邏輯 (寫入 localStorage) ---
         function handleMedicationSubmit(event) {
-        // --- 託藥表單提交邏輯 (寫入 Firestore) ---
-        async function handleMedicationSubmit(event) {
             event.preventDefault();
             const form = event.target;
             const requests = getRequests(MEDICATION_KEY);
 
             // 驗證簽名
             if (!medicationSignaturePad || !medicationSignaturePad.getIsSigned()) {
-@@ -1289,7 +1310,6 @@
+                alert('請務必在簽名框內簽名，以完成提交！');
+                return;
+            }
+            
+            // 處理複雜的用藥內容欄位
+            let medicationDetails = '';
+            
+            // 1. 藥粉/藥丸
+            if (form.medType[0].checked && form.powderQty.value) {
+                medicationDetails += `藥粉/藥丸: ${form.powderQty.value} 包\n`;
+            }
+            // 2. 藥水
+            if (form.medType[1].checked && form.liquidQty.value) {
+                medicationDetails += `藥水: ${form.liquidQty.value} c.c.\n`;
+            }
+            // 3. 藥膏/其他
+            if (form.medType[2].checked && form.otherQty.value) {
+                medicationDetails += `其他用藥/藥膏: ${form.otherQty.value}\n`;
+            }
+            medicationDetails += `備註 (冷藏等): ${form.refrigerationNote.value || '無備註'}`;
+
 
             // 收集表單數據
             const newRequest = {
@@ -314,7 +1293,15 @@
                 className: form.className.value,
                 childName: form.childName.value,
                 startDate: form.startDate.value,
-@@ -1305,23 +1325,88 @@
+                endDate: form.endDate.value,
+                symptoms: form.symptoms.value,
+                medicationDetails: medicationDetails, // 使用重構後的內容
+                time: form.time.value,
+                parentEmail: form.parentEmail.value,
+                parentSignature: medicationSignaturePad.toDataURL(), // 儲存 Base64 簽名
+                prescriptionConfirm: form.prescriptionConfirm.checked, // 處方簽確認
+                refrigerationNote: form.refrigerationNote.value, // 其他注意事項
+                teacherReply: null, // 初始回覆為 null
                 timestamp: new Date().toISOString()
             };
 
@@ -322,12 +1309,6 @@
             saveRequests(MEDICATION_KEY, requests); // 儲存到 localStorage
             form.reset();
             medicationSignaturePad.clear(); // 清空簽名板
-            // 使用 Firestore 寫入數據
-            try {
-                await addDoc(collection(db, MEDICATION_KEY), newRequest);
-                
-                form.reset();
-                medicationSignaturePad.clear(); // 清空簽名板
 
             const message = document.createElement('div');
             message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
@@ -337,153 +1318,20 @@
             setTimeout(() => {
                 message.remove();
             }, 3000);
-                const message = document.createElement('div');
-                message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-                message.textContent = `託藥申請已成功送出！數據已同步至雲端。`;
-                document.body.appendChild(message);
-                
-                setTimeout(() => {
-                    message.remove();
-                }, 3000);
-            } catch (e) {
-                console.error("提交託藥單失敗:", e);
-                alert("提交託藥單失敗，請稍後再試。");
-            }
 
             return false;
-        }
-
-        // --- Firestore 數據獲取 (取代 Local Storage) ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyDwaFkl2KMq6uNYKiUdoyKd2UWxIG85lMc",
-            authDomain: "wleskidstw-dd0c3.firebaseapp.com",
-            projectId: "wleskidstw-dd0c3",
-            storageBucket: "wleskidstw-dd0c3.firebasestorage.app",
-            messagingSenderId: "284932938662",
-            appId: "1:284932938662:web:fb3e5c813143c2bfa60d67",
-            measurementId: "G-M0P869XDQ2"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const LEAVE_KEY = 'leave_requests';
-        const MEDICATION_KEY = 'medication_requests';
-        const ANNOUNCEMENT_KEY = 'announcements';
-        const GALLERY_KEY = 'gallery_images';
-        const CALENDAR_KEY = 'calendar_entries'; 
-        
-        async function getAnnouncements() {
-            const collectionRef = collection(db, ANNOUNCEMENT_KEY);
-            const q = query(collectionRef, orderBy('timestamp', 'desc')); 
-            
-            try {
-                const querySnapshot = await getDocs(q);
-                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            } catch (e) {
-                console.error("Error getting documents: ", e);
-                return [];
-            }
-        }
-        
-        async function getCalendarEntries() {
-            const collectionRef = collection(db, CALENDAR_KEY);
-            const q = query(collectionRef, orderBy('date', 'asc')); 
-            
-            try {
-                const querySnapshot = await getDocs(q);
-                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            } catch (e) {
-                console.error("Error getting documents: ", e);
-                return [];
-            }
-        }
-        
-        async function getGalleryImages() {
-            const collectionRef = collection(db, GALLERY_KEY);
-            const q = query(collectionRef, orderBy('timestamp', 'asc')); 
-            
-            try {
-                const querySnapshot = await getDocs(q);
-                // 只返回 URL 陣列，以匹配原 Local Storage 結構
-                return querySnapshot.docs.map(doc => doc.data().url);
-            } catch (e) {
-                console.error("Error getting documents: ", e);
-                return [];
-            }
         }
 
         // 頁面載入時初始化 Tab 和公告
         window.onload = function() {
             showAboutTab('calendar');
-@@ -1333,5 +1418,71 @@
+            showAdminTab('leave');
+            renderPublicAnnouncements();
+            // 在頁面載入時確保簽名板初始化
+            if (leaveSignaturePad) leaveSignaturePad.resizeCanvas();
+            if (medicationSignaturePad) medicationSignaturePad.resizeCanvas();
         };
     </script>
 
-    <!-- 腳本引入 Firestore 所需的模組函數 -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
-        
-        // 重新定義 Firebase config (防止多次執行)
-        const firebaseConfig = {
-            apiKey: "AIzaSyDwaFkl2KMq6uNYKiUdoyKd2UWxIG85lMc",
-            authDomain: "wleskidstw-dd0c3.firebaseapp.com",
-            projectId: "wleskidstw-dd0c3",
-            storageBucket: "wleskidstw-dd0c3.firebasestorage.app",
-            messagingSenderId: "284932938662",
-            appId: "1:284932938662:web:fb3e5c813143c2bfa60d67",
-            measurementId: "G-M0P869XDQ2"
-        };
-        
-        // 初始化 Firestore
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // 將 Firestore 函數導出到 Window 作用域供其他腳本使用
-        window.getAnnouncements = async function() {
-            const collectionRef = collection(db, 'announcements');
-            const q = query(collectionRef, orderBy('timestamp', 'desc'));
-            try {
-                const querySnapshot = await getDocs(q);
-                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            } catch (e) {
-                console.error("Error getting announcements from Firestore:", e);
-                return [];
-            }
-        }
-
-        window.getCalendarEntries = async function() {
-            const collectionRef = collection(db, 'calendar_entries');
-            const q = query(collectionRef, orderBy('date', 'asc'));
-            try {
-                const querySnapshot = await getDocs(q);
-                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            } catch (e) {
-                console.error("Error getting calendar entries from Firestore:", e);
-                return [];
-            }
-        }
-        
-        window.getGalleryImages = async function() {
-            const collectionRef = collection(db, 'gallery_images');
-            const q = query(collectionRef, orderBy('timestamp', 'asc'));
-            try {
-                const querySnapshot = await getDocs(q);
-                return querySnapshot.docs.map(doc => doc.data().url);
-            } catch (e) {
-                console.error("Error getting gallery images from Firestore:", e);
-                return [];
-            }
-        }
-
-        // 由於整個腳本在 Preview 環境中容易出錯，我們使用 DOMContentLoaded 確保核心渲染在 DOM 準備就緒後執行
-        document.addEventListener('DOMContentLoaded', () => {
-             // 確保在 DOM 載入時執行 Firestore 讀取和渲染
-            window.renderPublicAnnouncements();
-            window.renderGalleryPreview();
-            
-            // 由於 showAboutTab('calendar') 在 window.onload 中調用，它會在所有 DOM 元素準備好後調用 renderPublicCalendar()
-        });
-        
-    </script>
 </body>
+</html>
