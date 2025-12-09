@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>教師管理後台 - 文林附幼</title>
+    <title>臺北市北投區文林國民小學附設幼兒園</title>
     <!-- 載入 Tailwind CSS 函式庫 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
@@ -11,197 +11,349 @@
     <!-- 引入 Firebase 相關 SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script> 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f7f3ed; }
-        .handwriting-font { font-family: 'Klee One', cursive; }
-        .tab-btn.active { border-bottom: 3px solid #0f766e; color: #0f766e; font-weight: 700; }
-        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); }
-        .data-table th, .data-table td { padding: 12px 15px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        body {
+            /* 內文使用清晰的 Inter */
+@@ -84,7 +87,7 @@
+        }
     </style>
 </head>
+<body class="text-stone-700">
 <body>
 
-    <!-- 登入介面 (現已連線至 Firebase Auth) -->
-    <div id="login-view" class="min-h-screen flex items-center justify-center bg-teal-50">
-        <div class="bg-white p-8 rounded-xl card-shadow w-full max-w-sm">
-            <h2 class="text-3xl font-bold text-teal-700 mb-6 text-center handwriting-font">教師後台登入</h2>
-            <!-- 綁定事件監聽器到表單 -->
-            <form id="login-form">
-                <div class="mb-4">
-                    <label for="username" class="block text-sm font-medium text-stone-700 mb-1">帳號 (Email)</label>
-                    <input type="email" id="username" value="wleskidstw@gmail.com" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+    <!-- 導覽列 (Header) -->
+    <header class="sticky top-0 z-50 bg-white shadow-xl">
+@@ -120,7 +123,7 @@
+    <!-- 手機版側邊選單 (Sidebar Modal) -->
+    <div id="mobile-sidebar" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden z-50">
+        <div class="absolute right-0 top-0 w-64 h-full bg-white shadow-lg p-6 transform transition-transform duration-300 translate-x-full">
+            <button class="absolute top-4 right-4 text-stone-400 hover:text-stone-700" onclick="toggleSidebar()">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-bold text-teal-700 mb-6 handwriting-font">網站導覽</h3>
+@@ -518,18 +521,18 @@
+                </h3>
+
+                <!-- 相簿預覽 (4張圖片) - 從 localStorage 讀取圖片 URL -->
+                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10" id="gallery-preview-container">
+                 <div id="gallery-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10">
+                    <!-- 圖片將由 JS 渲染 -->
                 </div>
-                <div class="mb-6">
-                    <label for="password" class="block text-sm font-medium text-stone-700 mb-1">密碼 (Password)</label>
-                    <input type="password" id="password" value="@Wles123456" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
-                </div>
-                <button type="submit" id="login-button" class="w-full py-3 bg-teal-700 text-white font-bold rounded-lg hover:bg-teal-800 transition duration-150 shadow-md">登入後台</button>
-                <p class="mt-4 text-xs text-stone-500 text-center">
-                    **提示:** 請使用您在 Firebase Auth 建立的真實教師帳號。
+
+                <p class="text-lg text-stone-600 mb-8 max-w-2xl mx-auto">
+                    點擊下方按鈕，連結至 Google 相簿或學校相簿系統，查看更多的全園活動照片和孩子們的精彩瞬間。
                 </p>
-            </form>
-        </div>
-    </div>
 
-    <!-- 管理後台介面 (登入後顯示) -->
-    <div id="admin-view" class="min-h-screen bg-stone-50 hidden">
-        <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold text-teal-700 handwriting-font">文林附幼 教師管理中心</h1>
-                <button onclick="window.handleLogout()" class="text-sm font-medium text-stone-600 hover:text-red-500 transition duration-150">登出</button>
+                <!-- 獨立頁面連結按鈕 (已修正為指向 Google 相簿網址) -->
+                <a href="https://photos.google.com/u/1/albums" target="_blank" 
+                <!-- 獨立頁面連結按鈕 (已修正為指向 teacher_admin_panel.html) -->
+                <a href="teacher_admin_panel.html" target="_blank" 
+                   class="mt-6 inline-block px-10 py-4 text-xl font-bold text-white bg-teal-600 rounded-full shadow-lg hover:bg-teal-700 transition duration-300 transform hover:scale-105">
+                    點此進入全園相簿連結 →
+                    🧑‍🏫 教師後台登入 →
+                </a>
             </div>
-        </header>
+        </section>
+@@ -916,26 +919,40 @@
+                // Helper to get normalized coordinates
+                const getCoords = (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    // 修正: 使用 clientX/Y 並減去 Canvas 相對視口的偏移量
+                    const clientX = e.clientX || e.touches?.[0].clientX;
+                    const clientY = e.clientY || e.touches?.[0].clientY;
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <p class="text-sm text-red-600 font-semibold mb-4">
-                ✅ 數據狀態：已連線至 Google Firebase Firestore (請確保已登入)
-            </p>
-            <!-- Tab 導覽 -->
-            <div class="flex border-b border-gray-200 mb-6 space-x-4 overflow-x-auto whitespace-nowrap">
-                <button class="tab-btn py-3 px-4 active" onclick="window.showAdminTab('announcements')">最新公告管理</button>
-                <button class="tab-btn py-3 px-4" onclick="window.showAdminTab('leave-requests')">請假單審核 (<span id="leave-count" class="text-red-500">0</span>)</button>
-                <button class="tab-btn py-3 px-4" onclick="window.showAdminTab('medication-requests')">託藥單回覆 (<span id="medication-count" class="text-red-500">0</span>)</button>
-                <button class="tab-btn py-3 px-4" onclick="window.showAdminTab('gallery-management')">活動花絮圖片</button>
-                <button class="tab-btn py-3 px-4" onclick="window.showAdminTab('calendar-management')">行事曆管理</button>
-            </div>
+                    if (clientX === undefined || clientY === undefined) return null;
 
-            <!-- Tab 內容區 -->
-            <div id="admin-content">
+                    return {
+                        x: (e.clientX - rect.left),
+                        y: (e.clientY - rect.top)
+                        x: (clientX - rect.left),
+                        y: (clientY - rect.top)
+                    };
+                };
+
+                // Mouse Events
+                this.canvas.addEventListener('mousedown', (e) => this.startDrawing(getCoords(e)));
+                this.canvas.addEventListener('mousedown', (e) => {
+                    const coords = getCoords(e);
+                    if (coords) this.startDrawing(coords);
+                });
+                this.canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
+                this.canvas.addEventListener('mousemove', (e) => this.draw(getCoords(e)));
+                this.canvas.addEventListener('mousemove', (e) => {
+                    const coords = getCoords(e);
+                    if (coords) this.draw(coords);
+                });
+
+                // Touch Events
+                // Touch Events (確保觸控動作被 Canvas 捕獲)
+                this.canvas.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // 防止滾動
+                    this.startDrawing(getCoords(e.touches[0]));
+                    e.preventDefault(); 
+                    const coords = getCoords(e);
+                    if (coords) this.startDrawing(coords);
+                });
+                this.canvas.addEventListener('touchend', this.stopDrawing.bind(this));
+                this.canvas.addEventListener('touchmove', (e) => {
+                    e.preventDefault(); // 防止滾動
+                    this.draw(getCoords(e.touches[0]));
+                    e.preventDefault(); 
+                    const coords = getCoords(e);
+                    if (coords) this.draw(coords);
+                });
+            }
+
+@@ -1111,32 +1128,32 @@
+
+        // --- 公告渲染邏輯 ---
+        function renderPublicAnnouncements() {
+            // 從 localStorage 讀取教師發布的公告
+            const announcements = getRequests(ANNOUNCEMENT_KEY);
+            const listContainer = document.getElementById('public-announcement-list');
+            listContainer.innerHTML = '';
+
+            if (announcements.length === 0) {
+                // 如果沒有公告，顯示提示信息
+                listContainer.innerHTML = `<p class="text-stone-500 text-center py-4">目前尚無公告內容。</p>`;
+                return;
+            }
+
+            // 只顯示前三個公告
+            announcements.slice(0, 3).forEach((ann, index) => {
+                const tagColor = ann.tag === '重要' ? 'border-amber-500' : ann.tag === '活動' ? 'border-teal-500' : 'border-stone-500';
+                const item = document.createElement('div');
+                item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor} cursor-pointer`;
+            // 從 Firestore 讀取教師發布的公告
+            getAnnouncements().then(announcements => {
+                const listContainer = document.getElementById('public-announcement-list');
+                listContainer.innerHTML = '';
+
+                // 使用 onclick 顯示完整的公告內容
+                item.onclick = () => showAnnouncementDetails(ann.id);
+
+                item.innerHTML = `
+                    <p class="text-stone-500 text-sm">【${ann.tag}】${ann.date}</p>
+                    <p class="text-lg font-semibold text-stone-800">${ann.title}</p>
+                    <p class="text-sm text-stone-600 mt-1">${ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : ''}</p>
+                `;
+                listContainer.appendChild(item);
+                if (announcements.length === 0) {
+                    listContainer.innerHTML = `<p class="text-stone-500 text-center py-4">目前尚無公告內容。</p>`;
+                    return;
+                }
+
+                // 只顯示前三個公告
+                announcements.slice(0, 3).forEach((ann, index) => {
+                    const tagColor = ann.tag === '重要' ? 'border-amber-500' : ann.tag === '活動' ? 'border-teal-500' : 'border-stone-500';
+                    const item = document.createElement('div');
+                    item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor} cursor-pointer`;
+                    
+                    // 使用 onclick 顯示完整的公告內容
+                    item.onclick = () => showAnnouncementDetails(ann.id);
+
+                    item.innerHTML = `
+                        <p class="text-stone-500 text-sm">【${ann.tag}】${ann.date}</p>
+                        <p class="text-lg font-semibold text-stone-800">${ann.title}</p>
+                        <p class="text-sm text-stone-600 mt-1">${ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : ''}</p>
+                    `;
+                    listContainer.appendChild(item);
+                });
+            });
+        }
+
+@@ -1173,50 +1190,50 @@
+        // --- 行事曆渲染邏輯 (新增) ---
+        function renderPublicCalendar() {
+            const container = document.getElementById('calendar-table-container');
+            const entries = getRequests(CALENDAR_KEY) || [];
+            container.innerHTML = ''; // Clear previous content
+
+            if (entries.length === 0) {
+                container.innerHTML = '<p class="text-stone-500 text-center py-8">目前尚無行事曆資料，請老師登入後台新增。</p>';
+                return;
+            }
+            getCalendarEntries().then(entries => {
+                container.innerHTML = ''; // Clear previous content
+
+                if (entries.length === 0) {
+                    container.innerHTML = '<p class="text-stone-500 text-center py-8">目前尚無行事曆資料，請老師登入後台新增。</p>';
+                    return;
+                }
+
+                // Sort entries by date (ascending)
+                entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                let tableHtml = `
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full min-w-[500px] bg-white rounded-lg shadow-sm">
+                            <thead>
+                                <tr class="bg-teal-100 text-teal-800">
+                                    <th class="w-[15%]">日期</th>
+                                    <th class="w-[65%]">活動名稱</th>
+                                    <th class="w-[20%]">備註/地點</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+            // Sort entries by date (ascending)
+            entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            let tableHtml = `
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full min-w-[500px] bg-white rounded-lg shadow-sm">
+                        <thead>
+                            <tr class="bg-teal-100 text-teal-800">
+                                <th class="w-[15%]">日期</th>
+                                <th class="w-[65%]">活動名稱</th>
+                                <th class="w-[20%]">備註/地點</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+                entries.forEach(entry => {
+                    tableHtml += `
+                        <tr>
+                            <td>${entry.date}</td>
+                            <td>${entry.title}</td>
+                            <td>${entry.note || ''}</td>
+                        </tr>
+                    `;
+                });
+
+            entries.forEach(entry => {
+                tableHtml += `
+                    <tr>
+                        <td>${entry.date}</td>
+                        <td>${entry.title}</td>
+                        <td>${entry.note || ''}</td>
+                    </tr>
+                `;
+                tableHtml += `</tbody></table></div>`;
+                container.innerHTML = tableHtml;
+            });
+
+            tableHtml += `</tbody></table></div>`;
+            container.innerHTML = tableHtml;
+        }
+
+
+        // --- 請假表單提交邏輯 (寫入 localStorage) ---
+        function handleLeaveSubmit(event) {
+        // --- 請假表單提交邏輯 (寫入 Firestore) ---
+        async function handleLeaveSubmit(event) {
+            event.preventDefault(); 
+            const form = event.target;
+            const requests = getRequests(LEAVE_KEY);
+
+            // 驗證簽名
+            if (!leaveSignaturePad || !leaveSignaturePad.getIsSigned()) {
+@@ -1226,7 +1243,6 @@
+
+            // 收集表單數據
+            const newRequest = {
+                id: Date.now(),
+                parentName: form.parentName.value,
+                relationship: form.relationship.value,
+                childName: form.childName.value,
+@@ -1240,28 +1256,33 @@
+                timestamp: new Date().toISOString()
+            };
+
+            requests.unshift(newRequest);
+            saveRequests(LEAVE_KEY, requests); // 儲存到 localStorage
+            form.reset(); 
+            leaveSignaturePad.clear(); // 清空簽名板
+            // 使用 Firestore 寫入數據
+            try {
+                await addDoc(collection(db, LEAVE_KEY), newRequest);
                 
-                <!-- 1. 公告管理 -->
-                <div id="announcements" class="tab-content bg-white p-6 rounded-xl card-shadow">
-                    <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">發布/編輯最新公告</h2>
-                    <form id="announcement-form">
-                        <input type="hidden" id="edit-announcement-id" value="">
+                form.reset(); 
+                leaveSignaturePad.clear(); // 清空簽名板
 
-                        <div>
-                            <label for="announcement-title" class="block text-sm font-medium text-stone-700 mb-1">公告標題</label>
-                            <input type="text" id="announcement-title" class="w-full p-2 border rounded-lg" placeholder="例如：新學期開學日通知" required>
-                        </div>
-                        <div>
-                            <label for="announcement-content" class="block text-sm font-medium text-stone-700 mb-1">公告內容</label>
-                            <textarea id="announcement-content" class="w-full p-2 border rounded-lg" rows="4" placeholder="輸入公告的詳細內容..." required></textarea>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="announcement-tag" class="block text-sm font-medium text-stone-700 mb-1">標籤 (Tag)</label>
-                                <select id="announcement-tag" class="w-full p-2 border rounded-lg">
-                                    <option value="重要">【重要】</option>
-                                    <option value="活動">【活動】</option>
-                                    <option value="行政">【行政】</option>
-                                    <option value="班級">【班級】</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="announcement-date" class="block text-sm font-medium text-stone-700 mb-1">發布日期</label>
-                                <input type="date" id="announcement-date" class="w-full p-2 border rounded-lg" value="${new Date().toISOString().split('T')[0]}" required>
-                            </div>
-                        </div>
-                        <div>
-                            <!-- 附加檔案欄位已改為連結輸入 -->
-                            <label for="announcement-file-url" class="block text-sm font-medium text-stone-700 mb-1">附加檔案公開連結 (URL)</label>
-                            <input type="text" id="announcement-file-url" class="w-full p-2 border rounded-lg bg-gray-50" placeholder="貼上公開檔案的網址 (例如 GitHub 或 Google Drive 公開連結)">
-                            <p class="text-xs text-stone-500 mt-1">請確保連結是公開且可存取的。</p>
-                        </div>
-                        <button type="submit" class="py-2 px-4 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150">儲存公告並發布</button>
-                    </form>
-                    
-                    <h3 class="text-lg font-bold text-stone-700 mb-3 border-t pt-4">現有公告列表</h3>
-                    <div id="announcement-list" class="space-y-3">
-                        <!-- 公告列表將由 JS 渲染 -->
-                    </div>
-                </div>
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = `請假申請已成功送出！請老師登入後台審核。`;
+            document.body.appendChild(message);
+                const message = document.createElement('div');
+                message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+                message.textContent = `請假申請已成功送出！數據已同步至雲端。`;
+                document.body.appendChild(message);
 
-                <!-- 2. 請假單審核 -->
-                <div id="leave-requests" class="tab-content bg-white p-6 rounded-xl card-shadow hidden">
-                    <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">待處理請假單</h2>
-                    <div id="leave-requests-list" class="space-y-4">
-                        <p class="text-stone-500">載入數據中...</p>
-                        <!-- 請假單列表將由 JS 渲染 -->
-                    </div>
-                </div>
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+            } catch (e) {
+                console.error("提交請假單失敗:", e);
+                alert("提交請假單失敗，請稍後再試。");
+            }
 
-                <!-- 3. 託藥單回覆 -->
-                <div id="medication-requests" class="tab-content bg-white p-6 rounded-xl card-shadow hidden">
-                    <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">待回覆託藥單</h2>
-                    <div id="medication-requests-list" class="space-y-4">
-                        <p class="text-stone-500">載入數據中...</p>
-                        <!-- 託藥單列表將由 JS 渲染 -->
-                    </div>
-                </div>
+            return false;
+        }
 
-                <!-- 4. 活動花絮圖片管理 -->
-                <div id="gallery-management" class="tab-content bg-white p-6 rounded-xl card-shadow hidden">
-                    <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">網站首頁活動花絮圖片設定</h2>
-                    <form id="gallery-form">
-                        <p class="text-sm text-stone-600">請貼上 **4 張**您希望在網站首頁展示的活動圖片公開連結。請確保這些圖片是公開可存取的，並應為正方形或接近正方形以確保顯示效果。</p>
-                        
-                        <div>
-                            <label for="image-url-0" class="block text-sm font-medium text-stone-700 mb-1">預覽圖片 1 連結 (URL)</label>
-                            <input type="url" id="image-url-0" class="w-full p-2 border rounded-lg" placeholder="圖片 1 連結 (例如: https://.../photo.jpg)">
-                        </div>
-                        <div>
-                            <label for="image-url-1" class="block text-sm font-medium text-stone-700 mb-1">預覽圖片 2 連結 (URL)</label>
-                            <input type="url" id="image-url-1" class="w-full p-2 border rounded-lg" placeholder="圖片 2 連結">
-                        </div>
-                        <div>
-                            <label for="image-url-2" class="block text-sm font-medium text-stone-700 mb-1">預覽圖片 3 連結 (URL)</label>
-                            <input type="url" id="image-url-2" class="w-full p-2 border rounded-lg" placeholder="圖片 3 連結">
-                        </div>
-                        <div>
-                            <label for="image-url-3" class="block text-sm font-medium text-stone-700 mb-1">預覽圖片 4 連結 (URL)</label>
-                            <input type="url" id="image-url-3" class="w-full p-2 border rounded-lg" placeholder="圖片 4 連結">
-                        </div>
-                        <button type="submit" class="py-2 px-4 bg-teal-600 text-white font-bold rounded-lg hover:bg-teal-700 transition duration-150">更新首頁預覽圖</button>
-                    </form>
-                    
-                    <h3 class="text-lg font-bold text-stone-700 mb-3 border-t pt-4">目前預覽 (預計顯示於家長網頁)</h3>
-                    <div id="gallery-preview-admin" class="grid grid-cols-2 gap-4">
-                        <!-- 預覽圖將由 JS 渲染 -->
-                    </div>
-                </div>
+        // --- 託藥表單提交邏輯 (寫入 localStorage) ---
+        function handleMedicationSubmit(event) {
+        // --- 託藥表單提交邏輯 (寫入 Firestore) ---
+        async function handleMedicationSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const requests = getRequests(MEDICATION_KEY);
 
-                <!-- 5. 行事曆管理 -->
-                <div id="calendar-management" class="tab-content bg-white p-6 rounded-xl card-shadow hidden">
-                    <h2 class="text-xl font-bold text-teal-700 mb-4 handwriting-font">學年重要行事曆項目新增與編輯</h2>
-                    <form id="calendar-form">
-                         <input type="hidden" id="edit-calendar-id" value="">
-                        <div class="grid grid-cols-3 gap-4">
-                            <div>
-                                <label for="calendar-date" class="block text-sm font-medium text-stone-700 mb-1">日期</label>
-                                <input type="date" id="calendar-date" class="w-full p-2 border rounded-lg" required>
-                            </div>
-                            <div class="col-span-2">
-                                <label for="calendar-title" class="block text-sm font-medium text-stone-700 mb-1">活動名稱</label>
-                                <input type="text" id="calendar-title" class="w-full p-2 border rounded-lg" required>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="calendar-note" class="block text-sm font-medium text-stone-700 mb-1">備註/地點</label>
-                            <input type="text" id="calendar-note" class="w-full p-2 border rounded-lg" placeholder="例如：上午 10:00，活動中心">
-                        </div>
-                        
-                        <button type="submit" id="save-calendar-button" class="py-2 px-4 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150">新增行事曆項目</button>
-                    </form>
+            // 驗證簽名
+            if (!medicationSignaturePad || !medicationSignaturePad.getIsSigned()) {
+@@ -1289,7 +1310,6 @@
 
-                    <h3 class="text-lg font-bold text-stone-700 mb-3 border-t pt-4">已發布行事曆列表</h3>
-                    <div id="calendar-list" class="space-y-3">
-                        <!-- 行事曆列表將由 JS 渲染 -->
-                    </div>
-                </div>
+            // 收集表單數據
+            const newRequest = {
+                id: Date.now(),
+                className: form.className.value,
+                childName: form.childName.value,
+                startDate: form.startDate.value,
+@@ -1305,23 +1325,88 @@
+                timestamp: new Date().toISOString()
+            };
 
-            </div>
-        </div>
-    </div>
+            requests.unshift(newRequest);
+            saveRequests(MEDICATION_KEY, requests); // 儲存到 localStorage
+            form.reset();
+            medicationSignaturePad.clear(); // 清空簽名板
+            // 使用 Firestore 寫入數據
+            try {
+                await addDoc(collection(db, MEDICATION_KEY), newRequest);
+                
+                form.reset();
+                medicationSignaturePad.clear(); // 清空簽名板
 
-    <script type="module">
-        // 導入 Firebase 模組
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
-        
-        // ** Firebase 配置資訊 (請修改為您自己的金鑰) **
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = `託藥申請已成功送出！請老師登入後台審核。`;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+                const message = document.createElement('div');
+                message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+                message.textContent = `託藥申請已成功送出！數據已同步至雲端。`;
+                document.body.appendChild(message);
+                
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+            } catch (e) {
+                console.error("提交託藥單失敗:", e);
+                alert("提交託藥單失敗，請稍後再試。");
+            }
+
+            return false;
+        }
+
+        // --- Firestore 數據獲取 (取代 Local Storage) ---
         const firebaseConfig = {
             apiKey: "AIzaSyDwaFkl2KMq6uNYKiUdoyKd2UWxIG85lMc",
             authDomain: "wleskidstw-dd0c3.firebaseapp.com",
@@ -211,239 +363,18 @@
             appId: "1:284932938662:web:fb3e5c813143c2bfa60d67",
             measurementId: "G-M0P869XDQ2"
         };
-
-        // 初始化 Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app); // 初始化 Auth 服務
 
-        // --- 常數定義 (集合名稱) ---
         const LEAVE_KEY = 'leave_requests';
         const MEDICATION_KEY = 'medication_requests';
         const ANNOUNCEMENT_KEY = 'announcements';
         const GALLERY_KEY = 'gallery_images';
         const CALENDAR_KEY = 'calendar_entries'; 
         
-        // ** EmailJS 金鑰設定 (請修改為您自己的金鑰) **
-        const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
-        const EMAILJS_TEMPLATE_ID_MEDICATION = 'template_yh5wstg'; 
-        const EMAILJS_TEMPLATE_ID_LEAVE = 'template_3q1tinr'; 
-        const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; 
-
-
-        // --- 數據存取通用函數 (Firestore CRUD) ---
-        // 修正: 統一使用 const/箭頭函數宣告，避免重複宣告錯誤
-        const getRequests = async (collectionName, sortingField = 'timestamp', sortDirection = 'desc') => {
-            const collectionRef = collection(db, collectionName);
-            const q = query(collectionRef, orderBy(sortingField, sortDirection)); 
-            
-            try {
-                const querySnapshot = await getDocs(q);
-                const data = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                return data;
-            } catch (e) {
-                console.error(`Error getting documents from ${collectionName}: `, e);
-                return [];
-            }
-        };
-
-        const updateRequest = async (collectionName, docId, data) => {
-            const docRef = doc(db, collectionName, docId);
-            try {
-                if (!docId || typeof docId !== 'string') {
-                    throw new Error('Invalid document ID provided for update.');
-                }
-                await updateDoc(docRef, data);
-                return true;
-            } catch (e) {
-                console.error(`Error updating document ${docId} in ${collectionName}: `, e);
-                return false;
-            }
-        };
-        
-        // --- 登入/登出邏輯 (已啟用 Firebase Auth) ---
-        window.handleLogin = async function(event) {
-            event.preventDefault();
-            const email = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                // 執行 Firebase 登入
-                await signInWithEmailAndPassword(auth, email, password);
-                // onAuthStateChanged 會自動切換介面
-            } catch (error) {
-                console.error("登入失敗:", error);
-                const message = document.createElement('div');
-                message.className = 'fixed bottom-5 right-5 p-4 bg-red-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-                message.textContent = `登入失敗：${error.message}`;
-                document.body.appendChild(message);
-                setTimeout(() => { message.remove(); }, 4000);
-            }
-        };
-
-        window.handleLogout = function() {
-            try {
-                signOut(auth);
-            } catch (error) {
-                console.error("登出失敗:", error);
-            }
-        };
-        
-        // --- Tab 切換邏輯 ---
-        window.showAdminTab = function(tabName) {
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            document.getElementById(tabName).classList.remove('hidden');
-            document.querySelector(`.tab-btn[onclick*="'${tabName}'"]`).classList.add('active');
-
-            if (tabName === 'leave-requests') renderLeaveRequests();
-            if (tabName === 'medication-requests') renderMedicationRequests();
-            if (tabName === 'announcements') renderAnnouncements();
-            if (tabName === 'gallery-management') loadGalleryManagement();
-            if (tabName === 'calendar-management') loadCalendarManagement();
-        };
-        
-        // --- 公告管理邏輯 ---
-        const getAnnouncements = async () => {
-            return await getRequests(ANNOUNCEMENT_KEY);
-        };
-
-        const saveAnnouncement = async (event) => {
-            event.preventDefault();
-            if (!auth.currentUser) {
-                alert('您必須先登入才能發布公告。');
-                return;
-            }
-
-            const form = event.target;
-            const title = form.elements['announcement-title'].value;
-            const content = form.elements['announcement-content'].value;
-            const tag = form.elements['announcement-tag'].value;
-            const date = form.elements['announcement-date'].value;
-            const fileURL = document.getElementById('announcement-file-url').value.trim();
-            const editIdInput = document.getElementById('edit-announcement-id');
-            const editId = editIdInput.value;
-
-            let messageText = '';
-            const data = { title, content, tag, date, fileURL, timestamp: new Date().toISOString() };
-
-            try {
-                if (editId) {
-                    await updateRequest(ANNOUNCEMENT_KEY, editId, data);
-                    messageText = '公告已成功更新！主網頁將同步至雲端。';
-                } else {
-                    await addDoc(collection(db, ANNOUNCEMENT_KEY), data);
-                    messageText = '新公告已成功儲存！主網頁將同步至雲端。';
-                }
-            } catch (e) {
-                console.error("Error saving announcement entry: ", e);
-                alert(`儲存公告項目失敗。請檢查 Firebase 安全規則：${e.message}`);
-                return;
-            }
-            
-            form.reset();
-            document.getElementById('announcement-form').querySelector('button[type="submit"]').textContent = '儲存公告並發布';
-            editIdInput.value = '';
-            document.getElementById('announcement-date').value = new Date().toISOString().split('T')[0];
-            
-            const message = document.createElement('div');
-            message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = messageText;
-            document.body.appendChild(message);
-            setTimeout(() => { message.remove(); }, 3000);
-            
-            renderAnnouncements();
-        };
-
-        window.deleteAnnouncement = async function(id) {
-            if (!confirm("確定要刪除這則公告嗎？")) return;
-            if (!auth.currentUser) {
-                alert('您必須先登入才能刪除公告。');
-                return;
-            }
-            try {
-                await deleteDoc(doc(db, ANNOUNCEMENT_KEY, id));
-                alert('公告已刪除。');
-                renderAnnouncements();
-            } catch (e) {
-                console.error("Error removing document: ", e);
-                alert(`刪除失敗。請檢查 Firebase 安全規則：${e.message}`);
-            }
-        };
-        
-        window.editAnnouncement = function(id) {
-            getAnnouncements().then(announcements => {
-                const ann = announcements.find(a => a.id === id);
-
-                if (!ann) return;
-                
-                document.getElementById('announcement-title').value = ann.title;
-                document.getElementById('announcement-content').value = ann.content;
-                document.getElementById('announcement-tag').value = ann.tag;
-                document.getElementById('announcement-date').value = ann.date;
-                document.getElementById('announcement-file-url').value = ann.fileURL;
-
-                document.getElementById('edit-announcement-id').value = id;
-                document.querySelector('#announcements button[type="submit"]').textContent = '更新公告';
-                
-                document.getElementById('announcements').scrollIntoView({ behavior: 'smooth' });
-            });
-        };
-
-        const renderAnnouncements = () => {
-            getAnnouncements().then(announcements => {
-                const listContainer = document.getElementById('announcement-list');
-                listContainer.innerHTML = '';
-                
-                if (announcements.length === 0) {
-                    listContainer.innerHTML = '<p class="text-stone-500">目前沒有公告。</p>';
-                    return;
-                }
-
-                announcements.forEach(ann => {
-                    const item = document.createElement('div');
-                    item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2';
-                    
-                    const header = document.createElement('div');
-                    header.className = 'flex justify-between items-start';
-                    header.innerHTML = `
-                        <div>
-                            <span class="text-xs font-semibold text-teal-700 mr-2">[${ann.tag}]</span>
-                            <span class="font-bold text-lg text-stone-800">${ann.title}</span>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button onclick="window.editAnnouncement('${ann.id}')" class="text-sm text-teal-600 hover:underline">編輯</button>
-                            <button onclick="window.deleteAnnouncement('${ann.id}')" class="text-sm text-red-500 hover:text-red-700">刪除</button>
-                        </div>
-                    `;
-                    item.appendChild(header);
-
-                    const contentPreview = ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : '無內容';
-                    const fileName = ann.fileURL ? ann.fileURL.split('/').pop() : '';
-
-                    item.innerHTML += `
-                        <p class="text-sm text-stone-600 whitespace-pre-wrap">${contentPreview}</p>
-                        <p class="text-xs text-stone-500 mt-1">發布於: ${ann.date}</p>
-                        ${ann.fileURL ? `<p class="text-xs text-teal-700 font-medium">附件: <a href="${ann.fileURL}" target="_blank" class="underline hover:text-teal-900">${fileName}</a></p>` : ''}
-                    `;
-                    
-                    listContainer.appendChild(item);
-                });
-            });
-        };
-        
-        // --- 活動花絮圖片管理邏輯 ---
-        const getGalleryImagesDocs = async () => {
-            const collectionRef = collection(db, GALLERY_KEY);
-            const q = query(collectionRef, orderBy('timestamp', 'asc')); 
+        async function getAnnouncements() {
+            const collectionRef = collection(db, ANNOUNCEMENT_KEY);
+            const q = query(collectionRef, orderBy('timestamp', 'desc')); 
             
             try {
                 const querySnapshot = await getDocs(q);
@@ -452,597 +383,107 @@
                 console.error("Error getting documents: ", e);
                 return [];
             }
+        }
+        
+        async function getCalendarEntries() {
+            const collectionRef = collection(db, CALENDAR_KEY);
+            const q = query(collectionRef, orderBy('date', 'asc')); 
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (e) {
+                console.error("Error getting documents: ", e);
+                return [];
+            }
+        }
+        
+        async function getGalleryImages() {
+            const collectionRef = collection(db, GALLERY_KEY);
+            const q = query(collectionRef, orderBy('timestamp', 'asc')); 
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                // 只返回 URL 陣列，以匹配原 Local Storage 結構
+                return querySnapshot.docs.map(doc => doc.data().url);
+            } catch (e) {
+                console.error("Error getting documents: ", e);
+                return [];
+            }
+        }
+
+        // 頁面載入時初始化 Tab 和公告
+        window.onload = function() {
+            showAboutTab('calendar');
+@@ -1333,5 +1418,71 @@
+        };
+    </script>
+
+    <!-- 腳本引入 Firestore 所需的模組函數 -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
+        
+        // 重新定義 Firebase config (防止多次執行)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwaFkl2KMq6uNYKiUdoyKd2UWxIG85lMc",
+            authDomain: "wleskidstw-dd0c3.firebaseapp.com",
+            projectId: "wleskidstw-dd0c3",
+            storageBucket: "wleskidstw-dd0c3.firebasestorage.app",
+            messagingSenderId: "284932938662",
+            appId: "1:284932938662:web:fb3e5c813143c2bfa60d67",
+            measurementId: "G-M0P869XDQ2"
         };
         
-        const loadGalleryManagement = async () => {
-            const imageDocs = await getGalleryImagesDocs();
-            
-            // 將 Firestore 數據轉換為簡單的 URL 陣列，只取前 4 個
-            const currentURLs = imageDocs.map(item => item.url).slice(0, 4);
+        // 初始化 Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-            for (let i = 0; i < 4; i++) {
-                const input = document.getElementById(`image-url-${i}`);
-                if (input) {
-                    input.value = currentURLs[i] || '';
-                }
-            }
-            renderGalleryPreviewAdmin(currentURLs);
-        };
-
-        const saveGalleryImages = async (event) => {
-            event.preventDefault();
-            if (!auth.currentUser) {
-                alert('您必須先登入才能更新圖片。');
-                return;
-            }
-
-            const newURLs = [];
-            for (let i = 0; i < 4; i++) {
-                const url = document.getElementById(`image-url-${i}`).value.trim();
-                newURLs.push(url);
-            }
-            
-            // 刪除舊數據
-            const existingDocs = await getGalleryImagesDocs();
-            for(const doc of existingDocs) {
-                await deleteDoc(doc(db, GALLERY_KEY, doc.id));
-            }
-
-            const validURLs = newURLs.filter(url => url !== '');
-
-            // 寫入新數據
-            for(const url of validURLs) {
-                await addDoc(collection(db, GALLERY_KEY), { url: url, timestamp: new Date().toISOString() });
-            }
-
-            alert('活動花絮圖片連結已更新！');
-            renderGalleryPreviewAdmin(validURLs);
-        };
-
-        const renderGalleryPreviewAdmin = (imageURLs) => {
-            const container = document.getElementById('gallery-preview-admin');
-            container.innerHTML = '';
-
-            const defaultPlaceholder = "https://placehold.co/150x150/cccccc/333333?text=預覽圖";
-            
-            for(let i = 0; i < 4; i++) {
-                const url = imageURLs[i] || defaultPlaceholder;
-                const div = document.createElement('div');
-                div.className = 'rounded-xl overflow-hidden shadow-lg aspect-square';
-                div.innerHTML = `<img src="${url}" alt="預覽圖 ${i + 1}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${defaultPlaceholder}';">`;
-                container.appendChild(div);
-            }
-        };
-
-
-        // --- 行事曆管理邏輯 ---
-        window.loadCalendarManagement = function() {
-            document.getElementById('calendar-form').reset();
-            document.getElementById('edit-calendar-id').value = '';
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
-            renderCalendarEntries();
-        };
-
-        const getCalendarEntries = async () => {
-            // 確保資料是按照日期升序排序
-            return await getRequests(CALENDAR_KEY, 'date', 'asc');
-        };
-
-        const saveCalendarEntry = async (event) => {
-            event.preventDefault();
-            if (!auth.currentUser) {
-                alert('您必須先登入才能新增行事曆項目。');
-                return;
-            }
-            const form = event.target;
-            const date = form.elements['calendar-date'].value;
-            const title = form.elements['calendar-title'].value;
-            const note = form.elements['calendar-note'].value;
-            const editIdInput = document.getElementById('edit-calendar-id');
-            const editId = editIdInput.value;
-
-            let messageText = '';
-            const data = { date, title, note, timestamp: new Date().toISOString() };
-
+        // 將 Firestore 函數導出到 Window 作用域供其他腳本使用
+        window.getAnnouncements = async function() {
+            const collectionRef = collection(db, 'announcements');
+            const q = query(collectionRef, orderBy('timestamp', 'desc'));
             try {
-                if (editId) {
-                    await updateRequest(CALENDAR_KEY, editId, data);
-                    messageText = '行事曆項目已成功更新！主網頁將同步更新。';
-                } else {
-                    await addDoc(collection(db, CALENDAR_KEY), data);
-                    messageText = '行事曆項目已成功新增！主網頁將同步更新。';
-                }
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             } catch (e) {
-                console.error("Error saving calendar entry: ", e);
-                alert(`儲存行事曆項目失敗。請檢查 Firebase 安全規則：${e.message}`);
-                return;
+                console.error("Error getting announcements from Firestore:", e);
+                return [];
             }
-            
-            form.reset();
-            editIdInput.value = '';
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
-            
-            alert(messageText);
-            renderCalendarEntries();
-        };
+        }
 
-        window.deleteCalendarEntry = async function(id) {
-            if (!confirm("確定要刪除此行事曆項目嗎？")) return;
-            if (!auth.currentUser) {
-                alert('您必須先登入才能刪除行事曆項目。');
-                return;
-            }
+        window.getCalendarEntries = async function() {
+            const collectionRef = collection(db, 'calendar_entries');
+            const q = query(collectionRef, orderBy('date', 'asc'));
             try {
-                await deleteDoc(doc(db, CALENDAR_KEY, id));
-                alert('行事曆項目已刪除。');
-                renderCalendarEntries();
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             } catch (e) {
-                console.error("Error removing calendar entry: ", e);
-                alert(`刪除失敗。請檢查 Firebase 安全規則：${e.message}`);
+                console.error("Error getting calendar entries from Firestore:", e);
+                return [];
             }
-        };
-
-        window.editCalendarEntry = function(id) {
-            getCalendarEntries().then(entries => {
-                const entry = entries.find(e => e.id === id);
-
-                if (!entry) return;
-
-                // 填入表單
-                document.getElementById('calendar-date').value = entry.date;
-                document.getElementById('calendar-title').value = entry.title; 
-                document.getElementById('calendar-note').value = entry.note;
-
-                // 設定編輯模式
-                document.getElementById('edit-calendar-id').value = id;
-                document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '更新項目';
-                
-                document.getElementById('calendar-management').scrollIntoView({ behavior: 'smooth' });
-            });
-        };
-
-        const renderCalendarEntries = () => {
-            getCalendarEntries().then(entries => {
-                const listContainer = document.getElementById('calendar-list');
-                listContainer.innerHTML = '';
-
-                if (entries.length === 0) {
-                    listContainer.innerHTML = '<p class="text-stone-500">目前沒有行事曆項目。</p>';
-                    return;
-                }
-
-                entries.forEach(entry => {
-                    const item = document.createElement('div');
-                    item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2';
-                    
-                    const header = document.createElement('div');
-                    header.className = 'flex justify-between items-start';
-                    header.innerHTML = `
-                        <div>
-                            <p class="text-xs font-semibold text-teal-700">${entry.date}</p>
-                            <span class="font-bold text-lg text-stone-800">${entry.title}</span>
-                            ${entry.note ? `<p class="text-xs text-stone-500">${entry.note}</p>` : ''}
-                        </div>
-                        <div class="flex space-x-2 flex-shrink-0">
-                            <button onclick="window.editCalendarEntry('${entry.id}')" class="text-sm text-teal-600 hover:underline">編輯</button>
-                            <button onclick="window.deleteCalendarEntry('${entry.id}')" class="text-sm text-red-500 hover:text-red-700">刪除</button>
-                        </div>
-                    `;
-                    listContainer.appendChild(item);
-                });
-            });
-        };
-
-        // --- 請假單列表邏輯 ---
-        const getLeaveRequests = async () => {
-            return await getRequests(LEAVE_KEY);
-        };
-
-        window.updateLeaveStatus = async function(id, newStatus) {
-            if (!auth.currentUser) {
-                alert('您必須先登入才能審核請假單。');
-                return;
-            }
-            let requests = await getLeaveRequests();
-            const index = requests.findIndex(req => req.id === id);
-            if (index === -1) return;
-
-            const req = requests[index];
-
-            // 1. 執行 Email 服務 API 呼叫 (真實發送)
-            if (!EMAILJS_USER_ID || !EMAILJS_TEMPLATE_ID_LEAVE || !EMAILJS_SERVICE_ID) {
-                console.error("錯誤: 請假審核 Email JS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
-                alert("錯誤: EmailJS 金鑰尚未設定。無法發送通知。");
-                // 仍允許更新狀態
-            } else {
-                const emailParams = {
-                    to_email: req.parentEmail,
-                    parent_name: req.parentName,
-                    child_name: req.childName,
-                    class_name: req.className,
-                    start_date: req.startDate,
-                    end_date: req.endDate,
-                    reason: req.reason,
-                    signature_img: req.signature // 簽名 Base64
-                };
-                
-                const API_URL = `https://api.emailjs.com/api/v1.0/email/send`;
-
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            service_id: EMAILJS_SERVICE_ID,
-                            template_id: EMAILJS_TEMPLATE_ID_LEAVE,
-                            user_id: EMAILJS_USER_ID,
-                            template_params: emailParams
-                        })
-                    });
-
-                    if (response.ok) {
-                        alert(`請假單已審核通過並成功發送 Email 給 ${req.parentEmail}！`);
-                    } else {
-                        console.error("EmailJS API 呼叫失敗:", response.statusText);
-                        alert(`請假單已審核通過，但 Email 發送失敗 (API 錯誤)：${response.statusText}`);
-                    }
-                } catch (error) {
-                    console.error("EmailJS API 呼叫發生錯誤:", error);
-                    alert(`請假單已審核通過，但 Email 發送發生錯誤：${error}`);
-                }
-            }
-
-            // 2. 更新請假狀態並渲染 (Firestore)
-            await updateRequest(LEAVE_KEY, req.id, { status: newStatus });
-            renderLeaveRequests();
-            loadDashboardData();
-        };
-
-        const renderLeaveRequests = () => {
-             getLeaveRequests().then(requests => {
-                const listContainer = document.getElementById('leave-requests-list');
-                listContainer.innerHTML = '';
-                
-                const pendingRequests = requests.filter(r => r.status === '待審核').length;
-                document.getElementById('leave-count').textContent = pendingRequests;
-
-                if (requests.length === 0) {
-                    listContainer.innerHTML = '<p class="text-stone-500">目前沒有新的請假申請。</p>';
-                    return;
-                }
-
-                requests.forEach((req) => {
-                    const isPending = req.status === '待審核';
-                    const statusColor = isPending ? 'bg-amber-100 border-amber-500' : 'bg-teal-100 border-teal-500';
-                    const statusText = isPending ? '待處理' : '已審核';
-
-                    item = document.createElement('div');
-                    item.className = `p-4 rounded-xl border-l-4 ${statusColor} card-shadow`;
-                    item.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-lg font-bold text-stone-800">${req.childName} (${req.className})</p>
-                                <p class="text-sm text-stone-600">家長: ${req.parentName} (${req.relationship})</p>
-                                <p class="text-sm text-stone-600">期間: ${req.startDate} ~ ${req.endDate}</p>
-                                <p class="text-sm font-medium text-red-700 mt-1">原因: ${req.reason}</p>
-                                <p class="text-xs text-stone-500 mt-2">接收通知 Email: ${req.parentEmail}</p>
-                                <p class="text-xs text-stone-500">提交時間: ${new Date(req.timestamp).toLocaleString('zh-TW')}</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-xs font-semibold px-2 py-1 rounded-full ${isPending ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}">${statusText}</span>
-                                <p class="text-xs text-stone-500 mb-2">簽名: <a href="${req.signature}" target="_blank" class="text-teal-700 hover:underline">查看簽名圖</a></p>
-                                ${isPending ? `<button onclick="window.updateLeaveStatus('${req.id}', '已審核')" class="mt-2 text-sm text-teal-700 hover:underline font-bold">標記為已審核</button>` : ''}
-                            </div>
-                        </div>
-                    `;
-                    listContainer.appendChild(item);
-                });
-             });
-        };
+        }
         
-        // --- 託藥單列表與回覆邏輯 ---
-        const getMedicationRequests = async () => {
-            return await getRequests(MEDICATION_KEY);
-        };
-
-        window.handleTeacherReply = async function(event, id) {
-            event.preventDefault();
-            if (!auth.currentUser) {
-                alert('您必須先登入才能回覆託藥單。');
-                return;
-            }
-            
-            const form = event.target;
-            const requests = await getMedicationRequests();
-            const index = requests.findIndex(req => req.id === id);
-
-            if (index === -1) return;
-
-            const req = requests[index];
-
-            const reply = {
-                time: form.elements.teacher_time.value,
-                note: form.elements.teacher_note.value,
-                teacher: form.elements.teacher_name.value,
-                timestamp: new Date().toISOString()
-            };
-
-            // 1. 執行 Email 服務 API 呼叫 (真實發送)
-            if (!EMAILJS_USER_ID || !EMAILJS_TEMPLATE_ID_MEDICATION || !EMAILJS_SERVICE_ID) {
-                console.error("錯誤: 託藥回覆 EmailJS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
-                alert("錯誤: EmailJS 金鑰尚未設定。無法發送通知。");
-            } else {
-                const emailParams = {
-                    to_email: req.parentEmail,
-                    child_name: req.childName,
-                    class_name: req.className,
-                    medication_details: req.medicationDetails.replace(/\n/g, '<br>'),
-                    reply_time: reply.time,
-                    reply_note: reply.note.replace(/\n/g, '<br>'),
-                    teacher_name: reply.teacher
-                };
-                
-                const API_URL = `https://api.emailjs.com/api/v1.0/email/send`;
-
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            service_id: EMAILJS_SERVICE_ID,
-                            template_id: EMAILJS_TEMPLATE_ID_MEDICATION,
-                            user_id: EMAILJS_USER_ID,
-                            template_params: emailParams
-                        })
-                    });
-
-                    if (response.ok) {
-                        alert(`回覆已記錄，Email 成功發送給家長: ${req.parentEmail}`);
-                    } else {
-                        console.error("EmailJS API 呼叫失敗:", response.statusText);
-                        alert(`Email 發送失敗 (API 呼叫失敗，請檢查 EmailJS 網站設定)：${response.statusText}`);
-                    }
-                } catch (error) {
-                    console.error("EmailJS API 呼叫發生錯誤:", error);
-                    alert(`Email 發送發生錯誤：${error}`);
-                }
-            }
-
-            // 2. 儲存回覆並更新後台介面
-            await updateRequest(MEDICATION_KEY, req.id, { teacherReply: reply });
-            
-            const message = document.createElement('div');
-            message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = `回覆已記錄，並已嘗試發送 Email 給家長: ${req.parentEmail}`;
-            document.body.appendChild(message);
-            setTimeout(() => { message.remove(); }, 3000);
-            
-            renderMedicationRequests();
-            loadDashboardData();
-        };
-
-        window.deleteMedicationEntry = async function(id) {
-            if (!confirm("確定要清除此託藥回覆記錄嗎？")) return;
+        window.getGalleryImages = async function() {
+            const collectionRef = collection(db, 'gallery_images');
+            const q = query(collectionRef, orderBy('timestamp', 'asc'));
             try {
-                // 清除回覆狀態 (在實際應用中可能直接刪除文件)
-                await updateRequest(MEDICATION_KEY, id, { teacherReply: null });
-                alert('託藥回覆記錄已清除。');
-                renderMedicationRequests();
-                loadDashboardData();
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => doc.data().url);
             } catch (e) {
-                console.error("Error clearing medication entry: ", e);
+                console.error("Error getting gallery images from Firestore:", e);
+                return [];
             }
-        };
+        }
 
-        const renderMedicationRequests = () => {
-            getMedicationRequests().then(requests => {
-                const listContainer = document.getElementById('medication-requests-list');
-                listContainer.innerHTML = '';
-                
-                const pendingRequests = requests.filter(r => r.teacherReply === undefined || r.teacherReply === null || !r.teacherReply.time).length;
-                document.getElementById('medication-count').textContent = pendingRequests;
-
-                if (requests.length === 0) {
-                    listContainer.innerHTML = '<p class="text-stone-500">目前沒有新的託藥申請。</p>';
-                    return;
-                }
-
-                requests.forEach((req) => {
-                    const isReplied = req.teacherReply && req.teacherReply.time;
-                    const statusColor = isReplied ? 'bg-green-100 border-green-500' : 'bg-amber-100 border-amber-500';
-                    const statusText = isReplied ? '已回覆' : '待回覆'; 
-                    
-                    const item = document.createElement('div');
-                    item.className = `p-4 rounded-xl border-l-4 ${statusColor} card-shadow`;
-                    
-                    // 修正：確保內嵌的 onsubmit 使用了正確的引號
-                    item.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-lg font-bold text-stone-800">${req.childName} (${req.className})</p>
-                                <p class="text-sm text-stone-600">家長: ${req.parentName} (${req.relationship})</p>
-                                <p class="text-sm text-stone-600">期間: ${req.startDate} ~ ${req.endDate} | 服藥時間: ${req.time}</p>
-                                <p class="text-sm font-medium text-red-700 mt-1">原因: ${req.reason}</p>
-                                <p class="text-xs text-stone-500 mt-2">接收通知 Email: ${req.parentEmail}</p>
-                                <p class="text-xs text-stone-500">提交時間: ${new Date(req.timestamp).toLocaleString('zh-TW')}</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-xs font-semibold px-2 py-1 rounded-full ${isReplied ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}">${statusText}</span>
-                                <p class="text-xs text-stone-500 mb-2">簽名: <a href="${req.parentSignature}" target="_blank" class="text-teal-700 hover:underline">查看簽名圖</a></p>
-                                ${isReplied ? `<button onclick="window.deleteMedicationEntry('${req.id}')" class="mt-2 text-sm text-red-500 hover:underline">刪除此記錄</button>` : ''}
-                            </div>
-                        </div>
-                    `;
-                    listContainer.appendChild(item);
-                });
-            });
-        };
-
-        // --- 行事曆管理邏輯 ---
-        window.loadCalendarManagement = function() {
-            document.getElementById('calendar-form').reset();
-            document.getElementById('edit-calendar-id').value = '';
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
-            renderCalendarEntries();
-        };
-
-        const getCalendarEntries = async () => {
-            // 確保資料是按照日期升序排序
-            return await getRequests(CALENDAR_KEY, 'date', 'asc');
-        };
-
-        const saveCalendarEntry = async (event) => {
-            event.preventDefault();
-            if (!auth.currentUser) {
-                alert('您必須先登入才能新增行事曆項目。');
-                return;
-            }
-            const form = event.target;
-            const date = form.elements['calendar-date'].value;
-            const title = form.elements['calendar-title'].value;
-            const note = form.elements['calendar-note'].value;
-            const editIdInput = document.getElementById('edit-calendar-id');
-            const editId = editIdInput.value;
-
-            let messageText = '';
-            const data = { date, title, note, timestamp: new Date().toISOString() };
-
-            try {
-                if (editId) {
-                    await updateRequest(CALENDAR_KEY, editId, data);
-                    messageText = '行事曆項目已成功更新！主網頁將同步更新。';
-                } else {
-                    await addDoc(collection(db, CALENDAR_KEY), data);
-                    messageText = '行事曆項目已成功新增！主網頁將同步更新。';
-                }
-            } catch (e) {
-                console.error("Error saving calendar entry: ", e);
-                alert(`儲存行事曆項目失敗。請檢查 Firebase 安全規則：${e.message}`);
-                return;
-            }
-            
-            form.reset();
-            editIdInput.value = '';
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
-            
-            alert(messageText);
-            renderCalendarEntries();
-        };
-
-        window.deleteCalendarEntry = async function(id) {
-            if (!confirm("確定要刪除此行事曆項目嗎？")) return;
-            if (!auth.currentUser) {
-                alert('您必須先登入才能刪除行事曆項目。');
-                return;
-            }
-            try {
-                await deleteDoc(doc(db, CALENDAR_KEY, id));
-                alert('行事曆項目已刪除。');
-                renderCalendarEntries();
-            } catch (e) {
-                console.error("Error removing calendar entry: ", e);
-                alert(`刪除失敗。請檢查 Firebase 安全規則：${e.message}`);
-            }
-        };
-
-        window.editCalendarEntry = function(id) {
-            getCalendarEntries().then(entries => {
-                const entry = entries.find(e => e.id === id);
-
-                if (!entry) return;
-
-                // 填入表單
-                document.getElementById('calendar-date').value = entry.date;
-                document.getElementById('calendar-title').value = entry.title; 
-                document.getElementById('calendar-note').value = entry.note;
-
-                // 設定編輯模式
-                document.getElementById('edit-calendar-id').value = id;
-                document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '更新項目';
-                
-                document.getElementById('calendar-management').scrollIntoView({ behavior: 'smooth' });
-            });
-        };
-
-        const renderCalendarEntries = () => {
-            getCalendarEntries().then(entries => {
-                const listContainer = document.getElementById('calendar-list');
-                listContainer.innerHTML = '';
-
-                if (entries.length === 0) {
-                    listContainer.innerHTML = '<p class="text-stone-500">目前沒有行事曆項目。</p>';
-                    return;
-                }
-
-                entries.forEach(entry => {
-                    const item = document.createElement('div');
-                    item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2';
-                    
-                    const header = document.createElement('div');
-                    header.className = 'flex justify-between items-start';
-                    header.innerHTML = `
-                        <div>
-                            <p class="text-xs font-semibold text-teal-700">${entry.date}</p>
-                            <span class="font-bold text-lg text-stone-800">${entry.title}</span>
-                            ${entry.note ? `<p class="text-xs text-stone-500">${entry.note}</p>` : ''}
-                        </div>
-                        <div class="flex space-x-2 flex-shrink-0">
-                            <button onclick="window.editCalendarEntry('${entry.id}')" class="text-sm text-teal-600 hover:underline">編輯</button>
-                            <button onclick="window.deleteCalendarEntry('${entry.id}')" class="text-sm text-red-500 hover:text-red-700">刪除</button>
-                        </div>
-                    `;
-                    listContainer.appendChild(item);
-                });
-            });
-        };
-
-        // --- 儀表板通用加載 ---
-        const loadDashboardData = () => {
-            getLeaveRequests().then(leaveRequests => {
-                getMedicationRequests().then(medicationRequests => {
-                    const pendingLeaves = leaveRequests.filter(r => r.status === '待審核').length;
-                    const pendingMedications = medicationRequests.filter(r => r.teacherReply === undefined || r.teacherReply === null || !r.teacherReply.time).length;
-
-                    document.getElementById('leave-count').textContent = pendingLeaves;
-                    document.getElementById('medication-count').textContent = pendingMedications;
-                    
-                    showAdminTab('announcements');
-                });
-            });
-        };
-
-        // 檢查是否已登入 (在 DOM 載入後執行)
+        // 由於整個腳本在 Preview 環境中容易出錯，我們使用 DOMContentLoaded 確保核心渲染在 DOM 準備就緒後執行
         document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('login-form');
-            if (loginForm) loginForm.addEventListener('submit', window.handleLogin);
+             // 確保在 DOM 載入時執行 Firestore 讀取和渲染
+            window.renderPublicAnnouncements();
+            window.renderGalleryPreview();
             
-            const announcementForm = document.getElementById('announcement-form');
-            if (announcementForm) announcementForm.addEventListener('submit', saveAnnouncement);
-            
-            const galleryForm = document.getElementById('gallery-form');
-            if (galleryForm) galleryForm.addEventListener('submit', saveGalleryImages);
-            
-            const calendarForm = document.getElementById('calendar-form');
-            if (calendarForm) calendarForm.addEventListener('submit', saveCalendarEntry);
-
-            const dateInput = document.getElementById('announcement-date');
-            if (dateInput) {
-                dateInput.value = new Date().toISOString().split('T')[0];
-            }
-            
-            onAuthStateChanged(auth, (user) => {
-                const loginView = document.getElementById('login-view');
-                const adminView = document.getElementById('admin-view');
-
-                if (user) {
-                    if (loginView) loginView.classList.add('hidden');
-                    if (adminView) adminView.classList.remove('hidden');
-                    loadDashboardData();
-                } else {
-                    if (loginView) loginView.classList.remove('hidden');
-                    if (adminView) adminView.classList.add('hidden');
-                }
-            });
+            // 由於 showAboutTab('calendar') 在 window.onload 中調用，它會在所有 DOM 元素準備好後調用 renderPublicCalendar()
         });
+        
     </script>
 </body>
