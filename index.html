@@ -8,6 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Klee One (手寫簡約風) 和 Inter (內文清晰用) 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+    <!-- 引入 Firebase 相關 SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <style>
         body {
             /* 內文使用清晰的 Inter */
@@ -84,7 +87,7 @@
         }
     </style>
 </head>
-<body class="text-stone-700">
+<body>
     
     <!-- 導覽列 (Header) -->
     <header class="sticky top-0 z-50 bg-white shadow-xl">
@@ -120,7 +123,7 @@
     <!-- 手機版側邊選單 (Sidebar Modal) -->
     <div id="mobile-sidebar" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden z-50">
         <div class="absolute right-0 top-0 w-64 h-full bg-white shadow-lg p-6 transform transition-transform duration-300 translate-x-full">
-            <button class="absolute top-4 right-4 text-stone-400 hover:text-stone-700" onclick="toggleSidebar()">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <h3 class="text-xl font-bold text-teal-700 mb-6 handwriting-font">網站導覽</h3>
@@ -518,7 +521,7 @@
                 </h3>
 
                 <!-- 相簿預覽 (4張圖片) - 從 localStorage 讀取圖片 URL -->
-                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10" id="gallery-preview-container">
+                 <div id="gallery-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10">
                     <!-- 圖片將由 JS 渲染 -->
                 </div>
                 
@@ -526,10 +529,10 @@
                     點擊下方按鈕，連結至 Google 相簿或學校相簿系統，查看更多的全園活動照片和孩子們的精彩瞬間。
                 </p>
                 
-                <!-- 獨立頁面連結按鈕 (已修正為指向 Google 相簿網址) -->
-                <a href="https://photos.google.com/u/1/albums" target="_blank" 
+                <!-- 獨立頁面連結按鈕 (已修正為指向 teacher_admin_panel.html) -->
+                <a href="teacher_admin_panel.html" target="_blank" 
                    class="mt-6 inline-block px-10 py-4 text-xl font-bold text-white bg-teal-600 rounded-full shadow-lg hover:bg-teal-700 transition duration-300 transform hover:scale-105">
-                    點此進入全園相簿連結 →
+                    🧑‍🏫 教師後台登入 →
                 </a>
             </div>
         </section>
@@ -916,26 +919,40 @@
                 // Helper to get normalized coordinates
                 const getCoords = (e) => {
                     const rect = this.canvas.getBoundingClientRect();
+                    // 修正: 使用 clientX/Y 並減去 Canvas 相對視口的偏移量
+                    const clientX = e.clientX || e.touches?.[0].clientX;
+                    const clientY = e.clientY || e.touches?.[0].clientY;
+
+                    if (clientX === undefined || clientY === undefined) return null;
+
                     return {
-                        x: (e.clientX - rect.left),
-                        y: (e.clientY - rect.top)
+                        x: (clientX - rect.left),
+                        y: (clientY - rect.top)
                     };
                 };
 
                 // Mouse Events
-                this.canvas.addEventListener('mousedown', (e) => this.startDrawing(getCoords(e)));
+                this.canvas.addEventListener('mousedown', (e) => {
+                    const coords = getCoords(e);
+                    if (coords) this.startDrawing(coords);
+                });
                 this.canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
-                this.canvas.addEventListener('mousemove', (e) => this.draw(getCoords(e)));
+                this.canvas.addEventListener('mousemove', (e) => {
+                    const coords = getCoords(e);
+                    if (coords) this.draw(coords);
+                });
 
-                // Touch Events
+                // Touch Events (確保觸控動作被 Canvas 捕獲)
                 this.canvas.addEventListener('touchstart', (e) => {
-                    e.preventDefault(); // 防止滾動
-                    this.startDrawing(getCoords(e.touches[0]));
+                    e.preventDefault(); 
+                    const coords = getCoords(e);
+                    if (coords) this.startDrawing(coords);
                 });
                 this.canvas.addEventListener('touchend', this.stopDrawing.bind(this));
                 this.canvas.addEventListener('touchmove', (e) => {
-                    e.preventDefault(); // 防止滾動
-                    this.draw(getCoords(e.touches[0]));
+                    e.preventDefault(); 
+                    const coords = getCoords(e);
+                    if (coords) this.draw(coords);
                 });
             }
 
@@ -1111,32 +1128,32 @@
 
         // --- 公告渲染邏輯 ---
         function renderPublicAnnouncements() {
-            // 從 localStorage 讀取教師發布的公告
-            const announcements = getRequests(ANNOUNCEMENT_KEY);
-            const listContainer = document.getElementById('public-announcement-list');
-            listContainer.innerHTML = '';
-
-            if (announcements.length === 0) {
-                // 如果沒有公告，顯示提示信息
-                listContainer.innerHTML = `<p class="text-stone-500 text-center py-4">目前尚無公告內容。</p>`;
-                return;
-            }
-
-            // 只顯示前三個公告
-            announcements.slice(0, 3).forEach((ann, index) => {
-                const tagColor = ann.tag === '重要' ? 'border-amber-500' : ann.tag === '活動' ? 'border-teal-500' : 'border-stone-500';
-                const item = document.createElement('div');
-                item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor} cursor-pointer`;
+            // 從 Firestore 讀取教師發布的公告
+            getAnnouncements().then(announcements => {
+                const listContainer = document.getElementById('public-announcement-list');
+                listContainer.innerHTML = '';
                 
-                // 使用 onclick 顯示完整的公告內容
-                item.onclick = () => showAnnouncementDetails(ann.id);
+                if (announcements.length === 0) {
+                    listContainer.innerHTML = `<p class="text-stone-500 text-center py-4">目前尚無公告內容。</p>`;
+                    return;
+                }
 
-                item.innerHTML = `
-                    <p class="text-stone-500 text-sm">【${ann.tag}】${ann.date}</p>
-                    <p class="text-lg font-semibold text-stone-800">${ann.title}</p>
-                    <p class="text-sm text-stone-600 mt-1">${ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : ''}</p>
-                `;
-                listContainer.appendChild(item);
+                // 只顯示前三個公告
+                announcements.slice(0, 3).forEach((ann, index) => {
+                    const tagColor = ann.tag === '重要' ? 'border-amber-500' : ann.tag === '活動' ? 'border-teal-500' : 'border-stone-500';
+                    const item = document.createElement('div');
+                    item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor} cursor-pointer`;
+                    
+                    // 使用 onclick 顯示完整的公告內容
+                    item.onclick = () => showAnnouncementDetails(ann.id);
+
+                    item.innerHTML = `
+                        <p class="text-stone-500 text-sm">【${ann.tag}】${ann.date}</p>
+                        <p class="text-lg font-semibold text-stone-800">${ann.title}</p>
+                        <p class="text-sm text-stone-600 mt-1">${ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : ''}</p>
+                    `;
+                    listContainer.appendChild(item);
+                });
             });
         }
         
@@ -1173,50 +1190,50 @@
         // --- 行事曆渲染邏輯 (新增) ---
         function renderPublicCalendar() {
             const container = document.getElementById('calendar-table-container');
-            const entries = getRequests(CALENDAR_KEY) || [];
-            container.innerHTML = ''; // Clear previous content
+            getCalendarEntries().then(entries => {
+                container.innerHTML = ''; // Clear previous content
 
-            if (entries.length === 0) {
-                container.innerHTML = '<p class="text-stone-500 text-center py-8">目前尚無行事曆資料，請老師登入後台新增。</p>';
-                return;
-            }
+                if (entries.length === 0) {
+                    container.innerHTML = '<p class="text-stone-500 text-center py-8">目前尚無行事曆資料，請老師登入後台新增。</p>';
+                    return;
+                }
 
-            // Sort entries by date (ascending)
-            entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+                // Sort entries by date (ascending)
+                entries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            let tableHtml = `
-                <div class="overflow-x-auto">
-                    <table class="data-table w-full min-w-[500px] bg-white rounded-lg shadow-sm">
-                        <thead>
-                            <tr class="bg-teal-100 text-teal-800">
-                                <th class="w-[15%]">日期</th>
-                                <th class="w-[65%]">活動名稱</th>
-                                <th class="w-[20%]">備註/地點</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            entries.forEach(entry => {
-                tableHtml += `
-                    <tr>
-                        <td>${entry.date}</td>
-                        <td>${entry.title}</td>
-                        <td>${entry.note || ''}</td>
-                    </tr>
+                let tableHtml = `
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full min-w-[500px] bg-white rounded-lg shadow-sm">
+                            <thead>
+                                <tr class="bg-teal-100 text-teal-800">
+                                    <th class="w-[15%]">日期</th>
+                                    <th class="w-[65%]">活動名稱</th>
+                                    <th class="w-[20%]">備註/地點</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                 `;
-            });
 
-            tableHtml += `</tbody></table></div>`;
-            container.innerHTML = tableHtml;
+                entries.forEach(entry => {
+                    tableHtml += `
+                        <tr>
+                            <td>${entry.date}</td>
+                            <td>${entry.title}</td>
+                            <td>${entry.note || ''}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHtml += `</tbody></table></div>`;
+                container.innerHTML = tableHtml;
+            });
         }
 
 
-        // --- 請假表單提交邏輯 (寫入 localStorage) ---
-        function handleLeaveSubmit(event) {
+        // --- 請假表單提交邏輯 (寫入 Firestore) ---
+        async function handleLeaveSubmit(event) {
             event.preventDefault(); 
             const form = event.target;
-            const requests = getRequests(LEAVE_KEY);
             
             // 驗證簽名
             if (!leaveSignaturePad || !leaveSignaturePad.getIsSigned()) {
@@ -1226,7 +1243,6 @@
 
             // 收集表單數據
             const newRequest = {
-                id: Date.now(),
                 parentName: form.parentName.value,
                 relationship: form.relationship.value,
                 childName: form.childName.value,
@@ -1240,28 +1256,33 @@
                 timestamp: new Date().toISOString()
             };
 
-            requests.unshift(newRequest);
-            saveRequests(LEAVE_KEY, requests); // 儲存到 localStorage
-            form.reset(); 
-            leaveSignaturePad.clear(); // 清空簽名板
+            // 使用 Firestore 寫入數據
+            try {
+                await addDoc(collection(db, LEAVE_KEY), newRequest);
+                
+                form.reset(); 
+                leaveSignaturePad.clear(); // 清空簽名板
 
-            const message = document.createElement('div');
-            message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = `請假申請已成功送出！請老師登入後台審核。`;
-            document.body.appendChild(message);
+                const message = document.createElement('div');
+                message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+                message.textContent = `請假申請已成功送出！數據已同步至雲端。`;
+                document.body.appendChild(message);
 
-            setTimeout(() => {
-                message.remove();
-            }, 3000);
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+            } catch (e) {
+                console.error("提交請假單失敗:", e);
+                alert("提交請假單失敗，請稍後再試。");
+            }
 
             return false;
         }
 
-        // --- 託藥表單提交邏輯 (寫入 localStorage) ---
-        function handleMedicationSubmit(event) {
+        // --- 託藥表單提交邏輯 (寫入 Firestore) ---
+        async function handleMedicationSubmit(event) {
             event.preventDefault();
             const form = event.target;
-            const requests = getRequests(MEDICATION_KEY);
 
             // 驗證簽名
             if (!medicationSignaturePad || !medicationSignaturePad.getIsSigned()) {
@@ -1289,7 +1310,6 @@
 
             // 收集表單數據
             const newRequest = {
-                id: Date.now(),
                 className: form.className.value,
                 childName: form.childName.value,
                 startDate: form.startDate.value,
@@ -1305,21 +1325,86 @@
                 timestamp: new Date().toISOString()
             };
 
-            requests.unshift(newRequest);
-            saveRequests(MEDICATION_KEY, requests); // 儲存到 localStorage
-            form.reset();
-            medicationSignaturePad.clear(); // 清空簽名板
+            // 使用 Firestore 寫入數據
+            try {
+                await addDoc(collection(db, MEDICATION_KEY), newRequest);
+                
+                form.reset();
+                medicationSignaturePad.clear(); // 清空簽名板
 
-            const message = document.createElement('div');
-            message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = `託藥申請已成功送出！請老師登入後台審核。`;
-            document.body.appendChild(message);
-            
-            setTimeout(() => {
-                message.remove();
-            }, 3000);
+                const message = document.createElement('div');
+                message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+                message.textContent = `託藥申請已成功送出！數據已同步至雲端。`;
+                document.body.appendChild(message);
+                
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+            } catch (e) {
+                console.error("提交託藥單失敗:", e);
+                alert("提交託藥單失敗，請稍後再試。");
+            }
 
             return false;
+        }
+
+        // --- Firestore 數據獲取 (取代 Local Storage) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwaFkl2KMq6uNYKiUdoyKd2UWxIG85lMc",
+            authDomain: "wleskidstw-dd0c3.firebaseapp.com",
+            projectId: "wleskidstw-dd0c3",
+            storageBucket: "wleskidstw-dd0c3.firebasestorage.app",
+            messagingSenderId: "284932938662",
+            appId: "1:284932938662:web:fb3e5c813143c2bfa60d67",
+            measurementId: "G-M0P869XDQ2"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const LEAVE_KEY = 'leave_requests';
+        const MEDICATION_KEY = 'medication_requests';
+        const ANNOUNCEMENT_KEY = 'announcements';
+        const GALLERY_KEY = 'gallery_images';
+        const CALENDAR_KEY = 'calendar_entries'; 
+        
+        async function getAnnouncements() {
+            const collectionRef = collection(db, ANNOUNCEMENT_KEY);
+            const q = query(collectionRef, orderBy('timestamp', 'desc')); 
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (e) {
+                console.error("Error getting documents: ", e);
+                return [];
+            }
+        }
+        
+        async function getCalendarEntries() {
+            const collectionRef = collection(db, CALENDAR_KEY);
+            const q = query(collectionRef, orderBy('date', 'asc')); 
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (e) {
+                console.error("Error getting documents: ", e);
+                return [];
+            }
+        }
+        
+        async function getGalleryImages() {
+            const collectionRef = collection(db, GALLERY_KEY);
+            const q = query(collectionRef, orderBy('timestamp', 'asc')); 
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                // 只返回 URL 陣列，以匹配原 Local Storage 結構
+                return querySnapshot.docs.map(doc => doc.data().url);
+            } catch (e) {
+                console.error("Error getting documents: ", e);
+                return [];
+            }
         }
 
         // 頁面載入時初始化 Tab 和公告
@@ -1333,5 +1418,71 @@
         };
     </script>
 
+    <!-- 腳本引入 Firestore 所需的模組函數 -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
+        
+        // 重新定義 Firebase config (防止多次執行)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwaFkl2KMq6uNYKiUdoyKd2UWxIG85lMc",
+            authDomain: "wleskidstw-dd0c3.firebaseapp.com",
+            projectId: "wleskidstw-dd0c3",
+            storageBucket: "wleskidstw-dd0c3.firebasestorage.app",
+            messagingSenderId: "284932938662",
+            appId: "1:284932938662:web:fb3e5c813143c2bfa60d67",
+            measurementId: "G-M0P869XDQ2"
+        };
+        
+        // 初始化 Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 將 Firestore 函數導出到 Window 作用域供其他腳本使用
+        window.getAnnouncements = async function() {
+            const collectionRef = collection(db, 'announcements');
+            const q = query(collectionRef, orderBy('timestamp', 'desc'));
+            try {
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (e) {
+                console.error("Error getting announcements from Firestore:", e);
+                return [];
+            }
+        }
+
+        window.getCalendarEntries = async function() {
+            const collectionRef = collection(db, 'calendar_entries');
+            const q = query(collectionRef, orderBy('date', 'asc'));
+            try {
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (e) {
+                console.error("Error getting calendar entries from Firestore:", e);
+                return [];
+            }
+        }
+        
+        window.getGalleryImages = async function() {
+            const collectionRef = collection(db, 'gallery_images');
+            const q = query(collectionRef, orderBy('timestamp', 'asc'));
+            try {
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => doc.data().url);
+            } catch (e) {
+                console.error("Error getting gallery images from Firestore:", e);
+                return [];
+            }
+        }
+
+        // 由於整個腳本在 Preview 環境中容易出錯，我們使用 DOMContentLoaded 確保核心渲染在 DOM 準備就緒後執行
+        document.addEventListener('DOMContentLoaded', () => {
+             // 確保在 DOM 載入時執行 Firestore 讀取和渲染
+            window.renderPublicAnnouncements();
+            window.renderGalleryPreview();
+            
+            // 由於 showAboutTab('calendar') 在 window.onload 中調用，它會在所有 DOM 元素準備好後調用 renderPublicCalendar()
+        });
+        
+    </script>
 </body>
-</html>
