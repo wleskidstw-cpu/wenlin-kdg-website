@@ -758,24 +758,240 @@
                 </div>
 
             </div>
+        </section>
+
+
+    </main>
+    
+    <!-- 聯絡我們 Modal (對話框) -->
+    <div id="contact-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg transition-all duration-300 transform scale-100">
+            <h2 class="text-2xl font-bold text-amber-700 mb-4 handwriting-font">✉️ 聯絡我們</h2>
+            <p class="text-sm text-stone-600 mb-6">請填寫您的問題，我們將盡快透過 Email 回覆您。</p>
+            <form id="general-contact-form" onsubmit="handleGeneralContactSubmit(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">對象/收件人</label>
+                        <select name="recipient" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" required>
+                            <option value="幼兒園主任" selected>幼兒園主任 (一般行政)</option>
+                            <option value="行政教保員">行政教保員 (文書/招生)</option>
+                            <option value="總務">總務 (費用/雜項)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">您的姓名</label>
+                        <input type="text" name="senderName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="請輸入您的姓名" required>
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">您的電子郵件 (Email)</label>
+                        <input type="email" name="senderEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" placeholder="用於接收回覆" required>
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-1">問題描述</label>
+                        <textarea name="question" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500" rows="4" placeholder="請詳細描述您的問題或建議" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition duration-150 shadow-md">
+                        送出問題
+                    </button>
+                </div>
+            </form>
+            <!-- Modal Close Button -->
+            <button onclick="closeContactModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
         </div>
     </div>
+
+    <!-- 6. 頁腳 (Footer) & 聯絡資訊 -->
+    <footer id="contact" class="bg-stone-700 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 border-b border-stone-600 pb-8 mb-8">
+                
+                <!-- 關於學校 -->
+                <div>
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">文林附幼</h5>
+                    <p class="text-stone-300 text-sm">
+                        我們承諾提供最優質的學前教育，為每個孩子在未來的小學生活打下堅實的基礎。
+                    </p>
+                </div>
+
+                <!-- 聯絡資訊 -->
+                <div>
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">聯絡我們</h5>
+                    <p class="text-stone-300">📞 (02) 2823-4212 </p>
+                    <p class="text-stone-300">📧 wleskidstw@gmail.com</p>
+                    <p class="text-stone-300 mt-2">📍 臺北市北投區文林北路 155 號</p>
+                    
+                    <!-- 新增社群連結 -->
+                    <div class="flex space-x-4 mt-4">
+                        <a href="https://www.facebook.com/profile.php?id=100076303928280" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">
+                            <!-- Facebook Icon (Simplified SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.588-1.333h2.412v-3.798c-0.457-0.054-1.83-0.215-3.565-0.215-4.516 0-7.435 2.768-7.435 7.422v2.578z"/></svg>
+                        </a>
+                        <a href="https://www.youtube.com/channel/UCgfaMP3hjcr_x78GK44VsIQ" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">
+                            <!-- YouTube Icon (Simplified SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-1.226-7.5-1.226-11.1 0-3.14 1.066-5.894 3.797-6.91 6.812-1.016 3.015-1.016 6.136 0 9.151 1.016 3.015 3.77 5.746 6.91 6.812 3.604 1.226 7.5 1.226 11.1 0 3.14-1.066 5.894-3.797 6.91-6.812 1.016-3.015 1.016-6.136 0-9.151-1.016-3.015-3.77-5.746-6.91-6.812zm-3.8 8.166l-5.7 3.639c-.58.375-1.1.054-1.1-.64v-7.278c0-.694.52-1.015 1.1-.64l5.7 3.639c.58.374.58 1.004 0 1.379z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 快速連結 (已修改為好站連結) -->
+                <div>
+                    <h5 class="text-xl font-bold mb-4 text-amber-300 handwriting-font">好站連結</h5>
+                    <ul class="space-y-2">
+                        <li><a href="https://fatraceschool.k12ea.gov.tw/frontend/" target="_blank" class="text-stone-300 hover:text-white transition duration-150">校園食材登錄平台</a></li>
+                        <li><a href="https://www.doe.gov.taipei/" target="_blank" class="text-stone-300 hover:text-white transition duration-150">臺北市政府教育局</a></li>
+                        <li><a href="teacher_admin_panel.html" target="_blank" class="text-stone-300 hover:text-amber-400 transition duration-150">🧑‍🏫 教師後台登入</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 版權聲明 -->
+            <div class="text-center text-sm text-stone-400 pt-4">
+                &copy; 2024 臺北市北投區文林國民小學附設幼兒園. 設計：程式夥伴
+            </div>
+        </div>
+    </footer>
 
     <script>
         // --- 常數定義 ---
         const LEAVE_KEY = 'wenlin_leave_requests';
         const MEDICATION_KEY = 'wenlin_medication_requests';
         const ANNOUNCEMENT_KEY = 'wenlin_announcements';
-        const GALLERY_KEY = 'wenlin_gallery_images';
-        const CALENDAR_KEY = 'wenlin_calendar_entries'; 
+        const GALLERY_KEY = 'wenlin_gallery_images'; // 新增：用於儲存活動花絮圖片 URL 
+        const CALENDAR_KEY = 'wenlin_calendar_entries'; // 行事曆模板
         
-        // ** EmailJS 金鑰設定 (用於發送審核通知) **
+        // ** EmailJS 金鑰設定 (已複製到主網頁) **
         const EMAILJS_SERVICE_ID = 'service_e4kb1a4'; 
-        const EMAILJS_TEMPLATE_ID_MEDICATION = 'template_yh5wstg'; 
-        const EMAILJS_TEMPLATE_ID_LEAVE = 'template_3q1tinr'; 
+        const EMAILJS_TEMPLATE_ID_MEDICATION = 'template_yh5wstg'; // 託藥回覆模板
+        const EMAILJS_TEMPLATE_ID_LEAVE = 'template_3q1tinr'; // 請假審核模板
         const EMAILJS_USER_ID = '0rtERq-KaOIx1yYP9'; 
 
-        // --- 數據存取通用函數 (Local Storage CRUD) ---
+        // --- 簽名板類別 ---
+        class SignaturePad {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.drawing = false;
+                this.isSigned = false;
+
+                // 設置 Canvas 初始大小和樣式
+                this.resizeCanvas();
+                // 修正：當視窗大小改變時，重新設置 Canvas 大小
+                window.addEventListener('resize', this.resizeCanvas.bind(this));
+                
+                this.ctx.lineWidth = 2;
+                this.ctx.lineCap = 'round';
+                this.ctx.strokeStyle = '#000';
+                this.ctx.fillStyle = '#fff';
+
+                this.addListeners();
+            }
+
+            resizeCanvas() {
+                const rect = this.canvas.parentNode.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                
+                // 設置 Canvas 的實際繪圖解析度
+                this.canvas.width = rect.width * dpr;
+                this.canvas.height = 128 * dpr;
+                
+                // 設置 Canvas 的顯示尺寸
+                this.canvas.style.width = rect.width + 'px';
+                this.canvas.style.height = 128 + 'px';
+                
+                // 縮放繪圖上下文，使繪製清晰
+                this.ctx.scale(dpr, dpr);
+                this.clear(); // 清除重繪時的內容
+            }
+
+            clear() {
+                this.ctx.fillStyle = '#fff';
+                // 修正: 填充整個 Canvas 顯示區域
+                this.ctx.fillRect(0, 0, this.canvas.width / (window.devicePixelRatio || 1), this.canvas.height / (window.devicePixelRatio || 1));
+                this.isSigned = false;
+            }
+
+            addListeners() {
+                // Helper to get normalized coordinates
+                const getCoords = (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    return {
+                        x: (e.clientX - rect.left),
+                        y: (e.clientY - rect.top)
+                    };
+                };
+
+                // Mouse Events
+                this.canvas.addEventListener('mousedown', (e) => this.startDrawing(getCoords(e)));
+                this.canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
+                this.canvas.addEventListener('mousemove', (e) => this.draw(getCoords(e)));
+
+                // Touch Events
+                this.canvas.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // 防止滾動
+                    this.startDrawing(getCoords(e.touches[0]));
+                });
+                this.canvas.addEventListener('touchend', this.stopDrawing.bind(this));
+                this.canvas.addEventListener('touchmove', (e) => {
+                    e.preventDefault(); // 防止滾動
+                    this.draw(getCoords(e.touches[0]));
+                });
+            }
+
+            startDrawing(coords) {
+                this.drawing = true;
+                this.isSigned = true;
+                this.ctx.beginPath();
+                this.ctx.moveTo(coords.x, coords.y);
+            }
+
+            stopDrawing() {
+                this.drawing = false;
+                this.ctx.closePath();
+            }
+
+            draw(coords) {
+                if (!this.drawing) return;
+                
+                this.ctx.lineTo(coords.x, coords.y);
+                this.ctx.stroke();
+            }
+
+            toDataURL() {
+                return this.isSigned ? this.canvas.toDataURL('image/png') : null;
+            }
+
+            getIsSigned() {
+                return this.isSigned;
+            }
+        }
+        
+        // --- 初始化簽名板 ---
+        let leaveSignaturePad;
+        let medicationSignaturePad;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const leaveCanvas = document.getElementById('leaveSignatureCanvas');
+            if (leaveCanvas) {
+                leaveSignaturePad = new SignaturePad('leaveSignatureCanvas');
+            }
+            const medicationCanvas = document.getElementById('medicationSignatureCanvas');
+            if (medicationCanvas) {
+                medicationSignaturePad = new SignaturePad('medicationSignatureCanvas');
+            }
+            renderPublicAnnouncements();
+            renderGalleryPreview(); // 新增：初始化活動花絮預覽
+        });
+
+        function clearSignature(canvasId) {
+            const pad = canvasId === 'leaveSignatureCanvas' ? leaveSignaturePad : medicationSignaturePad;
+            if (pad) {
+                pad.clear();
+            }
+        }
+        
+        // --- 數據存取通用函數 ---
         function getRequests(key) {
             try {
                 return JSON.parse(localStorage.getItem(key)) || [];
@@ -788,729 +1004,334 @@
             localStorage.setItem(key, JSON.stringify(requests));
         }
         
-        // --- 登入/登出邏輯 (Local Storage 模擬) ---
-        function handleLogin(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            // 模擬驗證
-            if (username === 'teacher' && password === '123456') {
-                localStorage.setItem('adminLoggedIn', 'true');
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('admin-view').classList.remove('hidden');
-                loadDashboardData();
-            } else {
-                const message = document.createElement('div');
-                message.className = 'fixed bottom-5 right-5 p-4 bg-red-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-                message.textContent = `登入失敗：請檢查帳號和密碼。`;
-                document.body.appendChild(message);
-                setTimeout(() => { message.remove(); }, 4000);
-            }
-        }
-
-        function handleLogout() {
-            localStorage.removeItem('adminLoggedIn');
-            document.getElementById('login-view').classList.remove('hidden');
-            document.getElementById('admin-view').classList.add('hidden');
-        }
-        
-        // --- Tab 切換邏輯 ---
-        function showAdminTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            document.getElementById(tabName).classList.remove('hidden');
-            document.querySelector(`.tab-btn[onclick*="'${tabName}'"]`).classList.add('active');
-
-            // 載入該 Tab 的數據
-            if (tabName === 'leave-requests') renderLeaveRequests();
-            if (tabName === 'medication-requests') renderMedicationRequests();
-            if (tabName === 'announcements') renderAnnouncements();
-            if (tabName === 'gallery-management') loadGalleryManagement(); // 載入圖片管理數據
-            if (tabName === 'calendar-management') loadCalendarManagement(); // 載入行事曆管理數據
-        }
-        
-        // --- 公告管理邏輯 ---
-        function getAnnouncements() {
-            const announcements = getRequests(ANNOUNCEMENT_KEY);
-            return announcements.sort((a, b) => new Date(b.date) - new Date(a.date));
-        }
-
-        function saveAnnouncement(event) {
-            event.preventDefault();
-            const form = event.target;
-            const title = form.elements['announcement-title'].value;
-            const content = form.elements['announcement-content'].value;
-            const tag = form.elements['announcement-tag'].value;
-            const date = form.elements['announcement-date'].value;
-            const fileURL = document.getElementById('announcement-file-url').value.trim();
-            const editIdInput = document.getElementById('edit-announcement-id');
-            const editId = editIdInput.value ? parseInt(editIdInput.value) : null;
-
-            let announcements = getRequests(ANNOUNCEMENT_KEY);
-            let messageText = '';
-
-            if (editId) {
-                const index = announcements.findIndex(ann => ann.id == editId);
-                if (index !== -1) {
-                    announcements[index] = { 
-                        ...announcements[index], 
-                        title: title, 
-                        content: content, 
-                        tag: tag, 
-                        date: date, 
-                        fileURL: fileURL 
-                    };
-                    messageText = '公告已成功更新！';
-                }
-            } else {
-                const newAnnouncement = {
-                    id: Date.now(),
-                    title: title,
-                    content: content,
-                    tag: tag,
-                    date: date,
-                    fileURL: fileURL
-                };
-                announcements.unshift(newAnnouncement); 
-                messageText = '新公告已成功儲存！';
-            }
-            saveRequests(ANNOUNCEMENT_KEY, announcements);
-            
-            form.reset();
-            document.getElementById('announcement-form').querySelector('button[type="submit"]').textContent = '儲存公告並發布';
-            editIdInput.value = '';
-            document.getElementById('announcement-date').value = new Date().toISOString().split('T')[0];
-            
-            const message = document.createElement('div');
-            message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = messageText;
-            document.body.appendChild(message);
-            setTimeout(() => { message.remove(); }, 3000);
-            
-            renderAnnouncements();
-        }
-
-        function deleteAnnouncement(id) {
-            if (!confirm("確定要刪除這則公告嗎？")) return;
-            let announcements = getRequests(ANNOUNCEMENT_KEY);
-            announcements = announcements.filter(ann => ann.id !== id);
-            saveRequests(ANNOUNCEMENT_KEY, announcements);
-            renderAnnouncements();
-        }
-        
-        function editAnnouncement(id) {
-            const announcements = getAnnouncements();
-            const ann = announcements.find(a => a.id === id);
-
-            if (!ann) return;
-            
-            document.getElementById('announcement-title').value = ann.title;
-            document.getElementById('announcement-content').value = ann.content;
-            document.getElementById('announcement-tag').value = ann.tag;
-            document.getElementById('announcement-date').value = ann.date;
-            document.getElementById('announcement-file-url').value = ann.fileURL;
-
-            document.getElementById('edit-announcement-id').value = id;
-            document.querySelector('#announcements button[type="submit"]').textContent = '更新公告';
-            
-            document.getElementById('announcements').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function renderAnnouncements() {
-            getAnnouncements().then(announcements => {
-                const listContainer = document.getElementById('announcement-list');
-                listContainer.innerHTML = '';
-                
-                if (announcements.length === 0) {
-                    listContainer.innerHTML = '<p class="text-stone-500">目前沒有公告。</p>';
-                    return;
-                }
-
-                announcements.forEach(ann => {
-                    const item = document.createElement('div');
-                    item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2';
-                    
-                    const header = document.createElement('div');
-                    header.className = 'flex justify-between items-start';
-                    header.innerHTML = `
-                        <div>
-                            <span class="text-xs font-semibold text-teal-700 mr-2">[${ann.tag}]</span>
-                            <span class="font-bold text-lg text-stone-800">${ann.title}</span>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button onclick="editAnnouncement(${ann.id})" class="text-sm text-teal-600 hover:underline">編輯</button>
-                            <button onclick="deleteAnnouncement(${ann.id})" class="text-sm text-red-500 hover:text-red-700">刪除</button>
-                        </div>
-                    `;
-                    item.appendChild(header);
-
-                    const contentPreview = ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : '無內容';
-                    const fileName = ann.fileURL ? ann.fileURL.split('/').pop() : '';
-
-                    item.innerHTML += `
-                        <p class="text-sm text-stone-600 whitespace-pre-wrap">${contentPreview}</p>
-                        <p class="text-xs text-stone-500 mt-1">發布於: ${ann.date}</p>
-                        ${ann.fileURL ? `<p class="text-xs text-teal-700 font-medium">附件: <a href="${ann.fileURL}" target="_blank" class="underline hover:text-teal-900">${fileName}</a></p>` : ''}
-                    `;
-                    
-                    listContainer.appendChild(item);
-                });
-            });
-        }
-        
-        // --- 活動花絮圖片管理邏輯 ---
-        function loadGalleryManagement() {
+        // --- 活動花絮圖片渲染 ---
+        function renderGalleryPreview() {
+            const container = document.getElementById('gallery-preview-container');
             const imageURLs = getRequests(GALLERY_KEY) || [];
-            
-            for (let i = 0; i < 4; i++) {
-                const input = document.getElementById(`image-url-${i}`);
-                if (input) {
-                    input.value = imageURLs[i] || '';
-                }
-            }
-            renderGalleryPreviewAdmin(imageURLs);
-        }
-
-        function saveGalleryImages(event) {
-            event.preventDefault();
-            const newURLs = [];
-            for (let i = 0; i < 4; i++) {
-                const url = document.getElementById(`image-url-${i}`).value.trim();
-                newURLs.push(url);
-            }
-            
-            const validURLs = newURLs.filter(url => url !== '');
-
-            saveRequests(GALLERY_KEY, validURLs);
-
-            alert('活動花絮圖片連結已更新！');
-            renderGalleryPreviewAdmin(validURLs);
-        }
-
-        function renderGalleryPreviewAdmin(imageURLs) {
-            const container = document.getElementById('gallery-preview-admin');
             container.innerHTML = '';
 
-            const defaultPlaceholder = "https://placehold.co/150x150/cccccc/333333?text=預覽圖";
-            
-            for(let i = 0; i < 4; i++) {
-                const url = imageURLs[i] || defaultPlaceholder;
+            // 確保有 4 個 Placeholder URL，如果 localStorage 不足 4 個
+            const defaultURLs = [
+                "https://placehold.co/300x300/fecaca/dc2626?text=校外教學",
+                "https://placehold.co/300x300/a7f3d0/059669?text=美術課",
+                "https://placehold.co/300x300/c7d2fe/4f46e5?text=故事時間",
+                "https://placehold.co/300x300/fed7aa/f97316?text=體能活動"
+            ];
+
+            const previewURLs = imageURLs.concat(defaultURLs).slice(0, 4);
+
+            previewURLs.forEach(url => {
                 const div = document.createElement('div');
                 div.className = 'rounded-xl overflow-hidden shadow-lg aspect-square';
-                div.innerHTML = `<img src="${url}" alt="預覽圖 ${i + 1}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${defaultPlaceholder}';">`;
+                div.innerHTML = `<img src="${url}" alt="活動花絮預覽圖" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/300x300/cccccc/333333?text=無法載入圖片';">`;
                 container.appendChild(div);
-            }
-        }
-
-
-        // --- 行事曆管理邏輯 ---
-        function loadCalendarManagement() {
-            document.getElementById('calendar-form').reset();
-            document.getElementById('edit-calendar-id').value = '';
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
-            renderCalendarEntries();
-        }
-
-        function getCalendarEntries() {
-            const entries = getRequests(CALENDAR_KEY);
-            return entries.sort((a, b) => new Date(a.date) - new Date(b.date));
-        }
-
-        function saveCalendarEntry(event) {
-            event.preventDefault();
-            const form = event.target;
-            const date = form.elements['calendar-date'].value;
-            const title = form.elements['calendar-title'].value;
-            const note = form.elements['calendar-note'].value;
-            const editIdInput = document.getElementById('edit-calendar-id');
-            const editId = editIdInput.value ? parseInt(editIdInput.value) : null;
-
-            let entries = getRequests(CALENDAR_KEY);
-            let messageText = '';
-
-            if (editId) {
-                // 執行更新
-                const index = entries.findIndex(entry => entry.id === editId);
-                if (index !== -1) {
-                    entries[index] = { ...entries[index], date: date, title: title, note: note };
-                    messageText = '行事曆項目已成功更新！';
-                }
-            } else {
-                // 執行創建
-                const newEntry = {
-                    id: Date.now(),
-                    date: date,
-                    title: title,
-                    note: note
-                };
-                entries.push(newEntry);
-                messageText = '行事曆項目已成功新增！';
-            }
-            saveRequests(CALENDAR_KEY, entries);
-            
-            form.reset();
-            editIdInput.value = '';
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
-            
-            alert(messageText);
-            renderCalendarEntries();
-        }
-
-        function deleteCalendarEntry(id) {
-            if (!confirm("確定要刪除此行事曆項目嗎？")) return;
-            let entries = getRequests(CALENDAR_KEY);
-            entries = entries.filter(entry => entry.id !== id);
-            saveRequests(CALENDAR_KEY, entries);
-            renderCalendarEntries();
-        }
-
-        function editCalendarEntry(id) {
-            const entries = getCalendarEntries();
-            const entry = entries.find(e => e.id === id);
-
-            if (!entry) return;
-
-            // 填入表單
-            document.getElementById('calendar-date').value = entry.date;
-            document.getElementById('calendar-title').value = entry.title;
-            document.getElementById('calendar-note').value = entry.note;
-
-            // 設定編輯模式
-            document.getElementById('edit-calendar-id').value = id;
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '更新項目';
-            
-            // 捲動到表單頂部
-            document.getElementById('calendar-management').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function renderCalendarEntries() {
-            const entries = getCalendarEntries();
-            const listContainer = document.getElementById('calendar-list');
-            listContainer.innerHTML = '';
-
-            if (entries.length === 0) {
-                listContainer.innerHTML = '<p class="text-stone-500">目前沒有行事曆項目。</p>';
-                return;
-            }
-
-            entries.forEach(entry => {
-                const item = document.createElement('div');
-                item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-start space-x-4';
-                
-                item.innerHTML = `
-                    <div>
-                        <p class="text-xs font-semibold text-teal-700">${entry.date}</p>
-                        <span class="font-bold text-base text-stone-800">${entry.title}</span>
-                        ${entry.note ? `<p class="text-xs text-stone-500">${entry.note}</p>` : ''}
-                    </div>
-                    <div class="flex space-x-2 flex-shrink-0">
-                        <button onclick="editCalendarEntry(${entry.id})" class="text-sm text-teal-600 hover:underline">編輯</button>
-                        <button onclick="deleteCalendarEntry(${entry.id})" class="text-sm text-red-500 hover:text-red-700">刪除</button>
-                    </div>
-                `;
-                listContainer.appendChild(item);
             });
         }
 
-        // --- 請假單列表邏輯 ---
-        function getLeaveRequests() {
-            const requests = getRequests(LEAVE_KEY);
-            return requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        }
 
-        async function updateLeaveStatus(id, newStatus) {
-            let requests = getLeaveRequests();
-            const index = requests.findIndex(req => req.id === id);
-            if (index === -1) return;
-
-            const req = requests[index];
-
-            // 1. 執行 Email 服務 API 呼叫 (真實發送)
-            if (!EMAILJS_USER_ID || !EMAILJS_TEMPLATE_ID_LEAVE || !EMAILJS_SERVICE_ID) {
-                console.error("錯誤: 請假審核 EmailJS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
-                alert("錯誤: EmailJS 金鑰尚未設定。無法發送通知。");
-                // 仍允許更新狀態
-            } else {
-                const emailParams = {
-                    to_email: req.parentEmail,
-                    parent_name: req.parentName,
-                    child_name: req.childName,
-                    class_name: req.className,
-                    start_date: req.startDate,
-                    end_date: req.endDate,
-                    reason: req.reason,
-                    signature_img: req.signature // 簽名 Base64
-                };
-                
-                const API_URL = `https://api.emailjs.com/api/v1.0/email/send`;
-
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            service_id: EMAILJS_SERVICE_ID,
-                            template_id: EMAILJS_TEMPLATE_ID_LEAVE,
-                            user_id: EMAILJS_USER_ID,
-                            template_params: emailParams
-                        })
-                    });
-
-                    if (response.ok) {
-                        alert(`請假單已審核通過並成功發送 Email 給 ${req.parentEmail}！`);
-                    } else {
-                        console.error("EmailJS API 呼叫失敗:", response.statusText);
-                        alert(`請假單已審核通過，但 Email 發送失敗 (API 錯誤)：${response.statusText}`);
-                    }
-                } catch (error) {
-                    console.error("EmailJS API 呼叫發生錯誤:", error);
-                    alert(`請假單已審核通過，但 Email 發送發生錯誤：${error}`);
-                }
-            }
-
-            // 2. 更新請假狀態並渲染 (Local Storage)
-            requests[index].status = newStatus;
-            saveRequests(LEAVE_KEY, requests);
-            renderLeaveRequests();
-            loadDashboardData();
-        }
-
-        function renderLeaveRequests() {
-             const requests = getLeaveRequests();
-             const listContainer = document.getElementById('leave-requests-list');
-             listContainer.innerHTML = '';
+        // --- 核心 Tab 切換邏輯 (通用) ---
+        function showAboutTab(tabName) {
+            document.querySelectorAll('#about-content .tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('#about-tabs button').forEach(button => {
+                button.classList.remove('tab-active');
+            });
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelector(`#about-tabs button[onclick*="'${tabName}'"]`).classList.add('tab-active');
             
-            const pendingRequests = requests.filter(r => r.status === '待審核').length;
-            document.getElementById('leave-count').textContent = pendingRequests;
+            // 修正：當切換到行事曆時，確保行事曆內容被渲染
+            if (tabName === 'calendar') {
+                renderPublicCalendar();
+            }
+        }
 
-            if (requests.length === 0) {
-                listContainer.innerHTML = '<p class="text-stone-500">目前沒有新的請假申請。</p>';
+        function showAdminTab(tabName) {
+            document.querySelectorAll('#admin-content .tab-content-admin').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('#admin-tabs button').forEach(button => {
+                button.classList.remove('tab-active');
+            });
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelector(`#admin-tabs button[onclick*="'${tabName}'"]`).classList.add('active');
+            document.getElementById('admin').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // --- 聯絡我們 Modal 邏輯 ---
+        function showContactModal() {
+            document.getElementById('contact-modal').classList.remove('hidden');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contact-modal').classList.add('hidden');
+        }
+        
+        function handleGeneralContactSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            
+            // 模擬 Email 寄送內容，實際不會發送
+            console.log("--- 模擬聯繫單送出 ---");
+            
+            closeContactModal();
+            form.reset();
+
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-5 right-5 p-4 bg-amber-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = `訊息已送出！我們將盡快以 Email 回覆您。`;
+            document.body.appendChild(message);
+
+            setTimeout(() => {
+                message.remove();
+            }, 4000);
+
+            return false;
+        }
+
+        // --- 手機版側邊選單邏輯 ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mobile-sidebar');
+            const innerContent = sidebar.querySelector('div');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                // 觸發重新繪製以應用過渡效果
+                setTimeout(() => {
+                    innerContent.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                innerContent.classList.add('translate-x-full');
+                setTimeout(() => {
+                    sidebar.classList.add('hidden');
+                }, 300); // 配合 CSS transition duration
+            }
+        }
+
+
+        // --- 公告渲染邏輯 ---
+        function renderPublicAnnouncements() {
+            // 從 localStorage 讀取教師發布的公告
+            const announcements = getRequests(ANNOUNCEMENT_KEY);
+            const listContainer = document.getElementById('public-announcement-list');
+            listContainer.innerHTML = '';
+
+            if (announcements.length === 0) {
+                // 如果沒有公告，顯示提示信息
+                listContainer.innerHTML = `<p class="text-stone-500 text-center py-4">目前尚無公告內容。</p>`;
                 return;
             }
 
-            requests.forEach((req) => {
-                const isPending = req.status === '待審核';
-                const statusColor = isPending ? 'bg-amber-100 border-amber-500' : 'bg-teal-100 border-teal-500';
-                const statusText = isPending ? '待處理' : '已審核';
+            // 只顯示前三個公告
+            announcements.slice(0, 3).forEach((ann, index) => {
+                const tagColor = ann.tag === '重要' ? 'border-amber-500' : ann.tag === '活動' ? 'border-teal-500' : 'border-stone-500';
+                const item = document.createElement('div');
+                item.className = `block p-4 bg-white rounded-xl shadow hover:shadow-lg transition duration-300 border-l-4 ${tagColor} cursor-pointer`;
+                
+                // 使用 onclick 顯示完整的公告內容
+                item.onclick = () => showAnnouncementDetails(ann.id);
 
-                item = document.createElement('div');
-                item.className = `p-4 rounded-xl border-l-4 ${statusColor} card-shadow`;
                 item.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-lg font-bold text-stone-800">${req.childName} (${req.className})</p>
-                            <p class="text-sm text-stone-600">家長: ${req.parentName} (${req.relationship})</p>
-                            <p class="text-sm text-stone-600">期間: ${req.startDate} ~ ${req.endDate}</p>
-                            <p class="text-sm font-medium text-red-700 mt-1">原因: ${req.reason}</p>
-                            <p class="text-xs text-stone-500 mt-2">接收通知 Email: ${req.parentEmail}</p>
-                            <p class="text-xs text-stone-500">提交時間: ${new Date(req.timestamp).toLocaleString('zh-TW')}</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs font-semibold px-2 py-1 rounded-full ${isPending ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}">${statusText}</span>
-                            <p class="text-xs text-stone-500 mb-2">簽名: <a href="${req.signature}" target="_blank" class="text-teal-700 hover:underline">查看簽名圖</a></p>
-                            ${isPending ? `<button onclick="updateLeaveStatus(${req.id}, '已審核')" class="mt-2 text-sm text-teal-700 hover:underline font-bold">標記為已審核</button>` : ''}
-                        </div>
-                    </div>
+                    <p class="text-stone-500 text-sm">【${ann.tag}】${ann.date}</p>
+                    <p class="text-lg font-semibold text-stone-800">${ann.title}</p>
+                    <p class="text-sm text-stone-600 mt-1">${ann.content ? ann.content.substring(0, 50) + (ann.content.length > 50 ? '...' : '') : ''}</p>
                 `;
                 listContainer.appendChild(item);
             });
         }
         
-        // --- 託藥單列表與回覆邏輯 ---
-        function getMedicationRequests() {
-            const requests = getRequests(MEDICATION_KEY);
-            return requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        // 新增：顯示完整公告內容的 Modal
+        function showAnnouncementDetails(id) {
+            const announcements = getRequests(ANNOUNCEMENT_KEY);
+            const ann = announcements.find(a => a.id == id);
+            
+            if (!ann) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4';
+            modal.onclick = () => document.body.removeChild(modal);
+
+            // 確保 fileURL 存在且不為空
+            const fileLink = ann.fileURL && ann.fileURL.trim()
+                ? `<p class="mt-4 text-sm text-teal-700 font-bold">附件：<a href="${ann.fileURL}" target="_blank" class="underline hover:text-teal-900">${ann.fileURL.split('/').pop()}</a></p>`
+                : '';
+
+            const contentHtml = ann.content.replace(/\n/g, '<br>');
+
+            modal.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-100" onclick="event.stopPropagation()">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-2 handwriting-font">${ann.title}</h2>
+                    <p class="text-xs text-stone-500 mb-4 border-b pb-2">【${ann.tag}】發布日期: ${ann.date}</p>
+                    <div class="text-stone-700 text-base whitespace-pre-wrap">${contentHtml}</div>
+                    ${fileLink}
+                    <button onclick="document.body.removeChild(this.parentNode.parentNode);" class="mt-6 py-2 px-4 bg-amber-600 text-white rounded-lg hover:bg-amber-700">關閉</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
-        async function handleTeacherReply(event, id) {
-            event.preventDefault();
-            
+        // --- 行事曆渲染邏輯 (新增) ---
+        function renderPublicCalendar() {
+            const container = document.getElementById('calendar-table-container');
+            const entries = getRequests(CALENDAR_KEY) || [];
+            container.innerHTML = ''; // Clear previous content
+
+            if (entries.length === 0) {
+                container.innerHTML = '<p class="text-stone-500 text-center py-8">目前尚無行事曆資料，請老師登入後台新增。</p>';
+                return;
+            }
+
+            // Sort entries by date (ascending)
+            entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            let tableHtml = `
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full min-w-[500px] bg-white rounded-lg shadow-sm">
+                        <thead>
+                            <tr class="bg-teal-100 text-teal-800">
+                                <th class="w-[15%]">日期</th>
+                                <th class="w-[65%]">活動名稱</th>
+                                <th class="w-[20%]">備註/地點</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            entries.forEach(entry => {
+                tableHtml += `
+                    <tr>
+                        <td>${entry.date}</td>
+                        <td>${entry.title}</td>
+                        <td>${entry.note || ''}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `</tbody></table></div>`;
+            container.innerHTML = tableHtml;
+        }
+
+
+        // --- 請假表單提交邏輯 (寫入 localStorage) ---
+        function handleLeaveSubmit(event) {
+            event.preventDefault(); 
             const form = event.target;
-            const requests = getMedicationRequests();
-            const index = requests.findIndex(req => req.id === id);
+            const requests = getRequests(LEAVE_KEY);
+            
+            // 驗證簽名
+            if (!leaveSignaturePad || !leaveSignaturePad.getIsSigned()) {
+                alert('請務必在簽名框內簽名，以完成提交！');
+                return;
+            }
 
-            if (index === -1) return;
-
-            const req = requests[index];
-
-            const reply = {
-                time: form.elements.teacher_time.value,
-                note: form.elements.teacher_note.value,
-                teacher: form.elements.teacher_name.value,
+            // 收集表單數據
+            const newRequest = {
+                id: Date.now(),
+                parentName: form.parentName.value,
+                relationship: form.relationship.value,
+                childName: form.childName.value,
+                parentEmail: form.parentEmail.value, 
+                className: form.className.value,
+                startDate: form.startDate.value,
+                endDate: form.endDate.value,
+                reason: form.reason.value,
+                signature: leaveSignaturePad.toDataURL(), // 儲存 Base64 簽名
+                status: '待審核', // 初始狀態
                 timestamp: new Date().toISOString()
             };
 
-            // 1. 執行 EmailJS API 呼叫 (使用 fetch) - 真實發送
-            if (!EMAILJS_USER_ID || !EMAILJS_TEMPLATE_ID_MEDICATION || !EMAILJS_SERVICE_ID) {
-                console.error("錯誤: 託藥回覆 EmailJS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
-                alert("錯誤: EmailJS 金鑰尚未設定。無法發送通知。");
-            } else {
-                const emailParams = {
-                    to_email: req.parentEmail,
-                    child_name: req.childName,
-                    class_name: req.className,
-                    medication_details: req.medicationDetails.replace(/\n/g, '<br>'),
-                    reply_time: reply.time,
-                    reply_note: reply.note.replace(/\n/g, '<br>'),
-                    teacher_name: reply.teacher
-                };
-                
-                const API_URL = `https://api.emailjs.com/api/v1.0/email/send`;
+            requests.unshift(newRequest);
+            saveRequests(LEAVE_KEY, requests); // 儲存到 localStorage
+            form.reset(); 
+            leaveSignaturePad.clear(); // 清空簽名板
 
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            service_id: EMAILJS_SERVICE_ID,
-                            template_id: EMAILJS_TEMPLATE_ID_MEDICATION,
-                            user_id: EMAILJS_USER_ID,
-                            template_params: emailParams
-                        })
-                    });
-
-                    if (response.ok) {
-                        alert(`回覆已記錄，Email 成功發送給家長: ${req.parentEmail}`);
-                    } else {
-                        console.error("EmailJS API 呼叫失敗:", response.statusText);
-                        alert(`Email 發送失敗 (API 呼叫失敗，請檢查 EmailJS 網站設定)：${response.statusText}`);
-                    }
-                } catch (error) {
-                    console.error("EmailJS API 呼叫發生錯誤:", error);
-                    alert(`Email 發送發生錯誤：${error}`);
-                }
-            }
-
-            // 2. 儲存回覆並更新後台介面
-            requests[index].teacherReply = reply;
-            saveRequests(MEDICATION_KEY, requests);
-            
             const message = document.createElement('div');
-            message.className = 'fixed bottom-5 right-5 p-4 bg-teal-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
-            message.textContent = `回覆已記錄，並已嘗試發送 Email 給家長: ${req.parentEmail}`;
+            message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = `請假申請已成功送出！請老師登入後台審核。`;
             document.body.appendChild(message);
-            setTimeout(() => { message.remove(); }, 3000);
-            
-            renderMedicationRequests();
-            loadDashboardData();
+
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+
+            return false;
         }
 
-        function renderMedicationRequests() {
-            getMedicationRequests().then(requests => {
-                const listContainer = document.getElementById('medication-requests-list');
-                listContainer.innerHTML = '';
-                
-                const pendingRequests = requests.filter(r => r.teacherReply === undefined || r.teacherReply === null || !r.teacherReply.time).length;
-                document.getElementById('medication-count').textContent = pendingRequests;
-
-                if (requests.length === 0) {
-                    listContainer.innerHTML = '<p class="text-stone-500">目前沒有新的託藥申請。</p>';
-                    return;
-                }
-
-                requests.forEach((req) => {
-                    const isReplied = req.teacherReply && req.teacherReply.time;
-                    const statusColor = isReplied ? 'bg-green-100 border-green-500' : 'bg-amber-100 border-amber-500';
-                    
-                    const item = document.createElement('div');
-                    item.className = `p-4 rounded-xl border-l-4 ${statusColor} card-shadow`;
-                    
-                    item.innerHTML = `
-                        <div class="text-lg font-bold text-stone-800 flex justify-between items-center">
-                            ${req.childName} (${req.className}) - 託藥單
-                            <span class="text-xs font-semibold px-2 py-1 rounded-full ${isReplied ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}">${isReplied ? '已回覆' : '待回覆'}</span>
-                        </div>
-                        <p class="text-sm text-stone-600">期間: ${req.startDate} ~ ${req.endDate} | 服藥時間: ${req.time}</p>
-                        <p class="text-sm text-stone-600">病名/病徵: ${req.symptoms} | 處方簽確認: ${req.prescriptionConfirm ? '是' : '否'}</p>
-                        <p class="text-sm text-stone-800 font-medium mt-1">用藥內容: <span class="text-teal-700 whitespace-pre-wrap">${req.medicationDetails}</span></p>
-                        <p class="text-sm text-stone-600 mb-3">家長 Email: <span class="text-teal-700">${req.parentEmail}</span></p>
-                        <p class="text-xs text-stone-500 mb-3">簽名: <a href="${req.parentSignature}" target="_blank" class="text-teal-700 hover:underline">查看簽名圖</a></p>
-
-                        ${isReplied ? `
-                            <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-300">
-                                <p class="font-bold text-green-700">✅ 教師回覆記錄 (${req.teacherReply.teacher})</p>
-                                <p class="text-sm text-green-600">時間: ${req.teacherReply.time}</p>
-                                <p class="text-sm text-green-600 whitespace-pre-wrap">情況: ${req.teacherReply.note}</p>
-                                <button onclick="deleteMedicationEntry(${req.id})" class="mt-2 text-xs text-red-500 hover:underline">刪除此記錄</button>
-                            </div>
-                        ` : `
-                            <form onsubmit="handleTeacherReply(event, ${req.id})" class="mt-3 space-y-2 p-3 bg-white rounded-lg border border-gray-300">
-                                <h5 class="font-semibold text-teal-700">老師回覆區 (即時發送 Email 給 ${req.parentEmail})</h5>
-                                <input type="text" name="teacher_time" placeholder="餵藥時間 (e.g., 12:35 PM)" required>
-                                <textarea name="teacher_note" placeholder="餵藥情況回覆" rows="2" required></textarea>
-                                <input type="text" name="teacher_name" placeholder="操作教師姓名 (e.g., 吳老師)" required>
-                                <button type="submit" class="w-full py-2 bg-teal-600 text-white text-sm font-bold rounded-lg hover:bg-teal-700 transition">送出餵藥回覆</button>
-                            </form>
-                        `}
-                    `;
-                    listContainer.appendChild(item);
-                });
-            });
-        }
-
-        function deleteMedicationEntry(id) {
-            if (!confirm("確定要清除此託藥回覆記錄嗎？")) return;
-            let requests = getMedicationRequests();
-            const index = requests.findIndex(req => req.id === id);
-            
-            if (index !== -1) {
-                 requests[index].teacherReply = null; // 清除回覆
-                 saveRequests(MEDICATION_KEY, requests);
-                 renderMedicationRequests();
-                 loadDashboardData();
-            }
-        }
-
-
-        // --- 行事曆管理邏輯 ---
-        function loadCalendarManagement() {
-            document.getElementById('calendar-form').reset();
-            document.getElementById('edit-calendar-id').value = '';
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
-            renderCalendarEntries();
-        }
-
-        function getCalendarEntries() {
-            const entries = getRequests(CALENDAR_KEY);
-            return entries.sort((a, b) => new Date(a.date) - new Date(b.date));
-        }
-
-        function saveCalendarEntry(event) {
+        // --- 託藥表單提交邏輯 (寫入 localStorage) ---
+        function handleMedicationSubmit(event) {
             event.preventDefault();
             const form = event.target;
-            const date = form.elements['calendar-date'].value;
-            const title = form.elements['calendar-title'].value;
-            const note = form.elements['calendar-note'].value;
-            const editIdInput = document.getElementById('edit-calendar-id');
-            const editId = editIdInput.value ? parseInt(editIdInput.value) : null;
+            const requests = getRequests(MEDICATION_KEY);
 
-            let entries = getRequests(CALENDAR_KEY);
-            let messageText = '';
-
-            if (editId) {
-                // 執行更新
-                const index = entries.findIndex(entry => entry.id === editId);
-                if (index !== -1) {
-                    entries[index] = { ...entries[index], date: date, title: title, note: note };
-                    messageText = '行事曆項目已成功更新！';
-                }
-            } else {
-                // 執行創建
-                const newEntry = {
-                    id: Date.now(),
-                    date: date,
-                    title: title,
-                    note: note
-                };
-                entries.push(newEntry);
-                messageText = '行事曆項目已成功新增！';
-            }
-            saveRequests(CALENDAR_KEY, entries);
-            
-            form.reset();
-            editIdInput.value = '';
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '新增行事曆項目';
-            
-            alert(messageText);
-            renderCalendarEntries();
-        }
-
-        function deleteCalendarEntry(id) {
-            if (!confirm("確定要刪除此行事曆項目嗎？")) return;
-            let entries = getRequests(CALENDAR_KEY);
-            entries = entries.filter(entry => entry.id !== id);
-            saveRequests(CALENDAR_KEY, entries);
-            renderCalendarEntries();
-        }
-
-        function editCalendarEntry(id) {
-            const entries = getCalendarEntries();
-            const entry = entries.find(e => e.id === id);
-
-            if (!entry) return;
-
-            // 填入表單
-            document.getElementById('calendar-date').value = entry.date;
-            document.getElementById('calendar-title').value = entry.title;
-            document.getElementById('calendar-note').value = entry.note;
-
-            // 設定編輯模式
-            document.getElementById('edit-calendar-id').value = id;
-            document.getElementById('calendar-form').querySelector('button[type="submit"]').textContent = '更新項目';
-            
-            // 捲動到表單頂部
-            document.getElementById('calendar-management').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function renderCalendarEntries() {
-            const entries = getCalendarEntries();
-            const listContainer = document.getElementById('calendar-list');
-            listContainer.innerHTML = '';
-
-            if (entries.length === 0) {
-                listContainer.innerHTML = '<p class="text-stone-500">目前沒有行事曆項目。</p>';
+            // 驗證簽名
+            if (!medicationSignaturePad || !medicationSignaturePad.getIsSigned()) {
+                alert('請務必在簽名框內簽名，以完成提交！');
                 return;
             }
+            
+            // 處理複雜的用藥內容欄位
+            let medicationDetails = '';
+            
+            // 1. 藥粉/藥丸
+            if (form.medType[0].checked && form.powderQty.value) {
+                medicationDetails += `藥粉/藥丸: ${form.powderQty.value} 包\n`;
+            }
+            // 2. 藥水
+            if (form.medType[1].checked && form.liquidQty.value) {
+                medicationDetails += `藥水: ${form.liquidQty.value} c.c.\n`;
+            }
+            // 3. 藥膏/其他
+            if (form.medType[2].checked && form.otherQty.value) {
+                medicationDetails += `其他用藥/藥膏: ${form.otherQty.value}\n`;
+            }
+            medicationDetails += `備註 (冷藏等): ${form.refrigerationNote.value || '無備註'}`;
 
-            entries.forEach(entry => {
-                const item = document.createElement('div');
-                item.className = 'p-3 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-start space-x-4';
-                
-                item.innerHTML = `
-                    <div>
-                        <p class="text-xs font-semibold text-teal-700">${entry.date}</p>
-                        <span class="font-bold text-base text-stone-800">${entry.title}</span>
-                        ${entry.note ? `<p class="text-xs text-stone-500">${entry.note}</p>` : ''}
-                    </div>
-                    <div class="flex space-x-2 flex-shrink-0">
-                        <button onclick="editCalendarEntry(${entry.id})" class="text-sm text-teal-600 hover:underline">編輯</button>
-                        <button onclick="deleteCalendarEntry(${entry.id})" class="text-sm text-red-500 hover:text-red-700">刪除</button>
-                    </div>
-                `;
-                listContainer.appendChild(item);
-            });
+
+            // 收集表單數據
+            const newRequest = {
+                id: Date.now(),
+                className: form.className.value,
+                childName: form.childName.value,
+                startDate: form.startDate.value,
+                endDate: form.endDate.value,
+                symptoms: form.symptoms.value,
+                medicationDetails: medicationDetails, // 使用重構後的內容
+                time: form.time.value,
+                parentEmail: form.parentEmail.value,
+                parentSignature: medicationSignaturePad.toDataURL(), // 儲存 Base64 簽名
+                prescriptionConfirm: form.prescriptionConfirm.checked, // 處方簽確認
+                refrigerationNote: form.refrigerationNote.value, // 其他注意事項
+                teacherReply: null, // 初始回覆為 null
+                timestamp: new Date().toISOString()
+            };
+
+            requests.unshift(newRequest);
+            saveRequests(MEDICATION_KEY, requests); // 儲存到 localStorage
+            form.reset();
+            medicationSignaturePad.clear(); // 清空簽名板
+
+            const message = document.createElement('div');
+            message.className = 'fixed bottom-5 right-5 p-4 bg-green-600 text-white rounded-lg shadow-xl z-50 transition duration-300';
+            message.textContent = `託藥申請已成功送出！請老師登入後台審核。`;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+
+            return false;
         }
 
-        // --- 儀表板通用加載 ---
-        function loadDashboardData() {
-            const leaveRequests = getLeaveRequests();
-            const medicationRequests = getMedicationRequests();
-
-            const pendingLeaves = leaveRequests.filter(r => r.status === '待審核').length;
-            const pendingMedications = medicationRequests.filter(r => r.teacherReply === undefined || r.teacherReply === null || !r.teacherReply.time).length;
-
-            document.getElementById('leave-count').textContent = pendingLeaves;
-            document.getElementById('medication-count').textContent = pendingMedications;
-            
-            showAdminTab('announcements');
-        }
-
-        // 檢查是否已登入 (在 DOM 載入後執行)
-        document.addEventListener('DOMContentLoaded', () => {
-            // 附加事件監聽器到表單和按鈕
-            document.getElementById('login-form').addEventListener('submit', handleLogin);
-            document.getElementById('announcement-form').addEventListener('submit', saveAnnouncement);
-            document.getElementById('gallery-form').addEventListener('submit', saveGalleryImages);
-            document.getElementById('calendar-form').addEventListener('submit', saveCalendarEntry);
-
-            // 確保公告的發布日期預設為今天
-            const dateInput = document.getElementById('announcement-date');
-            if (dateInput) {
-                dateInput.value = new Date().toISOString().split('T')[0];
-            }
-            
-            // 檢查 Local Storage 狀態進行模擬登入
-            if (localStorage.getItem('adminLoggedIn') === 'true') {
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('admin-view').classList.remove('hidden');
-                loadDashboardData();
-            }
-        });
+        // 頁面載入時初始化 Tab 和公告
+        window.onload = function() {
+            showAboutTab('calendar');
+            showAdminTab('leave');
+            renderPublicAnnouncements();
+            // 在頁面載入時確保簽名板初始化
+            if (leaveSignaturePad) leaveSignaturePad.resizeCanvas();
+            if (medicationSignaturePad) medicationSignaturePad.resizeCanvas();
+        };
     </script>
+
 </body>
+</html>
