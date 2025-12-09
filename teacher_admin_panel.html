@@ -195,7 +195,7 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
         // 導入 Firebase 模組
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
@@ -234,6 +234,7 @@
         // --- 數據存取通用函數 (Firestore CRUD) ---
         async function getRequests(collectionName, sortingField = 'timestamp', sortDirection = 'desc') {
             const collectionRef = collection(db, collectionName);
+            // 由於 Firestore 的限制，我們只按單個欄位排序
             const q = query(collectionRef, orderBy(sortingField, sortDirection)); 
             
             try {
@@ -270,6 +271,7 @@
             const password = document.getElementById('password').value;
 
             try {
+                // 使用 Firebase Authentication 進行登入
                 await signInWithEmailAndPassword(auth, email, password);
                 // AuthStateChanged 會處理介面切換
             } catch (error) {
@@ -349,11 +351,11 @@
                 if (editId) {
                     // 執行更新
                     await updateRequest(ANNOUNCEMENT_KEY, editId, data);
-                    messageText = '公告已成功更新！主網頁將同步更新。';
+                    messageText = '公告已成功更新！主網頁將同步至雲端。';
                 } else {
                     // 執行創建
                     await addDoc(collection(db, ANNOUNCEMENT_KEY), data);
-                    messageText = '新公告已成功儲存！主網頁將同步更新。';
+                    messageText = '新公告已成功儲存！主網頁將同步至雲端。';
                 }
             } catch (e) {
                 console.error("Error saving announcement entry: ", e);
@@ -448,6 +450,19 @@
         }
         
         // --- 活動花絮圖片管理邏輯 ---
+        async function getGalleryImagesDocs() {
+            const collectionRef = collection(db, GALLERY_KEY);
+            const q = query(collectionRef, orderBy('timestamp', 'asc')); 
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (e) {
+                console.error("Error getting documents: ", e);
+                return [];
+            }
+        }
+        
         async function loadGalleryManagement() {
             const imageDocs = await getGalleryImagesDocs();
             
@@ -739,7 +754,7 @@
                 timestamp: new Date().toISOString()
             };
 
-            // 1. 執行 EmailJS API 呼叫 (使用 fetch) - 真實發送
+            // 1. 執行 Email 服務 API 呼叫 (使用 fetch) - 真實發送
             if (!EMAILJS_USER_ID || !EMAILJS_TEMPLATE_ID_MEDICATION || !EMAILJS_SERVICE_ID) {
                 console.error("錯誤: 託藥回覆 EmailJS 金鑰/模板 ID 尚未設定! 請檢查程式碼中的設定。");
                 alert("錯誤: EmailJS 金鑰尚未設定。無法發送通知。");
@@ -1000,7 +1015,18 @@
             }
             
             // 檢查 Firebase Auth 狀態
-            // 由於 Firebase Auth 模組化的關係，我們需要確保所有事件都導出
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // 已登入
+                    document.getElementById('login-view').classList.add('hidden');
+                    document.getElementById('admin-view').classList.remove('hidden');
+                    loadDashboardData();
+                } else {
+                    // 未登入
+                    document.getElementById('login-view').classList.remove('hidden');
+                    document.getElementById('admin-view').classList.add('hidden');
+                }
+            });
         });
     </script>
 </body>
